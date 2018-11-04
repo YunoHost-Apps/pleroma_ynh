@@ -23,7 +23,7 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
-admin=$YNH_APP_ADMIN
+admin=$YNH_APP_ARG_ADMIN
 admin_email=$(ynh_user_get_info $admin 'mail')
 is_public=$YNH_APP_ARG_IS_PUBLIC
 random_key=$(ynh_string_random 64)
