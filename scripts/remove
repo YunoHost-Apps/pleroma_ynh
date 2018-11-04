@@ -21,6 +21,22 @@ port=$(ynh_app_setting_get "$app" port)
 db_name=$(ynh_app_setting_get "$app" psql_db)
 final_path=$(ynh_app_setting_get "$app" final_path)
 
+# STOP AND REMOVE SERVICE
+#=================================================
+
+# Remove the dedicated systemd config
+ynh_remove_systemd_config
+
+#=================================================
+# REMOVE SERVICE FROM ADMIN PANEL
+#=================================================
+
+if yunohost service status | grep -q "$app"
+then
+	echo "Remove $app service"
+	yunohost service remove "$app"
+fi
+
 #=================================================
 # REMOVE DEPENDENCIES
 #=================================================

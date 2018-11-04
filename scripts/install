@@ -83,11 +83,14 @@ ynh_app_setting_set "$app" port "$port"
 #=================================================
 
 # Add erlang for Debian Jessie 
+
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
 	echo "deb http://binaries.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
+elif 
+	[ "$(lsb_release --codename --short)" == "stretch" ]; then
+	echo "deb http://binaries.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 fi
 
-echo "deb http://binaries.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 
 # install dependencies
 ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
@@ -152,7 +155,8 @@ ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/config/setu
 #=================================================
 # SETUP
 #=================================================
-
+( cd $final_path && mix deps.get )
+( cd $final_path && MIX_ENV=prod mix ecto.migrate )
 
 #=================================================
 # SETUP SSOWAT
@@ -171,6 +175,11 @@ fi
 
 # Give permisiion to the final_path
 chown -R "$app":"$app" "$final_path"
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+systemctl enable "$app"
+systemctl start "$app"
 
 #=================================================
 # RELOAD NGINX
