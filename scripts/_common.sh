@@ -12,6 +12,14 @@ ynh_delete_file_checksum () {
 	ynh_app_setting_delete $app $checksum_setting_name
 }
 
+# usage: ynh_string_random [length]
+# | arg: length - the string length to generate (default: 24)
+ynh_string_random() {
+    dd if=/dev/urandom bs=1 count=1000 2> /dev/null \
+      | tr -c -d 'A-Za-z0-9' \
+      | sed -n 's/\(.\{'"${1:-24}"'\}\).*/\1/p'
+}
+
 # Send an email to inform the administrator
 #
 # usage: ynh_send_readme_to_admin app_message [recipients]
