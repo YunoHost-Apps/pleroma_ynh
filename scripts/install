@@ -27,6 +27,7 @@ admin=$YNH_APP_ARG_ADMIN
 admin_email=$(ynh_user_get_info $admin 'mail')
 is_public=$YNH_APP_ARG_IS_PUBLIC
 random_key=$(ynh_string_random 64)
+name=$YNH_APP_ARG_NAME
 
 
 # This is a multi-instance app, meaning it can be installed several times independently
@@ -62,6 +63,7 @@ ynh_app_setting_set "$app" admin_email "$admin_email"
 ynh_app_setting_set "$app" is_public   "$is_public"
 ynh_app_setting_set "$app" random_key  "random_key"
 ynh_app_setting_set "$app" admin       "$admin"
+ynh_app_setting_set "$app" name        "$name"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -139,7 +141,7 @@ cp -f ../conf/setup_db.psql "$final_path/config/setup_db.psql"
 
 ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/config/prod.secret.exs"
 ynh_replace_string "__KEY__"           "$random_key"    "$final_path/config/prod.secret.exs"
-ynh_replace_string "__INSTANCE_NAME__" "$instance_name" "$final_path/config/prod.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/config/prod.secret.exs"
 ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/config/prod.secret.exs"
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/config/prod.secret.exs"
 ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/config/prod.secret.exs"

@@ -7,6 +7,7 @@
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
 		admin="john" (ADMIN)
+		name="pleroma"
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
 		pkg_linter=1
