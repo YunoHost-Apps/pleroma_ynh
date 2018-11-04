@@ -61,7 +61,7 @@ ynh_webpath_register "$app" "$domain" "$path_url"
 ynh_app_setting_set "$app" domain      "$domain"
 ynh_app_setting_set "$app" admin_email "$admin_email"
 ynh_app_setting_set "$app" is_public   "$is_public"
-ynh_app_setting_set "$app" random_key  "random_key"
+ynh_app_setting_set "$app" random_key  "$random_key"
 ynh_app_setting_set "$app" admin       "$admin"
 ynh_app_setting_set "$app" name        "$name"
 
