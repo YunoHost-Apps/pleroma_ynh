@@ -1,0 +1,49 @@
+{
+    "name": "pleroma",
+    "id": "pleroma",
+    "packaging_format": 1,
+    "description": {
+        "en": "Pleroma is an OStatus-compatible social networking server written in Elixir, compatible with GNU Social and Mastodon"
+    },
+    "version": "0.9.0",
+    "url": "https://git.pleroma.social/pleroma/pleroma",
+    "license": "AGPL-3.0-only",
+    "maintainer": {
+        "name": "Anmol Sharma",
+        "email": "anmol@datamol.org"
+    },
+    "requirements": {
+        "yunohost": ">= 2.7.9"
+    },
+    "multi_instance": true,
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "type": "domain",
+                "ask": {
+                    "en": "Choose a domain name for pleroma"
+                },
+                "example": "example.com"
+            },
+            {
+                "name": "email",
+                "ask": {
+                    "en": "Choose an admin email (can be changed after installation)"
+                },
+                "example": "johndoe@example.com"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "ask": {
+                    "en": "Is it a public application?"
+                },
+                "default": true
+            }
+        ]
+    }
+}

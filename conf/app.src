@@ -1,0 +1,6 @@
+SOURCE_URL=https://git.pleroma.social/pleroma/pleroma/-/archive/v0.9.0/pleroma-v0.9.0.tar.gz
+SOURCE_SUM=068fd77e6c00998e41e7db58ff122dee714da0c0ba0eb5c590b81eb93543a11e
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=
