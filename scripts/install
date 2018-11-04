@@ -80,7 +80,7 @@ ynh_app_setting_set "$app" port "$port"
 
 
 # install dependencies
-ynh_install_app_dependencies install git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https
+ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https
 wget -P /tmp/ https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo dpkg -i /tmp/erlang-solutions_1.0_all.deb
 apt update && apt install elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
