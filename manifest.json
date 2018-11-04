@@ -29,12 +29,13 @@
                 },
                 "example": "example.com"
             },
-            {
-                "name": "email",
+           {
+                "name": "admin",
+                "type": "user",
                 "ask": {
-                    "en": "Choose an admin email (can be changed after installation)"
-                },
-                "example": "johndoe@example.com"
+                    "en": "Choose the Pleroma administrator (must be an existing YunoHost user)",
+                    "fr": "Choisissez l'administrateur de Pleroma (doit être un utilisateur YunoHost existant)"
+                }
             },
             {
                 "name": "is_public",

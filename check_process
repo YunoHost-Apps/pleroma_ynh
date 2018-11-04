@@ -6,9 +6,8 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		email="admin@example.com"
+		admin="john" (ADMIN)
 		is_public=1	(PUBLIC|public=1|private=0)
-		port="4000"	(PORT)
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=0

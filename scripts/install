@@ -23,9 +23,10 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
-admin_email=$YNH_APP_ARG_EMAIL
-admin_pass=$(ynh_string_random 24)
+admin=$YHN_APP_ADMIN
+admin_email=$(ynh_user_get_info $admin 'mail')
 is_public=$YNH_APP_ARG_IS_PUBLIC
+random_key=$(ynh_string_random 64)
 
 
 # This is a multi-instance app, meaning it can be installed several times independently
@@ -58,8 +59,9 @@ ynh_webpath_register "$app" "$domain" "$path_url"
 
 ynh_app_setting_set "$app" domain      "$domain"
 ynh_app_setting_set "$app" admin_email "$admin_email"
-ynh_app_setting_set "$app" admin_pass  "$admin_pass"
 ynh_app_setting_set "$app" is_public   "$is_public"
+ynh_app_setting_set "$app" random_key  "random_key"
+ynh_app_setting_set "$app" admin       "$admin"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -78,18 +80,22 @@ ynh_app_setting_set "$app" port "$port"
 # INSTALL DEPENDENCIES
 #=================================================
 
+# Add erlang for Debian Jessie 
+if [ "$(lsb_release --codename --short)" == "jessie" ]; then
+	echo "deb http://binaries.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
+fi
+
+echo "deb http://binaries.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 
 # install dependencies
-ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https
-wget -P /tmp/ https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo dpkg -i /tmp/erlang-solutions_1.0_all.deb
-apt-get update && apt-get -y install elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
 #=================================================
 # DATABASE SETUP
 #=================================================
 
 # Create postgresql database
-db_name="peertube_${app}"
+db_name="${app}"
 db_pwd=$(ynh_string_random 30)
 ynh_app_setting_set "$app" psql_db "$db_name"
 ynh_app_setting_set "$app" psqlpwd "$db_pwd"
@@ -99,6 +105,8 @@ ynh_psql_execute_as_root \
 "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -113,8 +121,7 @@ ynh_system_user_create "$app"
 
 ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path"
-
+git clone https://git.pleroma.social/pleroma/pleroma "$final_path"
 
 
 #=================================================
@@ -123,6 +130,26 @@ ynh_setup_source "$final_path"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
+
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
+cp -f ../conf/prod.secret.exs "$final_path/config/prod.secret.exs"
+cp -f ../conf/setup_db.psql "$final_path/config/setup_db.psql"
+
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/config/prod.secret.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/config/prod.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$instance_name" "$final_path/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/config/prod.secret.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/config/prod.secret.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/config/prod.secret.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/config/setup_db.psql"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/config/setup_db.psql"
+
+#=================================================
+# SETUP
+#=================================================
 
 
 #=================================================
