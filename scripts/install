@@ -26,7 +26,7 @@ path_url="/"
 admin=$YNH_APP_ARG_ADMIN
 admin_email=$(ynh_user_get_info $admin 'mail')
 is_public=$YNH_APP_ARG_IS_PUBLIC
-random_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)
+random_key=$(ynh_random 64)
 name=$YNH_APP_ARG_NAME
 
 
