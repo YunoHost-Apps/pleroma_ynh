@@ -26,7 +26,7 @@ final_path=$(ynh_app_setting_get "$app" final_path)
 #=================================================
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
-apt update && apt remove elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+apt-get update && apt-get -y remove elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
 #=================================================
 # REMOVE THE MYSQL DATABASE
