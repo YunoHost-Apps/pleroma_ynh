@@ -4,8 +4,8 @@
 
 [![Install pleroma with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=pleroma)
 
-**Links:**
-[Yunohost](https://yunohost.org)
+**Links:**<br>
+[Yunohost](https://yunohost.org)<br>
 [Pleroma](https://git.pleroma.social/pleroma/pleroma)
 
 ## Pleroma 
