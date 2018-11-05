@@ -6,13 +6,16 @@
 
 **Links:**<br>
 [Yunohost](https://yunohost.org)<br>
-[Pleroma](https://git.pleroma.social/pleroma/pleroma)
+[Pleroma](https://pleroma.social/)<br>
+[Pleroma Gitlab repo](https://git.pleroma.social/pleroma/pleroma)
 
 ## Pleroma 
 
-[Pleroma](https://git.pleroma.social/pleroma/pleroma) is an **OStatus-compatible social networking server** written in Elixir, compatible with **GNU Social** **Mastodon**. It is high-performance and can run on small devices like a **Raspberry Pi**.
+[Pleroma](https://pleroma.social/) is an **OStatus and ActivityPub compatible social networking server** written in Elixir, compatible with **GNU Social** and **Mastodon**. It is high-performance and can run on small devices like a **Raspberry Pi**.
 
-For clients it supports both the **GNU Social API** with **Qvitter extensions** and the **Mastodon client API**.
+For clients it supports both the **GNU Social API** with **Qvitter extensions** and the **Mastodon client API**.<br>
+
+For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post/what-is-pleroma/)<br>
 
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
