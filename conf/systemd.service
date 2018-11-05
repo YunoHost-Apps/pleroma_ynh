@@ -4,7 +4,7 @@ After=network.target postgresql.service
 
 [Service]
 User=__APP__
-WorkingDirectory=__FINALPATH__
+WorkingDirectory=__FINALPATH__/__APP__
 Environment="HOME=__FINALPATH__"
 ExecStart=/usr/local/bin/mix phx.server
 ExecReload=/bin/kill $MAINPID

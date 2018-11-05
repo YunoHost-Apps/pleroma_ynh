@@ -118,7 +118,7 @@ CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
 #=================================================
 
 # Create a system user
-ynh_system_user_create "$app"
+ynh_system_user_create "$app" "$final_path"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK PEERTUBE SOURCE
@@ -126,7 +126,7 @@ ynh_system_user_create "$app"
 
 ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
-git clone https://git.pleroma.social/pleroma/pleroma "$final_path"
+git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
 
 
 #=================================================
@@ -139,24 +139,24 @@ ynh_add_nginx_config
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-cp -f ../conf/prod.secret.exs "$final_path/config/prod.secret.exs"
-cp -f ../conf/setup_db.psql "$final_path/config/setup_db.psql"
+cp -f ../conf/prod.secret.exs "$final_path/$app/config/prod.secret.exs"
+cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
 
-ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/config/prod.secret.exs"
-ynh_replace_string "__KEY__"           "$random_key"    "$final_path/config/prod.secret.exs"
-ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/config/prod.secret.exs"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/config/prod.secret.exs"
-ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/config/prod.secret.exs"
-ynh_replace_string "__PORT__"          "$port"          "$final_path/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/config/setup_db.psql"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/config/setup_db.psql"
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/setup_db.psql"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
 
 #=================================================
 # SETUP
 #=================================================
-( cd $final_path && mix deps.get )
-( cd $final_path && MIX_ENV=prod mix ecto.migrate )
+( cd $final_path/$app && sudo -u "$app" mix deps.get )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate )
 
 #=================================================
 # SETUP SSOWAT
