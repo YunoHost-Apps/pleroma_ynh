@@ -155,7 +155,8 @@ ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config
 #=================================================
 # SETUP
 #=================================================
-( cd $final_path/$app && sudo -u "$app" mix deps.get --force )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
+( cd $final_path/$app && sudo -u "$app" mix deps.get )
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate )
 
 #=================================================
