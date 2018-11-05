@@ -85,12 +85,14 @@ ynh_app_setting_set "$app" port "$port"
 # Add erlang for Debian Jessie 
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	echo "deb http://binaries.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
+	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 elif 
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	echo "deb http://binaries.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
+	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 fi
-
+sudo wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+sudo apt-key add erlang_solutions.asc
+sudo rm erlang_solutions.asc
 
 # install dependencies
 ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
@@ -121,7 +123,7 @@ CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
 ynh_system_user_create "$app" "$final_path"
 
 #=================================================
-# DOWNLOAD, CHECK AND UNPACK PEERTUBE SOURCE
+# DOWNLOAD, CHECK AND UNPACK PLEROMA SOURCE
 #=================================================
 
 ynh_app_setting_set "$app" final_path "$final_path"
@@ -158,6 +160,7 @@ ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config
 # Give permisiion to the final_path
 chown -R "$app":"$app" "$final_path"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
 ( cd $final_path/$app && sudo -u "$app" mix deps.get )
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
 
