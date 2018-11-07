@@ -6,7 +6,7 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		admin="john" (ADMIN)
+		admin="john" (USER)
 		name="pleroma"
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
