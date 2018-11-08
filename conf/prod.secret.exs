@@ -17,6 +17,9 @@ config :pleroma, :media_proxy,
   enabled: false,
   redirect_on_failure: true
   #base_url: "https://cache.pleroma.social"
+ 
+config :pleroma, :fe,
+  scope_options_enabled: true
 
 # Configure your database
 config :pleroma, Pleroma.Repo,
