@@ -10,7 +10,7 @@ config :pleroma, :instance,
   name: "__INSTANCE_NAME__",
   email: "__ADMIN_EMAIL__",
   limit: 5000,
-  registrations_open: true,
+  registrations_open: __REG__,
   dedupe_media: false
 
 config :pleroma, :media_proxy,

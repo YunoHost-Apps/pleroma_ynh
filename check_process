@@ -8,6 +8,7 @@
 		domain="domain.tld"	(DOMAIN)
 		admin="john" (USER)
 		name="pleroma"
+		registration=0 (BOOLEAN)
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
 		pkg_linter=1
