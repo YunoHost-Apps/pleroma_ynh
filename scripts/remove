@@ -65,11 +65,8 @@ ynh_secure_remove "$final_path"
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
+ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
 
-if [ $cache -eq 1 ]
-then
-	rm -f /etc/nginx/conf.d/$app-cache.conf
-fi
 
 #=================================================
 # CLOSE A PORT
