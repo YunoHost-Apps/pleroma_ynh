@@ -33,6 +33,7 @@ app=$YNH_APP_INSTANCE_NAME
 final_path=$(ynh_app_setting_get "$app" final_path)
 domain=$(ynh_app_setting_get "$app" domain)
 db_name=$(ynh_app_setting_get "$app" psql_db)
+cache=$(ynh_app_setting_get "$app" cache)
 
 # Stop Pleroma for backup 
 systemctl stop "$app"
@@ -50,6 +51,11 @@ ynh_backup "$final_path"
 #=================================================
 
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
+
+if [ $cache -eq 1 ]
+then
+	ynh_backup "/etc/nginx/conf.d/$app-cache.conf"
+fi
 
 #=================================================
 # BACKUP THE PostgreSQL DATABASE

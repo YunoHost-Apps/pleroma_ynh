@@ -9,6 +9,8 @@
 		admin="john" (USER)
 		name="pleroma"
 		registration=0 (BOOLEAN)
+		cache=1 (BOOLEAN)
+		size="5g"
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
 		pkg_linter=1
