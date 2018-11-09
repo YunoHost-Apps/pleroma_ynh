@@ -29,6 +29,7 @@ db_name=$(ynh_app_setting_get "$app" psql_db)
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
 cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
+registration=$(ynh_app_setting_get "$app" registration)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
