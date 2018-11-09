@@ -14,7 +14,7 @@ config :pleroma, :instance,
   dedupe_media: false
 
 config :pleroma, :media_proxy,
-  enabled: false,
+  enabled: __MEDIA_CACHE__,
   redirect_on_failure: true
   #base_url: "https://cache.pleroma.social"
  

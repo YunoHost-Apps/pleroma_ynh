@@ -120,9 +120,9 @@ chown -R "$app":"$app" "$final_path"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
+ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
 if [ $cache -eq 1 ]
 then
-	rm -f /etc/nginx/conf.d/$app-cache.conf
 	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
 	ynh_replace_string "{APP}"    "$app"  "/etc/nginx/conf.d/$app-cache.conf"
 	ynh_replace_string "__SIZE__" "$size" "/etc/nginx/conf.d/$app-cache.conf"
@@ -133,6 +133,35 @@ then
 	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
 
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
+cp -f ../conf/prod.secret.exs "$final_path/$app/config/prod.secret.exs"
+cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
+
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/setup_db.psql"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
+if [ $cache -eq 1 ]
+then
+	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
+else
+	ynh_replace_string "__MEDIA_CACHE__"    "false"       "$final_path/$app/config/prod.secret.exs"
+fi
+
+#  Set registrations open/closed
+if [ $registration -eq 1 ]
+then
+ ynh_replace_string "__REG__" "true"  "$final_path/$app/config/prod.secret.exs"
+else
+ ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
+fi
 
 # Recalculate and store the config file checksum into the app settings
 ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
