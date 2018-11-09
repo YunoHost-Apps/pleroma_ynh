@@ -51,6 +51,22 @@
                 },
                 "default": false
             },
+           {
+                "name": "cache",
+                "type": "boolean",
+                "ask": {
+                    "en": "Enable media-chache for your instance"
+                },
+                "default": true
+               },
+            {
+                "name": "size",
+                "ask": {
+                    "en": "Select the cache size (2g,5g,10g,20g,40g,80g)"
+                },
+                "choices": ["2g","5g","10g","20g","40g","80g"],
+                "default": "5g"
+               }, 
 			{
                 "name": "is_public",
                 "type": "boolean",

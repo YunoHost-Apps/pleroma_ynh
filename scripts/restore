@@ -37,6 +37,7 @@ final_path=$(ynh_app_setting_get "$app" final_path)
 port=$(ynh_app_setting_get "$app" port)
 db_name=$(ynh_app_setting_get "$app" psql_db)
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+cache=$(ynh_app_setting_get "$app" cache)
 
 
 #=================================================
@@ -55,6 +56,10 @@ test ! -d "$final_path" \
 #=================================================
 
 ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
+if [ $cache -eq 1 ]
+then
+	ynh_restore_file "/etc/nginx/conf.d/$app-cache.conf"
+fi
 
 #=================================================
 # RESTORE THE APP MAIN DIR

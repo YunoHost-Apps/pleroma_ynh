@@ -20,6 +20,7 @@ domain=$(ynh_app_setting_get "$app" domain)
 port=$(ynh_app_setting_get "$app" port)
 db_name=$(ynh_app_setting_get "$app" psql_db)
 final_path=$(ynh_app_setting_get "$app" final_path)
+cache=$(ynh_app_setting_get "$app" cache)
 
 # STOP AND REMOVE SERVICE
 #=================================================
@@ -57,12 +58,18 @@ ynh_psql_remove_db "$db_name" "$app"
 # Remove the app directory securely
 ynh_secure_remove "$final_path"
 
+
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
+
+if [ $cache -eq 1 ]
+then
+	rm -f /etc/nginx/conf.d/$app-cache.conf
+fi
 
 #=================================================
 # CLOSE A PORT

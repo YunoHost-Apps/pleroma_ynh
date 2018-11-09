@@ -30,7 +30,8 @@ is_public=$YNH_APP_ARG_IS_PUBLIC
 random_key=$(ynh_random 64)
 name=$YNH_APP_ARG_NAME
 registration=$YNH_APP_ARG_REGISTRATION
-
+cache=$YNH_APP_ARG_CACHE
+size=$YNH_APP_ARG_SIZE
 
 # This is a multi-instance app, meaning it can be installed several times independently
 # The id of the app as stated in the manifest is available as $YNH_APP_ID
@@ -67,6 +68,9 @@ ynh_app_setting_set "$app" random_key   "$random_key"
 ynh_app_setting_set "$app" admin        "$admin"
 ynh_app_setting_set "$app" name         "$name"
 ynh_app_setting_set "$app" registration "$registration"
+ynh_app_setting_set "$app" cache        "$cache"
+ynh_app_setting_set "$app" size         "$size"
+
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
@@ -139,6 +143,17 @@ git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
+if [ $cache -eq 1 ]
+then
+	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string "{APP}"    "$app"  "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string "__SIZE__" "$size" "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_store_file_checksum "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string  "{APP}"     "$app"  "../conf/media.conf"
+	ynh_replace_string  "__PORT__"  "$port" "../conf/media.conf"
+	sudo su -c "cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf"
+	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
+fi
 
 #=================================================
 # MODIFY A CONFIG FILE
