@@ -47,7 +47,7 @@
                 "name": "registration",
                 "type": "boolean",
                 "ask": {
-                    "en": "Is registrations are open to everyone?"
+                    "en": "Is the registraion open for new users?"
                 },
                 "default": false
             },
@@ -55,14 +55,14 @@
                 "name": "cache",
                 "type": "boolean",
                 "ask": {
-                    "en": "Enable media-chache for your instance"
+                    "en": "Enable media-cache for your instance"
                 },
                 "default": true
                },
             {
                 "name": "size",
                 "ask": {
-                    "en": "Select the cache size (2g,5g,10g,20g,40g,80g)"
+                    "en": "Select the cache size. If you did not enabled media-cache in above option then this option will have no effect"
                 },
                 "choices": ["2g","5g","10g","20g","40g","80g"],
                 "default": "5g"
