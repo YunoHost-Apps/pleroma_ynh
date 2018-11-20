@@ -47,7 +47,7 @@
                 "name": "registration",
                 "type": "boolean",
                 "ask": {
-                    "en": "Is the registraion open for new users?"
+                    "en": "Is the registration open for new users?"
                 },
                 "default": false
             },
