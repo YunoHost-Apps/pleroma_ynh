@@ -26,7 +26,7 @@ path_url="/"
 admin=$YNH_APP_ARG_ADMIN
 admin_email=$(ynh_user_get_info $admin 'mail')
 admin_name=$(ynh_user_get_info $admin 'firstname')
-admin_pass=$(ynh_string_random 24)
+admin_pass_reset_url=""
 is_public=$YNH_APP_ARG_IS_PUBLIC
 random_key=$(ynh_random 64)
 name=$YNH_APP_ARG_NAME
@@ -206,8 +206,8 @@ chown -R "$app":"$app" "$final_path"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --moderator )
 # Make user admin
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --admin )
-# Send reset password mail
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user reset_password "$admin" )
+# Retrieve a password reset link that you can then send to the user
+admin_pass_reset_url=( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user reset_password "$admin" )
 
 #=================================================
 # SETUP SSOWAT
@@ -246,7 +246,7 @@ message=" $app was successfully installed :)
 Please open your $app domain: https://$domain$path_url
 
 The moderator username is: $admin
-The moderator password is: $admin_pass
+To reset your password: $admin_pass_reset_url
 
 If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/pleroma_ynh/
 If you are not afraid of the terminal, check out https://git.pleroma.social/pleroma/pleroma/wikis/home to see what more you can do with your awesome instance!"
