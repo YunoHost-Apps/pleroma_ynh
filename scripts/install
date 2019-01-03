@@ -208,7 +208,7 @@ chown -R "$app":"$app" "$final_path"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --admin )
 # Retrieve a password reset link that you can then send to the user
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user reset_password "$admin" )
-admin_pass_reset_url = $(!!)
+admin_pass_reset_url=$(!!)
 
 #=================================================
 # SETUP SSOWAT
