@@ -16,16 +16,16 @@ source psql.sh
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get "$app" domain)
+domain=$(ynh_app_setting_get $app domain)
 path_url="/"
-is_public=$(ynh_app_setting_get "$app" is_public)
-admin=$(ynh_app_setting_get "$app" admin)
+admin=$(ynh_app_setting_get $app admin)
+is_public=$(ynh_app_setting_get $app is_public)
+final_path=$(ynh_app_setting_get $app final_path)
+db_name=$(ynh_app_setting_get "$app" psql_db)
 admin_email=$(ynh_app_setting_get "$app" admin_email)
-final_path=$(ynh_app_setting_get "$app" final_path)
 random_key=$(ynh_app_setting_get "$app" random_key)
 name=$(ynh_app_setting_get "$app" name)
 port=$(ynh_app_setting_get "$app" port)
-db_name=$(ynh_app_setting_get "$app" psql_db)
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
 cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
@@ -37,11 +37,23 @@ registration=$(ynh_app_setting_get "$app" registration)
 
 # Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set "$app" is_public 1
+	ynh_app_setting_set $app is_public 1
 	is_public=1
 elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set "$app" is_public 0
+	ynh_app_setting_set $app is_public 0
 	is_public=0
+fi
+
+# If db_name doesn't exist, create it
+if [ -z $db_name ]; then
+	db_name=$(ynh_sanitize_dbid $app)
+	ynh_app_setting_set $app db_name $db_name
+fi
+
+# If final_path doesn't exist, create it
+if [ -z $final_path ]; then
+	final_path=/var/www/$app
+	ynh_app_setting_set $app final_path $final_path
 fi
 
 #=================================================
@@ -60,29 +72,46 @@ ynh_abort_if_errors
 # Stop Pleroma for upgrade
 systemctl stop "$app"
 
-#===================================================
-# Add PostgreSQL extension pg_trgm and citext
-#===================================================
-
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
-
-# Open this port
-yunohost firewall allow Both "$port" 2>&1
-
 #=================================================
-# CREATE DEDICATED USER
+# CHECK THE PATH
 #=================================================
 
-# Create a system user
-ynh_system_user_create "$app" "$final_path"
+# Normalize the URL path syntax
+path_url=$(ynh_normalize_url_path $path_url)
 
 #=================================================
-# INSTALL DEPENDENCIES
+# STANDARD UPGRADE STEPS
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
+# Download, check integrity, uncompress and patch the source from app.src
+#ynh_setup_source "$final_path"
+( cd $final_path/$app && git pull )
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
+if [ $cache -eq 1 ]
+then
+	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string "{APP}"    "$app"  "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string "__SIZE__" "$size" "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_store_file_checksum "/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string  "{APP}"     "$app"  "../conf/media.conf"
+	ynh_replace_string  "__PORT__"  "$port" "../conf/media.conf"
+	sudo su -c "cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf"
+	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
+fi
+
+#=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
 
 # Add erlang for Debian Jessie 
 
@@ -100,39 +129,45 @@ sudo rm erlang_solutions.asc
 ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
 
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path "$path_url")
-
 #=================================================
-# DOWNLOAD, CHECK AND UNPACK PLEROMA SOURCE
+# CREATE DEDICATED USER
 #=================================================
 
-( cd $final_path/$app && git pull )
-# Give permisiion to the final_path
+# Create a dedicated user (if not existing)
+ynh_system_user_create $app
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
+# Create a dedicated php-fpm config
+#ynh_add_fpm_config
+
+#=================================================
+# SPECIFIC UPGRADE
+#=================================================
+# ...
+#=================================================
+
+#===================================================
+# Add PostgreSQL extension pg_trgm and citext
+#===================================================
+
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
+
+# Open this port
+yunohost firewall allow Both "$port" 2>&1
+
+
+# Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
 ( cd $final_path/$app && sudo -u "$app" mix deps.get )
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-
-# Create a dedicated nginx config
-ynh_add_nginx_config
-ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
-if [ $cache -eq 1 ]
-then
-	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string "{APP}"    "$app"  "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string "__SIZE__" "$size" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_store_file_checksum "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string  "{APP}"     "$app"  "../conf/media.conf"
-	ynh_replace_string  "__PORT__"  "$port" "../conf/media.conf"
-	sudo su -c "cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf"
-	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
-fi
 
 #=================================================
 # MODIFY A CONFIG FILE
@@ -167,14 +202,32 @@ fi
 # Recalculate and store the config file checksum into the app settings
 ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
 
+### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
+### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
+ynh_backup_if_checksum_is_different "$final_path/$app/config/prod.secret.exs"
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
+
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+
+# Use logrotate to manage app-specific logfile(s)
+ynh_use_logrotate --non-append
+
 #=================================================
 # SETUP SYSTEMD
 #=================================================
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
 
-# Set right permissions
+# Set permissions on app files
 chown -R "$app":"$app" "$final_path"
 
 
@@ -182,15 +235,11 @@ chown -R "$app":"$app" "$final_path"
 # SETUP SSOWAT
 #=================================================
 
-if [ "$is_public" -eq 0 ]
-then	# Remove the public access
-	ynh_app_setting_delete "$app" skipped_uris
-fi
 # Make app public if necessary
-if [ "$is_public" -eq 1 ]
+if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set "$app" unprotected_uris "/"
+	ynh_app_setting_set $app unprotected_uris "/"
 fi
 
 #=================================================
