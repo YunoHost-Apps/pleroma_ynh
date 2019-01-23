@@ -6,7 +6,7 @@
         "en": "Pleroma is an OStatus-compatible social networking server written in Elixir, compatible with GNU Social and Mastodon",
         "fr": "Pleroma est un réseau social écrit en Elixir, compatible avec OStatus, GNU Social et Mastodon"
     },
-    "version": "0.9.0",
+    "version": "0.9.0~ynh1",
     "url": "https://git.pleroma.social/pleroma/pleroma",
     "license": "AGPL-3.0-only",
     "maintainer": {
@@ -31,13 +31,23 @@
                 },
                 "example": "example.com"
             },
-           {
+            {
                 "name": "admin",
                 "type": "user",
                 "ask": {
-                    "en": "Choose the Pleroma administrator (must be an existing YunoHost user)",
-                    "fr": "Choisissez l'administrateur de Pleroma (doit être un utilisateur YunoHost existant)"
-                }
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l’administrateur"
+                },
+                "example": "johndoe"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "ask": {
+                    "en": "Is it a public application?",
+                    "fr": "Est-ce une application publique ?"
+                },
+                "default": true
             },
             {
                 "name": "name",
@@ -72,16 +82,7 @@
                 },
                 "choices": ["2g","5g","10g","20g","40g","80g"],
                 "default": "5g"
-               }, 
-			{
-                "name": "is_public",
-                "type": "boolean",
-                "ask": {
-                    "en": "Is it a public application?",
-                    "fr": "Est-ce une application publique ?"
-                },
-                "default": true
-            }
+               }
         ]
     }
 }
