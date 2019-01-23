@@ -54,7 +54,8 @@
                 "ask": {
                     "en": "Choose a name for your Pleroma instance",
                     "fr": "Choisissez un nom pour votre instance Pleroma"
-                }
+                },
+                "default": "My Pleroma"
             },
             {
                 "name": "registration",
