@@ -84,7 +84,7 @@ ynh_backup "/etc/systemd/system/$app.service"
 # BACKUP A CRON FILE
 #=================================================
 
-ynh_backup "/etc/cron.d/$app"
+#ynh_backup "/etc/cron.d/$app"
 
 
 #=================================================
