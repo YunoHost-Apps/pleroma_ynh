@@ -16,12 +16,16 @@ source psql.sh
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get "$app" domain)
-port=$(ynh_app_setting_get "$app" port)
+domain=$(ynh_app_setting_get $app domain)
+port=$(ynh_app_setting_get $app port)
 db_name=$(ynh_app_setting_get "$app" psql_db)
-final_path=$(ynh_app_setting_get "$app" final_path)
+db_user=$db_name
+final_path=$(ynh_app_setting_get $app final_path)
 cache=$(ynh_app_setting_get "$app" cache)
 
+#=================================================
+# STANDARD REMOVE
+#=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
 
@@ -32,15 +36,17 @@ ynh_remove_systemd_config
 # REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
-if yunohost service status | grep -q "$app"
+# Remove a service from the admin panel, added by `yunohost service add`
+if yunohost service status | grep -q $app
 then
 	echo "Remove $app service"
-	yunohost service remove "$app"
+	yunohost service remove $app
 fi
 
 #=================================================
 # REMOVE DEPENDENCIES
 #=================================================
+
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
 rm -f  /etc/apt/sources.list.d/erlang-solutions.list
@@ -58,7 +64,6 @@ ynh_psql_remove_db "$db_name" "$app"
 # Remove the app directory securely
 ynh_secure_remove "$final_path"
 
-
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
@@ -67,6 +72,19 @@ ynh_secure_remove "$final_path"
 ynh_remove_nginx_config
 ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
 
+#=================================================
+# REMOVE PHP-FPM CONFIGURATION
+#=================================================
+
+# Remove the dedicated php-fpm config
+#ynh_remove_fpm_config
+
+#=================================================
+# REMOVE LOGROTATE CONFIGURATION
+#=================================================
+
+# Remove the app-specific logrotate config
+ynh_remove_logrotate
 
 #=================================================
 # CLOSE A PORT
@@ -74,13 +92,24 @@ ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	echo "Close port $port"
-	yunohost firewall disallow Both "$port" 2>&1
+	echo "Close port $port" >&2
+	yunohost firewall disallow TCP $port 2>&1
 fi
 
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
+# REMOVE THE CRON FILE
+#=================================================
+
+# Remove a cron file
+#ynh_secure_remove "/etc/cron.d/$app"
+
+# Remove a directory securely
+ynh_secure_remove "/etc/$app/"
+
+# Remove the log files
+ynh_secure_remove "/var/log/$app/"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -89,4 +118,4 @@ fi
 #=================================================
 
 # Delete a system user
-ynh_system_user_delete "$app"
+ynh_system_user_delete $app
