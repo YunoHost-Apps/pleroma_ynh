@@ -34,6 +34,10 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 1. This package is **multi-instance** that means you can run **multiple Pleroma instances** on a **single server**.
 1. There is **No LDAP** support for Pleroma yet.
 
+## License
+
+License AGPL-3.0
+
 ## Screenshots
 
 ![](Link to an screenshot for this app)
