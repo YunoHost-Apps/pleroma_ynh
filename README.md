@@ -38,13 +38,9 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 License AGPL-3.0
 
-## Screenshots
-
-![](Link to an screenshot for this app)
-
 ## Demo
 
-* [Official demo](Link to a demo site for this app)
+* [List of instances](http://distsn.org/pleroma-instances.html)
 
 ## Configuration
 
