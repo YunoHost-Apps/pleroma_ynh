@@ -142,8 +142,6 @@ ynh_app_setting_set "$app" psqlpwd "$db_pwd"
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
-"ALTER USER $app WITH SUPERUSER;"
-ynh_psql_execute_as_root \
 "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
@@ -254,7 +252,11 @@ chown -R "$app":"$app" "$final_path"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
 ( cd $final_path/$app && sudo -u "$app" mix deps.get )
+ynh_psql_execute_as_root \
+"ALTER USER $app WITH SUPERUSER;"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
+ynh_psql_execute_as_root \
+"ALTER USER $app WITH NOSUPERUSER;"
 # Add user and retrieve a password reset link that you can then send to the user
 admin_pass_reset_url=$( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" | tail -1 )
 # Make user moderator
