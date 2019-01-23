@@ -7,7 +7,7 @@ Environment="MIX_ENV=prod"
 User=__APP__
 WorkingDirectory=__FINALPATH__/__APP__
 Environment="HOME=__FINALPATH__"
-ExecStart=/usr/local/bin/mix phx.server
+ExecStart=/usr/bin/mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
