@@ -35,7 +35,7 @@ cache=$YNH_APP_ARG_CACHE
 size=$YNH_APP_ARG_SIZE
 admin_email=$(ynh_user_get_info $admin 'mail')
 admin_name=$(ynh_user_get_info $admin 'firstname')
-random_key=$(ynh_random 64)
+random_key=$(ynh_string_random 64)
 admin_pass_reset_url=""
 
 ### If it's a multi-instance app, meaning it can be installed several times independently
