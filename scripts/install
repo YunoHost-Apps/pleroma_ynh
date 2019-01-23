@@ -206,7 +206,7 @@ ynh_system_user_create "$app" "$final_path"
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config
+#ynh_add_fpm_config
 
 #=================================================
 # SPECIFIC SETUP
@@ -369,7 +369,7 @@ ynh_use_logrotate
 ###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
 ###		- As well as the section ADVERTISE SERVICE IN ADMIN PANEL" in the restore script
 
-yunohost service add $app --log "/var/log/$app/APP.log"
+#yunohost service add $app --log "/var/log/$app/APP.log"
 # if using yunohost version 3.2 or more in the 'manifest.json', a description can be added
 #yunohost service add $app --description "$app daemon for XXX" --log "/var/log/$app/APP.log"
 
