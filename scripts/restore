@@ -66,6 +66,7 @@ ynh_restore_file "$final_path"
 # RESTORE THE POSTGRESQL DATABASE
 #=================================================
 
+ynh_install_app_dependencies postgresql postgresql-contrib
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
