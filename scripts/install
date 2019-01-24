@@ -252,15 +252,21 @@ chown -R "$app":"$app" "$final_path"
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
 ( cd $final_path/$app && sudo -u "$app" mix deps.get )
+
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH SUPERUSER;"
+
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
+
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH NOSUPERUSER;"
+
 # Add user and retrieve a password reset link that you can then send to the user
 admin_pass_reset_url=$( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" | tail -1 )
+
 # Make user moderator
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --moderator )
+
 # Make user admin
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --admin )
 
