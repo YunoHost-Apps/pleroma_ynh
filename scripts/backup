@@ -32,7 +32,7 @@ db_name=$(ynh_app_setting_get "$app" psql_db)
 cache=$(ynh_app_setting_get "$app" cache)
 
 # Stop Pleroma for backup 
-systemctl stop "$app"
+yunohost service stop "$app"
 
 #=================================================
 # STANDARD BACKUP STEPS
@@ -86,13 +86,8 @@ ynh_backup "/etc/systemd/system/$app.service"
 
 #ynh_backup "/etc/cron.d/$app"
 
-
 #=================================================
-# RELOAD NGINX
+# START SERVICE
 #=================================================
 
-systemctl reload nginx
-systemctl enable "$app"
-systemctl start "$app"
-# App needs time to start
-sleep 10
+yunohost service start $app
