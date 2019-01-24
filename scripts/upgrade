@@ -69,7 +69,7 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 # Stop Pleroma for upgrade
-systemctl stop "$app"
+yunohost service stop "$app"
 
 #=================================================
 # CHECK THE PATH
@@ -250,7 +250,9 @@ fi
 #=================================================
 
 systemctl reload nginx
-systemctl enable "$app"
-systemctl start "$app"
-# App needs time to start
-sleep 10
+
+#=================================================
+# START SERVICE
+#=================================================
+
+yunohost service start $app
