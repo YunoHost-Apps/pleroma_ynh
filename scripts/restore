@@ -119,17 +119,18 @@ sudo rm erlang_solutions.asc
 ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
 #=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
-#=================================================
-
-yunohost service add $app --description "$app daemon for Pleroma" --log "/var/log/$app/$app.log"
-
-#=================================================
 # RESTORE SYSTEMD
 #=================================================
 
 ynh_restore_file "/etc/systemd/system/$app.service"
 systemctl enable $app.service
+systemctl daemon-reload
+
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add $app --description "$app daemon for Pleroma" --log "/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE THE CRON FILE
@@ -151,7 +152,8 @@ ynh_restore_file "/etc/logrotate.d/$app"
 
 systemctl reload nginx
 
-systemctl enable "$app"
-systemctl start "$app"
-# App needs time to start
-sleep 10
+#=================================================
+# START SERVICE
+#=================================================
+
+yunohost service start $app
