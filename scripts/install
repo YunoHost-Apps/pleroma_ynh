@@ -403,6 +403,7 @@ systemctl reload nginx
 #=================================================
 
 yunohost service start $app
+sleep 10
 
 #=================================================
 # SEND A README FOR THE ADMIN
