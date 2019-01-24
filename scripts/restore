@@ -122,7 +122,7 @@ ynh_install_app_dependencies git build-essential postgresql postgresql-contrib o
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/APP.log"
+yunohost service add $app --description "$app daemon for Pleroma" --log "/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE SYSTEMD
