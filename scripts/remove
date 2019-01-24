@@ -25,13 +25,6 @@ cache=$(ynh_app_setting_get "$app" cache)
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# STOP AND REMOVE SERVICE
-#=================================================
-
-# Remove the dedicated systemd config
-ynh_remove_systemd_config
-
-#=================================================
 # REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
@@ -41,6 +34,13 @@ then
 	echo "Remove $app service"
 	yunohost service remove $app
 fi
+
+#=================================================
+# STOP AND REMOVE SERVICE
+#=================================================
+
+# Remove the dedicated systemd config
+ynh_remove_systemd_config
 
 #=================================================
 # REMOVE DEPENDENCIES
