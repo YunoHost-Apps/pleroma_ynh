@@ -392,10 +392,6 @@ fi
 
 systemctl reload nginx
 
-systemctl enable "$app"
-systemctl start "$app"
-sleep 30
-
 #=================================================
 # SEND A README FOR THE ADMIN
 #=================================================
