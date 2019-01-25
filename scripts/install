@@ -215,31 +215,31 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-cp -f ../conf/prod.secret.exs "$final_path/$app/config/prod.secret.exs"
+cp -f ../conf/prod.secret.exs "$final_path/$app/config/$app.secret.exs"
 cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
 
-ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/$app.secret.exs"
 ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/setup_db.psql"
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
 if [ $cache -eq 1 ]
 then
-	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/$app.secret.exs"
 else
-	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/$app.secret.exs"
 fi
 
 #  Set registrations open/closed
 if [ $registration -eq 1 ]
 then
- ynh_replace_string "__REG__" "true"  "$final_path/$app/config/prod.secret.exs"
+ ynh_replace_string "__REG__" "true"  "$final_path/$app/config/$app.secret.exs"
 else
- ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
+ ynh_replace_string "__REG__" "false" "$final_path/$app/config/$app.secret.exs"
 fi
 
 
@@ -249,26 +249,26 @@ fi
 # Give permisiion to the final_path
 chown -R "$app":"$app" "$final_path"
 # App setup and db migration
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=$app mix local.hex --force )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=$app mix local.rebar --force )
 ( cd $final_path/$app && sudo -u "$app" mix deps.get )
 
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH SUPERUSER;"
 
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=$app mix ecto.migrate --force )
 
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH NOSUPERUSER;"
 
 # Add user and retrieve a password reset link that you can then send to the user
-admin_pass_reset_url=$( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" | tail -1 )
+admin_pass_reset_url=$( cd $final_path/$app && sudo -u "$app" MIX_ENV=$app mix pleroma.user new "$admin" "$admin_email" | tail -1 )
 
 # Make user moderator
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --moderator )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=$app mix pleroma.user set "$admin" --moderator )
 
 # Make user admin
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --admin )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=$app mix pleroma.user set "$admin" --admin )
 
 #=================================================
 # SETUP SYSTEMD
@@ -324,7 +324,7 @@ ynh_add_systemd_config
 ### `ynh_replace_string` is used to replace a string in a file.
 ### (It's compatible with sed regular expressions syntax)
 
-#ynh_replace_string "match_string" "replace_string" "$final_path/$app/config/prod.secret.exs"
+#ynh_replace_string "match_string" "replace_string" "$final_path/$app/config/$app.secret.exs"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -335,7 +335,7 @@ ynh_add_systemd_config
 ### you can make a backup of this file before modifying it again if the admin had modified it.
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
+ynh_store_file_checksum "$final_path/$app/config/$app.secret.exs"
 
 #=================================================
 # GENERIC FINALIZATION
