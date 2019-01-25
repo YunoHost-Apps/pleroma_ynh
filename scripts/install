@@ -246,7 +246,7 @@ fi
 #=================================================
 # SETUP
 #=================================================
-# Give permisiion to the final_path
+# Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
 # App setup and db migration
 ( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
