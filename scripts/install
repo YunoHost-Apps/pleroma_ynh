@@ -215,31 +215,31 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-cp -f ../conf/prod.secret.exs "$final_path/$app/config/$app.secret.exs"
+cp -f ../conf/prod.exs "$final_path/$app/config/$app.exs"
 cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
 
-ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/$app.secret.exs"
-ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/$app.secret.exs"
-ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/$app.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/$app.secret.exs"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/$app.secret.exs"
-ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/$app.secret.exs"
-ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/$app.secret.exs"
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/$app.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/$app.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/$app.exs"
+ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/$app.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/$app.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/$app.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/$app.exs"
 ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/setup_db.psql"
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
 if [ $cache -eq 1 ]
 then
-	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/$app.secret.exs"
+	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/$app.exs"
 else
-	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/$app.secret.exs"
+	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/$app.exs"
 fi
 
 #  Set registrations open/closed
 if [ $registration -eq 1 ]
 then
- ynh_replace_string "__REG__" "true"  "$final_path/$app/config/$app.secret.exs"
+ ynh_replace_string "__REG__" "true"  "$final_path/$app/config/$app.exs"
 else
- ynh_replace_string "__REG__" "false" "$final_path/$app/config/$app.secret.exs"
+ ynh_replace_string "__REG__" "false" "$final_path/$app/config/$app.exs"
 fi
 
 
@@ -324,7 +324,7 @@ ynh_add_systemd_config
 ### `ynh_replace_string` is used to replace a string in a file.
 ### (It's compatible with sed regular expressions syntax)
 
-#ynh_replace_string "match_string" "replace_string" "$final_path/$app/config/$app.secret.exs"
+#ynh_replace_string "match_string" "replace_string" "$final_path/$app/config/$app.exs"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -335,7 +335,7 @@ ynh_add_systemd_config
 ### you can make a backup of this file before modifying it again if the admin had modified it.
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum "$final_path/$app/config/$app.secret.exs"
+ynh_store_file_checksum "$final_path/$app/config/$app.exs"
 
 #=================================================
 # GENERIC FINALIZATION
