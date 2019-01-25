@@ -3,7 +3,7 @@ Description=__APP__  social network
 After=network.target postgresql.service
 
 [Service]
-Environment="MIX_ENV=__INSTANCE_NAME__"
+Environment="MIX_ENV=prod"
 User=__APP__
 WorkingDirectory=__FINALPATH__/__APP__
 Environment="HOME=__FINALPATH__"
