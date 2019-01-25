@@ -256,4 +256,4 @@ systemctl reload nginx
 #=================================================
 
 yunohost service start $app
-sleep 10
+sleep 30
