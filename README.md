@@ -75,7 +75,7 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 **Run:**
 
-    $ MIX_ENV=prodmix set_moderator username [true|false] 
+    $ MIX_ENV=prod mix set_moderator username [true|false] 
 
 **True** option will **make the user moderator** and **flase** will **take away the moderator privileges** from the user.
 
