@@ -51,20 +51,17 @@ How to configure this app: by an admin panel, a plain file with SSH, or any othe
 ## Admin Tasks
 Go to **cd /var/www/pleroma/pleroma**.
 
-### Register a User
+### Adding users
 
 **Run:**
 
-    $ sudo -u pleroma MIX_ENV=prod mix register_user <name> <nickname> <email> <bio> <password>
-
-The **name** appears on **statuses**, while the **nickname** corresponds to the **user**, e.g. @nickname@instance.tld
-
+    $ sudo -u pleroma MIX_ENV=prod mix pleroma.user new <NICKNAME> <EMAIL>
 
 ### Password reset
 
 **Run:** 
     
-    $ MIX_ENV=prod mix generate_password_reset username 
+    $ MIX_ENV=prod mix pleroma.user reset_password <NICKNAME>
     
 This will generate a **password reset link** that you can then send to the user.
 
@@ -75,9 +72,9 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 **Run:**
 
-    $ MIX_ENV=prod mix set_moderator username [true|false] 
+    $ MIX_ENV=prod mix pleroma.user set <NICKNAME> --[no-]admin 
 
-**True** option will **make the user moderator** and **flase** will **take away the moderator privileges** from the user.
+**--admin** option will **make the user moderator** and **--no-admin** will **take away the moderator privileges** from the user.
 
 ## Documentation
 
