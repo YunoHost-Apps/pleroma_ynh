@@ -100,6 +100,7 @@ ynh_replace_string "$old_domain" "$new_domain" "$final_path/$app/config/prod.sec
 
 # Start pleroma after modification
 yunohost service start $app
+sleep 30
 
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
 ### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
