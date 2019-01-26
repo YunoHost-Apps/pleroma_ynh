@@ -219,6 +219,16 @@ ynh_backup_if_checksum_is_different "$final_path/$app/config/prod.secret.exs"
 ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
 
 #=================================================
+# CLOSE A PORT
+#=================================================
+
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port" >&2
+	yunohost firewall disallow TCP $port 2>&1
+fi
+
+#=================================================
 # SETUP LOGROTATE
 #=================================================
 
