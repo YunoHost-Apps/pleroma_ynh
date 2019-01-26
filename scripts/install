@@ -95,7 +95,7 @@ ynh_app_setting_set "$app" random_key   "$random_key"
 # Find a free port
 port=$(ynh_find_port 4000)
 # Open this port
-yunohost firewall allow --no-upnp TCP $port 2>&1
+#yunohost firewall allow --no-upnp TCP $port 2>&1
 ynh_app_setting_set $app port $port
 
 #=================================================
