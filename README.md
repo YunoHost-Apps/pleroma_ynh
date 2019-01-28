@@ -33,7 +33,6 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 1. **Pleroma** require a valid **certificate** installed on the domain. Yunohost can **install Letsencrypt certificate** on the domain from **admin web-interface** or through **command-line**.
 1. This package is **multi-instance** that means you can run **multiple Pleroma instances** on a **single server**.
 1. There is **No LDAP** support for Pleroma yet.
-1. At the end of the installation, you will receive a mail to activate and reset your password for Pleroma.
 
 ## License
 
