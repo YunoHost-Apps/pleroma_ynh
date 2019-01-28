@@ -263,7 +263,7 @@ ynh_psql_execute_as_root \
 "ALTER USER $app WITH NOSUPERUSER;"
 
 # Add user
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --moderator --admin -y )
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y )
 
 #=================================================
 # SETUP SYSTEMD
