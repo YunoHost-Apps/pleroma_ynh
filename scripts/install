@@ -250,27 +250,35 @@ fi
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
-# App setup and db migration
-sudo -u "$app" MIX_ENV=prod mix local.hex --force
-sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-sudo -u "$app" mix deps.get
+# Install dependecies
+su "$app" <<DEPENDENCIES
+    MIX_ENV=prod mix local.hex --force
+	MIX_ENV=prod mix local.rebar --force
+	mix deps.get
+DEPENDENCIES
 
+# Run the database migration
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH SUPERUSER;"
 
-sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
+su "$app" <<DATABASE
+    MIX_ENV=prod mix ecto.migrate --force
+DATABASE
 
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH NOSUPERUSER;"
 
-# Add user and retrieve a password reset link that you can then send to the user
-admin_pass_reset_url=$( sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" | tail -1 )
-
-# Make user moderator
-sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --moderator
-
-# Make user admin
-sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --admin
+# Create admin account
+su "$app" <<ADMIN
+    # Add user and retrieve a password reset link that you can then send to the user
+    admin_pass_reset_url=$( MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" | tail -1 )
+	
+	# Make user moderator
+    MIX_ENV=prod mix pleroma.user set "$admin" --moderator
+    
+	# Make user admin
+    MIX_ENV=prod mix pleroma.user set "$admin" --admin
+ADMIN
 
 popd
 
