@@ -8,7 +8,8 @@
 		domain="domain.tld"	(DOMAIN)
 		admin="john" (USER)
 		is_public=1	(PUBLIC|public=1|private=0)
-		name="pleroma"
+		password="pass"
+		name="My Pleroma"
 		registration=0 (BOOLEAN)
 		cache=1 (BOOLEAN)
 		size="5g"

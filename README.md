@@ -33,7 +33,6 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 1. **Pleroma** require a valid **certificate** installed on the domain. Yunohost can **install Letsencrypt certificate** on the domain from **admin web-interface** or through **command-line**.
 1. This package is **multi-instance** that means you can run **multiple Pleroma instances** on a **single server**.
 1. There is **No LDAP** support for Pleroma yet.
-1. At the end of the installation, you will receive a mail to activate and reset your password for Pleroma.
 
 ## License
 
@@ -56,13 +55,13 @@ Go to **cd /var/www/pleroma/pleroma**.
 
 **Run:**
 
-    $ sudo -u pleroma MIX_ENV=prod mix pleroma.user new <NICKNAME> <EMAIL>
+    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod mix pleroma.user new <NICKNAME> <EMAIL> )
 
 ### Password reset
 
 **Run:** 
     
-    $ sudo -u pleroma MIX_ENV=prod mix pleroma.user reset_password <NICKNAME>
+    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod mix pleroma.user reset_password <NICKNAME> )
     
 This will generate a **password reset link** that you can then send to the user.
 
@@ -73,7 +72,7 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 **Run:**
 
-    $ sudo -u pleroma MIX_ENV=prod mix pleroma.user set <NICKNAME> --[no-]admin 
+    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod mix pleroma.user set <NICKNAME> --[no-]admin )
 
 **--admin** option will **make the user moderator** and **--no-admin** will **take away the moderator privileges** from the user.
 
