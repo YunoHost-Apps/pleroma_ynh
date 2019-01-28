@@ -253,9 +253,9 @@ chown -R "$app":"$app" "$final_path"
 # Install dependecies
 su -l "$app" -s /bin/bash <<DEPENDENCIES
     pushd $final_path/$app
-    MIX_ENV=prod mix local.hex --force
-	MIX_ENV=prod mix local.rebar --force
-	MIX_ENV=prod mix deps.get
+    mix local.hex --force
+	mix local.rebar --force
+	mix deps.get
     popd
 DEPENDENCIES
 
