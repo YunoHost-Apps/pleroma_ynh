@@ -29,6 +29,7 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
+password=$YNH_APP_ARG_PASSWORD
 name=$YNH_APP_ARG_NAME
 registration=$YNH_APP_ARG_REGISTRATION
 cache=$YNH_APP_ARG_CACHE
@@ -261,16 +262,8 @@ ynh_psql_execute_as_root \
 ynh_psql_execute_as_root \
 "ALTER USER $app WITH NOSUPERUSER;"
 
-read -rsp $'Press enter to continue...\n'
-
-# Add user and retrieve a password reset link that you can then send to the user
-admin_pass_reset_url=$( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" | tail -1 )
-
-# Make user moderator
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --moderator )
-
-# Make user admin
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user set "$admin" --admin )
+# Add user
+( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --moderator --admin -y )
 
 #=================================================
 # SETUP SYSTEMD
@@ -406,18 +399,3 @@ systemctl reload nginx
 
 yunohost service start $app
 sleep 10
-
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-
-message=" $app was successfully installed :)
-Please open your $app domain: https://$domain$path_url
-
-The moderator username is: $admin
-To reset your password: $admin_pass_reset_url
-
-If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/pleroma_ynh/
-If you are not afraid of the terminal, check out https://git.pleroma.social/pleroma/pleroma/wikis/home to see what more you can do with your awesome instance!"
-
-ynh_send_readme_to_admin "$message" "$admin"
