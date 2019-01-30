@@ -1,4 +1,4 @@
-language: elixir
+language: python
 
 before_install:
   - git clone https://github.com/YunoHost/package_linter /tmp/package_linter
