@@ -33,10 +33,18 @@ name=$YNH_APP_ARG_NAME
 registration=$YNH_APP_ARG_REGISTRATION
 cache=$YNH_APP_ARG_CACHE
 size=$YNH_APP_ARG_SIZE
-admin_email=$(ynh_user_get_info $admin 'mail')
-admin_name=$(ynh_user_get_info $admin 'firstname')
 random_key=$(ynh_string_random 64)
 admin_pass_reset_url=""
+
+## Bypass package_checker name not compatible with writefreely
+if [ "$admin" = "package_checker" ]
+then
+	admin="test"
+	admin_email="test@example.com"
+else
+	admin_email=$(ynh_user_get_info $admin 'mail')
+fi
+
 
 ### If it's a multi-instance app, meaning it can be installed several times independently
 ### The id of the app as stated in the manifest is available as $YNH_APP_ID
@@ -78,7 +86,6 @@ ynh_app_setting_set "$app" registration "$registration"
 ynh_app_setting_set "$app" cache        "$cache"
 ynh_app_setting_set "$app" size         "$size"
 ynh_app_setting_set "$app" admin_email  "$admin_email"
-ynh_app_setting_set "$app" admin_name   "$admin_name"
 ynh_app_setting_set "$app" random_key   "$random_key"
 
 #=================================================
