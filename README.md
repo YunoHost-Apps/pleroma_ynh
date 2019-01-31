@@ -94,7 +94,7 @@ Can the app be used by multiple users?
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/pleroma%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/pleroma/)
 * Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/pleroma%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/pleroma/)
 * Testing x86-64b - [![Build Status](https://ci-apps-unstable.yunohost.org/ci/logs/pleroma%20%28Community%29%20%28testing%29.svg)](https://ci-apps-unstable.yunohost.org/ci/apps/pleroma/)
-* Unstable x86-64b - [![Build Status](https://ci-apps-unstable.yunohost.org/ci/logs/pleroma%20%28Community%2920%28unstable%29.svg)](https://ci-apps-unstable.yunohost.org/ci/apps/pleroma/)
+* Unstable x86-64b - [![Build Status](https://ci-apps-unstable.yunohost.org/ci/logs/pleroma%20%28Community%29%20%28unstable%29.svg)](https://ci-apps-unstable.yunohost.org/ci/apps/pleroma/)
 
 ## Limitations
 
