@@ -133,7 +133,7 @@ ynh_install_app_dependencies git build-essential postgresql postgresql-contrib o
 #=================================================
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create $app
+ynh_system_user_create "$app" "$final_path"
 
 #=================================================
 # PHP-FPM CONFIGURATION
