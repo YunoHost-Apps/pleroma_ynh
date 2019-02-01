@@ -5,9 +5,10 @@ After=network.target postgresql.service
 [Service]
 Environment="MIX_ENV=prod"
 User=__APP__
+Group=__APP__
 WorkingDirectory=__FINALPATH__/__APP__
 Environment="HOME=__FINALPATH__"
-ExecStart=/usr/bin/mix phx.server
+ExecStart=/bin/sh -c '/usr/bin/mix phx.server >> /var/log/__APP__/__APP__.log 2>&1'
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure

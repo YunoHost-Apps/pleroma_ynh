@@ -215,8 +215,11 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# ...
+# CREATE LOG FOLDER
 #=================================================
+
+mkdir -p "/var/log/$app"
+chown -R "$app":"$app" "/var/log/$app"
 
 #=================================================
 # MODIFY A CONFIG FILE
@@ -248,9 +251,8 @@ else
  ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
 fi
 
-
 #=================================================
-# SETUP
+# MAKE SETUP
 #=================================================
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
