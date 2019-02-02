@@ -19,7 +19,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get $app domain)
 port=$(ynh_app_setting_get $app port)
 db_name=$(ynh_app_setting_get "$app" db_name)
-db_user=$db_name
 final_path=$(ynh_app_setting_get $app final_path)
 cache=$(ynh_app_setting_get "$app" cache)
 
@@ -56,7 +55,7 @@ ynh_psql_remove_db "$db_name" "$app"
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
-rm -f  /etc/apt/sources.list.d/erlang-solutions.list
+rm -f "/etc/apt/sources.list.d/erlang-solutions.list"
 
 #=================================================
 # REMOVE APP MAIN DIR
@@ -71,7 +70,7 @@ ynh_secure_remove "$final_path"
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
-ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
+ynh_secure_remove "/etc/nginx/conf.d/$app-cache.conf"
 
 #=================================================
 # REMOVE PHP-FPM CONFIGURATION

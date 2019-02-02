@@ -160,9 +160,14 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# ...
+# CONFIGURE
 #=================================================
 
+#Desactivate default frontend 
+cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+
+#Desactivate Pleroma.Web.Endpoint
+cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 #=================================================
 # MAKE UPGRADE
@@ -170,16 +175,16 @@ ynh_system_user_create "$app" "$final_path"
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
-( cd $final_path/$app && sudo -u "$app" mix deps.get )
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH SUPERUSER;"
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH NOSUPERUSER;"
-
-
+pushd $final_path/$app
+    sudo -u "$app" MIX_ENV=prod mix local.hex --force
+    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+    sudo -u "$app" mix deps.get
+    ynh_psql_execute_as_root \
+    "ALTER USER $app WITH SUPERUSER;"
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
+    ynh_psql_execute_as_root \
+    "ALTER USER $app WITH NOSUPERUSER;"
+popd
 
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
 ### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.

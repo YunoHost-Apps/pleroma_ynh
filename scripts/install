@@ -153,6 +153,8 @@ ynh_psql_execute_as_root "\connect $db_name
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -224,8 +226,7 @@ chown -R "$app":"$app" "/var/log/$app"
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-cp -f ../conf/prod.secret.exs "$final_path/$app/config/prod.secret.exs"
-cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
+cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
 ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
@@ -234,8 +235,7 @@ ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/co
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/setup_db.psql"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
+
 if [ $cache -eq 1 ]
 then
 	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
@@ -250,6 +250,12 @@ then
 else
  ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
 fi
+
+#Desactivate default frontend 
+cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+
+#Desactivate Pleroma.Web.Endpoint
+cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 #=================================================
 # MAKE SETUP
@@ -275,7 +281,8 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
 
 	#Generate key pair
-    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/config.exs"
+    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
+	ynh_replace_string "administrator@example.com" "__ADMIN_EMAIL__" "$final_path/$app/config/prod.secret.exs" 
 popd
 
 
