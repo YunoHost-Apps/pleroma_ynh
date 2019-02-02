@@ -31,7 +31,7 @@ cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
 registration=$(ynh_app_setting_get "$app" registration)
 
-if [$(ynh_app_setting_get "$app" psql_db)]
+if [ -n $(ynh_app_setting_get "$app" psql_db) ]
 then
     db_name=$(ynh_app_setting_get "$app" psql_db)
     db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
