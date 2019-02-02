@@ -44,6 +44,13 @@ fi
 ynh_remove_systemd_config
 
 #=================================================
+# REMOVE THE MYSQL DATABASE
+#=================================================
+
+# Remove a database if it exists, along with the associated user
+ynh_psql_remove_db "$db_name" "$app"
+
+#=================================================
 # REMOVE DEPENDENCIES
 #=================================================
 
@@ -51,12 +58,6 @@ ynh_remove_systemd_config
 ynh_remove_app_dependencies
 rm -f  /etc/apt/sources.list.d/erlang-solutions.list
 
-#=================================================
-# REMOVE THE MYSQL DATABASE
-#=================================================
-
-# Remove a database if it exists, along with the associated user
-ynh_psql_remove_db "$db_name" "$app"
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
