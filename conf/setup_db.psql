@@ -1,6 +1,0 @@
-CREATE USER __DB_NAME__ WITH ENCRYPTED PASSWORD '__DB_PWD__';
-CREATE DATABASE __DB_NAME__ OWNER __DB_NAME__;
-\c __DB_NAME__;
---Extensions made by ecto.migrate that need superuser access
-CREATE EXTENSION IF NOT EXISTS citext;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
