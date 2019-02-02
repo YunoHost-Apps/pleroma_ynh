@@ -31,7 +31,6 @@ cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
 registration=$(ynh_app_setting_get "$app" registration)
 
-
 if [$(ynh_app_setting_get "$app" psql_db)]
 then
     db_name=$(ynh_app_setting_get "$app" psql_db)
@@ -41,7 +40,6 @@ then
 	ynh_app_setting_delete "$app" psql_db
 	ynh_app_setting_delete "$app" psqlpwd
 fi
-
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -161,6 +159,13 @@ ynh_system_user_create "$app" "$final_path"
 
 #=================================================
 # SPECIFIC UPGRADE
+#=================================================
+# CREATE LOG FOLDER
+#=================================================
+
+mkdir -p "/var/log/$app"
+chown -R "$app":"$app" "/var/log/$app"
+
 #=================================================
 # CONFIGURE
 #=================================================
