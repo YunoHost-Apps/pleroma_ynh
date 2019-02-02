@@ -148,7 +148,7 @@ ynh_app_setting_set "$app" db_pwd "$db_pwd"
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
-"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
+"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $db_name;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ynh_psql_execute_as_root "\connect $db_name 
