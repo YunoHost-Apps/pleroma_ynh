@@ -74,6 +74,7 @@ fi
 ynh_backup_before_upgrade
 ynh_clean_setup () {
 	# restore it if the upgrade fails
+	read -p "Press any key..."
 	ynh_restore_upgradebackup
 	ynh_clean_check_starting
 }
