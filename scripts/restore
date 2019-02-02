@@ -31,8 +31,8 @@ domain=$(ynh_app_setting_get $app domain)
 path_url="/"
 final_path=$(ynh_app_setting_get $app final_path)
 port=$(ynh_app_setting_get "$app" port)
-db_name=$(ynh_app_setting_get "$app" psql_db)
-db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+db_name=$(ynh_app_setting_get "$app" db_name)
+db_pwd=$(ynh_app_setting_get "$app" db_pwd)
 cache=$(ynh_app_setting_get "$app" cache)
 
 

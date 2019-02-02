@@ -141,10 +141,10 @@ ynh_install_app_dependencies git build-essential postgresql postgresql-contrib o
 ###		- Remove also the section "REMOVE THE POSTGRESQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE POSTGRESQL DATABASE" in the restore script
 
-db_name="${app}"
+db_name="$app"
 db_pwd=$(ynh_string_random 30)
-ynh_app_setting_set "$app" psql_db "$db_name"
-ynh_app_setting_set "$app" psqlpwd "$db_pwd"
+ynh_app_setting_set "$app" db_name "$db_name"
+ynh_app_setting_set "$app" db_pwd "$db_pwd"
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
@@ -230,11 +230,11 @@ cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
 ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/setup_db.psql"
+ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/setup_db.psql"
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
 if [ $cache -eq 1 ]
 then
