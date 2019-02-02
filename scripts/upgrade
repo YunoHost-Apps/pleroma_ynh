@@ -42,7 +42,7 @@ then
 	ynh_app_setting_delete "$app" psql_db
 	ynh_app_setting_delete "$app" psqlpwd
 fi
-read -p "Press any key..."
+
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
@@ -76,7 +76,6 @@ fi
 ynh_backup_before_upgrade
 ynh_clean_setup () {
 	# restore it if the upgrade fails
-	read -p "Press any key..."
 	ynh_restore_upgradebackup
 	ynh_clean_check_starting
 }
