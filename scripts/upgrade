@@ -160,11 +160,38 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# CREATE LOG FOLDER
+# MODIFY A CONFIG FILE
 #=================================================
+cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
-mkdir -p "/var/log/$app"
-chown -R "$app":"$app" "/var/log/$app"
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+
+if [ $cache -eq 1 ]
+then
+	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
+else
+	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/prod.secret.exs"
+fi
+
+#  Set registrations open/closed
+if [ $registration -eq 1 ]
+then
+ ynh_replace_string "__REG__" "true"  "$final_path/$app/config/prod.secret.exs"
+else
+ ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
+fi
+
+#Desactivate default frontend 
+cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+
+#Desactivate Pleroma.Web.Endpoint
+cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 #=================================================
 # CONFIGURE
