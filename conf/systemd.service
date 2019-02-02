@@ -8,7 +8,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/__APP__
 Environment="HOME=__FINALPATH__"
-ExecStart=/bin/sh -c '/usr/bin/mix phx.server >> /var/log/__APP__/__APP__.log 2>&1'
+ExecStart=/usr/bin/mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
