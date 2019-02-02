@@ -38,6 +38,8 @@ then
     db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
     ynh_app_setting_set "$app" db_name "$db_name"
     ynh_app_setting_set "$app" db_pwd "$db_pwd"
+	ynh_app_setting_delete "$app" psql_db
+	ynh_app_setting_delete "$app" psqlpwd
 fi
 
 
