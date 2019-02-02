@@ -31,7 +31,7 @@ cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
 registration=$(ynh_app_setting_get "$app" registration)
 
-if [ -n $(ynh_app_setting_get "$app" psql_db) ]
+if [ -z $(ynh_app_setting_get "$app" psql_db) ]
 then
     db_name=$(ynh_app_setting_get "$app" psql_db)
     db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
@@ -40,7 +40,7 @@ then
 	ynh_app_setting_delete "$app" psql_db
 	ynh_app_setting_delete "$app" psqlpwd
 fi
-
+read -p "Press any key..."
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
