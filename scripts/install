@@ -99,7 +99,7 @@ ynh_app_setting_set "$app" random_key   "$random_key"
 ###		- Remove the section "CLOSE A PORT" in the remove script
 
 # Find a free port
-port=$(ynh_find_port 4000)
+port=$(ynh_find_port 8095)
 # Open this port
 #yunohost firewall allow --no-upnp TCP $port 2>&1
 ynh_app_setting_set $app port $port
@@ -256,21 +256,28 @@ fi
 #=================================================
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
-# App setup and db migration
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix deps.get )
 
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH SUPERUSER;"
+pushd $final_path/$app
+    # App setup and db migration
+    sudo -u "$app" MIX_ENV=prod mix local.hex --force
+    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+    sudo -u "$app" MIX_ENV=prod mix deps.get
 
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
+    ynh_psql_execute_as_root \
+    "ALTER USER $app WITH SUPERUSER;"
 
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH NOSUPERUSER;"
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
 
-# Add user
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y )
+    ynh_psql_execute_as_root \
+    "ALTER USER $app WITH NOSUPERUSER;"
+
+    # Add user
+    sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
+
+	#Generate key pair
+    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/config.exs"
+popd
+
 
 #=================================================
 # SETUP SYSTEMD
