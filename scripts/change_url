@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_systemd_action
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -90,24 +91,32 @@ fi
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-# ...
+# STOP SERVICE
 #=================================================
 
-# Stop pleroma for modification
-yunohost service stop $app
+ynh_systemd_action --action=stop --service_name=$app
+
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
 
 ynh_replace_string "$old_domain" "$new_domain" "$final_path/$app/config/prod.secret.exs"
 
-# Start pleroma after modification
-yunohost service start $app
+#=================================================
+# START SERVICE
+#=================================================
+
+ynh_systemd_action --action=start --service_name=$app
+
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
 
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
 ### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
 ynh_backup_if_checksum_is_different "$final_path/config.ini"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
-
-
 
 #=================================================
 # GENERIC FINALISATION
@@ -116,4 +125,3 @@ ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
 #=================================================
 
 systemctl reload nginx
-sleep 30

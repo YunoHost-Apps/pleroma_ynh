@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_systemd_action
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -17,8 +18,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get $app domain)
 port=$(ynh_app_setting_get $app port)
-db_name=$(ynh_app_setting_get "$app" psql_db)
-db_user=$db_name
+db_name=$(ynh_app_setting_get "$app" db_name)
 final_path=$(ynh_app_setting_get $app final_path)
 cache=$(ynh_app_setting_get "$app" cache)
 
@@ -36,6 +36,12 @@ then
 fi
 
 #=================================================
+# START SERVICE
+#=================================================
+
+ynh_systemd_action --action=stop --service_name=$app
+
+#=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
 
@@ -43,19 +49,23 @@ fi
 ynh_remove_systemd_config
 
 #=================================================
+# REMOVE THE POSTGRESQL DATABASE
+#=================================================
+
+ynh_psql_execute_as_root "\connect $db_name 
+SELECT pg_terminate_backend (pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$db_name';"
+
+# Remove a database if it exists, along with the associated user
+ynh_psql_remove_db "$db_name" "$app"
+
+#=================================================
 # REMOVE DEPENDENCIES
 #=================================================
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
-rm -f  /etc/apt/sources.list.d/erlang-solutions.list
+rm -f "/etc/apt/sources.list.d/erlang-solutions.list"
 
-#=================================================
-# REMOVE THE MYSQL DATABASE
-#=================================================
-
-# Remove a database if it exists, along with the associated user
-ynh_psql_remove_db "$db_name" "$app"
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
@@ -69,7 +79,7 @@ ynh_secure_remove "$final_path"
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
-ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
+ynh_secure_remove "/etc/nginx/conf.d/$app-cache.conf"
 
 #=================================================
 # REMOVE PHP-FPM CONFIGURATION

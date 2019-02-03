@@ -1,10 +1,14 @@
+# Pleroma instance configuration
+
+# NOTE: This file should not be committed to a repo or otherwise made public
+# without removing sensitive information.
+
 use Mix.Config
 
 config :pleroma, Pleroma.Web.Endpoint,
    url: [host: "__DOMAIN__", scheme: "https", port: 443],
    secret_key_base: "__KEY__",
-   http: [port: __PORT__],
-   protocol: "http"
+   http: [port: __PORT__]
 
 config :pleroma, :instance,
   name: "__INSTANCE_NAME__",
@@ -17,11 +21,7 @@ config :pleroma, :media_proxy,
   enabled: __MEDIA_CACHE__,
   redirect_on_failure: true
   #base_url: "https://cache.pleroma.social"
- 
-config :pleroma, :fe,
-  scope_options_enabled: true
 
-# Configure your database
 config :pleroma, Pleroma.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "__DB_NAME__",
@@ -29,6 +29,10 @@ config :pleroma, Pleroma.Repo,
   database: "__DB_NAME__",
   hostname: "localhost",
   pool_size: 10
+
+# Enable Strict-Transport-Security once SSL is working:
+# config :pleroma, :http_security,
+#   sts: true
 
 # Configure S3 support if desired.
 # The public S3 endpoint is different depending on region and provider,
@@ -51,9 +55,9 @@ config :pleroma, Pleroma.Repo,
 
 
 # Configure Openstack Swift support if desired.
-# 
-# Many openstack deployments are different, so config is left very open with 
-# no assumptions made on which provider you're using. This should allow very 
+#
+# Many openstack deployments are different, so config is left very open with
+# no assumptions made on which provider you're using. This should allow very
 # wide support without needing separate handlers for OVH, Rackspace, etc.
 #
 # config :pleroma, Pleroma.Uploaders.Swift,
@@ -65,4 +69,5 @@ config :pleroma, Pleroma.Repo,
 #  storage_url: "https://swift-endpoint.prodider.com/v1/AUTH_<tenant>/<container>",
 #  object_url: "https://cdn-endpoint.provider.com/<container>"
 #
+
 

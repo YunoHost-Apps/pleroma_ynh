@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_systemd_action
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -20,15 +21,27 @@ path_url="/"
 admin=$(ynh_app_setting_get $app admin)
 is_public=$(ynh_app_setting_get $app is_public)
 final_path=$(ynh_app_setting_get $app final_path)
-db_name=$(ynh_app_setting_get "$app" psql_db)
+db_name=$(ynh_app_setting_get "$app" db_name)
 admin_email=$(ynh_app_setting_get "$app" admin_email)
 random_key=$(ynh_app_setting_get "$app" random_key)
 name=$(ynh_app_setting_get "$app" name)
 port=$(ynh_app_setting_get "$app" port)
-db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+db_pwd=$(ynh_app_setting_get "$app" db_pwd)
 cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
 registration=$(ynh_app_setting_get "$app" registration)
+
+psql_db=$(ynh_app_setting_get "$app" psql_db)
+
+if [ -n "$psql_db" ]
+then
+    db_name=$(ynh_app_setting_get "$app" psql_db)
+    db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+    ynh_app_setting_set "$app" db_name "$db_name"
+    ynh_app_setting_set "$app" db_pwd "$db_pwd"
+	ynh_app_setting_delete "$app" psql_db
+	ynh_app_setting_delete "$app" psqlpwd
+fi
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -64,12 +77,16 @@ ynh_backup_before_upgrade
 ynh_clean_setup () {
 	# restore it if the upgrade fails
 	ynh_restore_upgradebackup
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
-# Stop Pleroma for upgrade
-yunohost service stop "$app"
+#=================================================
+# STOP SERVICE
+#=================================================
+
+ynh_systemd_action --action=stop --service_name=$app
 
 #=================================================
 # CHECK THE PATH
@@ -145,9 +162,48 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# ...
+# MODIFY A CONFIG FILE
+#=================================================
+cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
+
+ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+
+if [ $cache -eq 1 ]
+then
+	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
+else
+	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/prod.secret.exs"
+fi
+
+#  Set registrations open/closed
+if [ $registration -eq 1 ]
+then
+ ynh_replace_string "__REG__" "true"  "$final_path/$app/config/prod.secret.exs"
+else
+ ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
+fi
+
+#Desactivate default frontend 
+cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+
+#Desactivate Pleroma.Web.Endpoint
+cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
+
+#=================================================
+# CONFIGURE
 #=================================================
 
+#Desactivate default frontend 
+cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+
+#Desactivate Pleroma.Web.Endpoint
+cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 #=================================================
 # MAKE UPGRADE
@@ -155,16 +211,10 @@ ynh_system_user_create "$app" "$final_path"
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
-( cd $final_path/$app && sudo -u "$app" mix deps.get )
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH SUPERUSER;"
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH NOSUPERUSER;"
-
-
+pushd $final_path/$app
+    sudo -u "$app" mix deps.get
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
+popd
 
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
 ### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
@@ -226,5 +276,4 @@ systemctl reload nginx
 # START SERVICE
 #=================================================
 
-yunohost service start $app
-sleep 30
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"

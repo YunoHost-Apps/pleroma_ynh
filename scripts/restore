@@ -7,6 +7,7 @@
 #=================================================
 
 source ../settings/scripts/_common.sh
+source ../settings/scripts/ynh_systemd_action
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -15,7 +16,7 @@ source /usr/share/yunohost/helpers
 
 ynh_clean_setup () {
 	#### Remove this function if there's nothing to clean before calling the remove script.
-	true
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -30,8 +31,8 @@ domain=$(ynh_app_setting_get $app domain)
 path_url="/"
 final_path=$(ynh_app_setting_get $app final_path)
 port=$(ynh_app_setting_get "$app" port)
-db_name=$(ynh_app_setting_get "$app" psql_db)
-db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+db_name=$(ynh_app_setting_get "$app" db_name)
+db_pwd=$(ynh_app_setting_get "$app" db_pwd)
 cache=$(ynh_app_setting_get "$app" cache)
 
 
@@ -103,7 +104,6 @@ chown -R "$app":"$app" "$final_path"
 # REINSTALL DEPENDENCIES
 #=================================================
 
-
 # Add erlang for Debian Jessie 
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
@@ -157,5 +157,4 @@ systemctl reload nginx
 # START SERVICE
 #=================================================
 
-yunohost service start $app
-sleep 30
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"

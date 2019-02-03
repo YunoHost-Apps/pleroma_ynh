@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_systemd_action
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -15,7 +16,7 @@ source /usr/share/yunohost/helpers
 
 ynh_clean_setup () {
 	### Remove this function if there's nothing to clean before calling the remove script.
-	true
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -98,7 +99,7 @@ ynh_app_setting_set "$app" random_key   "$random_key"
 ###		- Remove the section "CLOSE A PORT" in the remove script
 
 # Find a free port
-port=$(ynh_find_port 4000)
+port=$(ynh_find_port 8095)
 # Open this port
 #yunohost firewall allow --no-upnp TCP $port 2>&1
 ynh_app_setting_set $app port $port
@@ -140,18 +141,20 @@ ynh_install_app_dependencies git build-essential postgresql postgresql-contrib o
 ###		- Remove also the section "REMOVE THE POSTGRESQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE POSTGRESQL DATABASE" in the restore script
 
-db_name="${app}"
+db_name="$app"
 db_pwd=$(ynh_string_random 30)
-ynh_app_setting_set "$app" psql_db "$db_name"
-ynh_app_setting_set "$app" psqlpwd "$db_pwd"
+ynh_app_setting_set "$app" db_name "$db_name"
+ynh_app_setting_set "$app" db_pwd "$db_pwd"
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
-"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
+"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $db_name;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -214,24 +217,18 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# ...
-#=================================================
-
-#=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-cp -f ../conf/prod.secret.exs "$final_path/$app/config/prod.secret.exs"
-cp -f ../conf/setup_db.psql "$final_path/$app/config/setup_db.psql"
+cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
 ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
 ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$app"           "$final_path/$app/config/setup_db.psql"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/setup_db.psql"
+
 if [ $cache -eq 1 ]
 then
 	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
@@ -247,27 +244,33 @@ else
  ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
 fi
 
+#Desactivate default frontend 
+cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+
+#Desactivate Pleroma.Web.Endpoint
+cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 #=================================================
-# SETUP
+# MAKE SETUP
 #=================================================
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
-# App setup and db migration
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.hex --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix local.rebar --force )
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix deps.get )
 
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH SUPERUSER;"
+pushd $final_path/$app
+    # App setup and db migration
+    sudo -u "$app" MIX_ENV=prod mix local.hex --force
+    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+    sudo -u "$app" MIX_ENV=prod mix deps.get
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
 
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force )
+    # Add user
+    sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
 
-ynh_psql_execute_as_root \
-"ALTER USER $app WITH NOSUPERUSER;"
+	#Generate key pair
+    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
+	ynh_replace_string "administrator@example.com" "__ADMIN_EMAIL__" "$final_path/$app/config/prod.secret.exs" 
+popd
 
-# Add user
-( cd $final_path/$app && sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y )
 
 #=================================================
 # SETUP SYSTEMD
@@ -401,5 +404,4 @@ systemctl reload nginx
 # START SERVICE
 #=================================================
 
-yunohost service start $app
-sleep 30
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
