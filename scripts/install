@@ -261,14 +261,7 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
-
-    ynh_psql_execute_as_root \
-    "ALTER USER $app WITH SUPERUSER;"
-
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
-
-    ynh_psql_execute_as_root \
-    "ALTER USER $app WITH NOSUPERUSER;"
 
     # Add user
     sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
