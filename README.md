@@ -40,7 +40,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ## License
 
-LICENSE AGPL-3.0
+**LICENSE:** AGPL-3.0
 
 ## Demo
 
