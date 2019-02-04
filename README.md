@@ -38,9 +38,9 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ![pleroma-screenshot1](https://user-images.githubusercontent.com/30271971/52231733-ff136500-28ba-11e9-902a-18f80e627db3.png)
 
-## Licence
+## License
 
-LICENCE AGPL-3.0
+LICENSE AGPL-3.0
 
 ## Demo
 
