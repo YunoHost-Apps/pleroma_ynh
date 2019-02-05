@@ -44,7 +44,6 @@ then
 	admin="test"
 fi
 
-
 ### If it's a multi-instance app, meaning it can be installed several times independently
 ### The id of the app as stated in the manifest is available as $YNH_APP_ID
 ### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
@@ -128,7 +127,7 @@ sudo apt-key add erlang_solutions.asc
 sudo rm erlang_solutions.asc
 
 # install dependencies
-ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -141,9 +140,9 @@ ynh_install_app_dependencies git build-essential postgresql postgresql-contrib o
 ###		- Remove also the section "REMOVE THE POSTGRESQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE POSTGRESQL DATABASE" in the restore script
 
-db_name="$app"
+db_name=$(ynh_sanitize_dbid $app)
 db_pwd=$(ynh_string_random 30)
-ynh_app_setting_set "$app" db_name "$db_name"
+ynh_app_setting_set $app db_name $db_name
 ynh_app_setting_set "$app" db_pwd "$db_pwd"
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
@@ -219,6 +218,7 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+
 cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
 ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
@@ -253,6 +253,7 @@ cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 #=================================================
 # MAKE SETUP
 #=================================================
+
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
 
@@ -270,7 +271,6 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
 	ynh_replace_string "administrator@example.com" "__ADMIN_EMAIL__" "$final_path/$app/config/prod.secret.exs" 
 popd
-
 
 #=================================================
 # SETUP SYSTEMD
