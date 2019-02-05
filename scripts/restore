@@ -30,10 +30,10 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get $app domain)
 path_url="/"
 final_path=$(ynh_app_setting_get $app final_path)
-port=$(ynh_app_setting_get "$app" port)
-db_name=$(ynh_app_setting_get "$app" db_name)
-db_pwd=$(ynh_app_setting_get "$app" db_pwd)
-cache=$(ynh_app_setting_get "$app" cache)
+port=$(ynh_app_setting_get $app port)
+db_name=$(ynh_app_setting_get $app db_name)
+db_pwd=$(ynh_app_setting_get $app db_pwd)
+cache=$(ynh_app_setting_get $app cache)
 
 
 #=================================================
@@ -117,7 +117,7 @@ sudo apt-key add erlang_solutions.asc
 sudo rm erlang_solutions.asc
 
 # install dependencies
-ynh_install_app_dependencies git build-essential postgresql postgresql-contrib openssl g++ apt-transport-https erlang-inets elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
 
 #=================================================
 # RESTORE SYSTEMD
