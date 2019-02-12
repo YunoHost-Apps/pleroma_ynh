@@ -200,12 +200,6 @@ else
  ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
 fi
 
-#Desactivate default frontend
-#cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
-
-#Desactivate Pleroma.Web.Endpoint
-#cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
-
 #=================================================
 # MAKE UPGRADE
 #=================================================
