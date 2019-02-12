@@ -110,7 +110,7 @@ ynh_replace_string "$old_domain" "$new_domain" "$final_path/$app/config/prod.sec
 # START SERVICE
 #=================================================
 
-ynh_systemd_action --action=start --service_name=$app
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
