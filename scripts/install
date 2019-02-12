@@ -278,7 +278,7 @@ pushd $final_path/$app
 
 	#Generate key pair
     sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-	ynh_replace_string "administrator@example.com" "__ADMIN_EMAIL__" "$final_path/$app/config/prod.secret.exs" 
+	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs" 
 popd
 
 #=================================================
