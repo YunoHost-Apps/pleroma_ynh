@@ -70,4 +70,4 @@ config :pleroma, Pleroma.Repo,
 #  object_url: "https://cdn-endpoint.provider.com/<container>"
 #
 
-
+import_config "prod.secret.web_push.exs"
