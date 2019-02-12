@@ -254,10 +254,10 @@ else
 fi
 
 #Desactivate default frontend 
-cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
+#cp -f ../conf/config.exs "$final_path/$app/config/config.exs"
 
 #Desactivate Pleroma.Web.Endpoint
-cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
+#cp -f ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 #=================================================
 # MAKE SETUP
