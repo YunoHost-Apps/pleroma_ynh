@@ -207,14 +207,12 @@ fi
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
 pushd $final_path/$app
-	if [ ! -f "$final_path/$app/config/prod.secret.web_push.exs" ]
-	then
-		#Generate key pair
-	    sudo -u "$app" mix web_push.gen.keypair >> "config/prod.secret.web_push.exs"
-		ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.web_push.exs" 
-	fi
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
+	
+	#Generate key pair
+    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
+	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs" 
 popd
 
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
