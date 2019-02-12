@@ -14,7 +14,7 @@
         "email": "anmol@datamol.org"
     },
     "requirements": {
-        "yunohost": ">= 2.7.9"
+        "yunohost": ">= 3.4"
     },
     "multi_instance": true,
     "services": [
@@ -26,8 +26,8 @@
                 "name": "domain",
                 "type": "domain",
                 "ask": {
-                    "en": "Choose a domain name for pleroma",
-                    "fr": "Choisissez un nom de domaine pour pleroma"
+                    "en": "Choose a domain name for Pleroma",
+                    "fr": "Choisissez un nom de domaine pour Pleroma"
                 },
                 "example": "example.com"
             },
@@ -64,6 +64,7 @@
             },
             {
                 "name": "name",
+                "type": "string",
                 "ask": {
                     "en": "Choose a name for your Pleroma instance",
                     "fr": "Choisissez un nom pour votre instance Pleroma"
@@ -91,6 +92,7 @@
                },
             {
                 "name": "size",
+                "type": "string",
                 "ask": {
                     "en": "Select the cache size. If you did not enabled media-cache in above option then this option will have no effect",
                     "fr": "Sélectionner la taille du cache. Si vous n'avez pas activé le cache média ci-dessus, cette option n'aura aucun effet"

@@ -32,7 +32,7 @@
 	Level 3=auto
 # Level 4: If the app supports LDAP and SSOwat, turn level 4 to '1' and add a link to an issue or a part of your code to show it.
 # If the app does not use LDAP nor SSOwat, and can't use them, turn level 4 to 'na' and explain as well.
-	#Application doesn't support LDAP
+	#https://github.com/YunoHost-Apps/pleroma_ynh/issues/28
     Level 4=na
 	Level 5=auto
 	Level 6=auto
