@@ -12,6 +12,8 @@ ExecStart=/usr/bin/mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
 
 ; Some security directives.
 ; Use private /tmp and /var/tmp folders inside a new file system namespace, which are discarded after the process stops.
