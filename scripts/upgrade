@@ -107,7 +107,7 @@ ynh_print_info "Download, check and unpack source"
 
 # Download, check integrity, uncompress and patch the source from app.src
 #ynh_setup_source "$final_path/$app"
-( cd $final_path/$app && git pull )
+( cd $final_path/$app && git pull --quiet )
 
 #=================================================
 # NGINX CONFIGURATION
