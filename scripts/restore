@@ -24,6 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -60,27 +61,14 @@ fi
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
+ynh_print_info "Restore the app main directory"
 
 ynh_restore_file "$final_path"
 
 #=================================================
-# RESTORE THE POSTGRESQL DATABASE
-#=================================================
-
-ynh_install_app_dependencies postgresql postgresql-contrib
-ynh_psql_test_if_first_run
-ynh_psql_create_user "$app" "$db_pwd"
-ynh_psql_execute_as_root \
-"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
-ynh_psql_execute_file_as_root ./db.sql "$db_name"
-
-#=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
+ynh_print_info "Recreate the dedicated user"
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create "$app" "$final_path"
@@ -96,13 +84,14 @@ chown -R "$app":"$app" "$final_path"
 # RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
 
-#ynh_restore_file "/etc/php5/fpm/pool.d/$app.conf"
+#ynh_restore_file "/etc/php/7.0/fpm/pool.d/$app.conf"
 
 #=================================================
 # SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
+ynh_print_info "Reinstall dependencies"
 
 # Add erlang for Debian Jessie 
 
@@ -116,12 +105,28 @@ sudo wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 sudo apt-key add erlang_solutions.asc
 sudo rm erlang_solutions.asc
 
-# install dependencies
+# Define and install dependencies
 ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+
+#=================================================
+# RESTORE THE POSTGRESQL DATABASE
+#=================================================
+ynh_print_info "Restore the postgresql database"
+
+ynh_psql_test_if_first_run
+ynh_psql_create_user "$app" "$db_pwd"
+ynh_psql_execute_as_root \
+"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_psql_execute_file_as_root ./db.sql "$db_name"
 
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
+ynh_print_info "Restore the systemd configuration"
 
 ynh_restore_file "/etc/systemd/system/$app.service"
 systemctl enable $app.service
@@ -150,7 +155,9 @@ ynh_restore_file "/etc/logrotate.d/$app"
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
+ynh_print_info "Reload nginx and php-fpm"
 
+#systemctl reload php7.0-fpm
 systemctl reload nginx
 
 #=================================================
@@ -158,3 +165,9 @@ systemctl reload nginx
 #=================================================
 
 ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Restoration completed"

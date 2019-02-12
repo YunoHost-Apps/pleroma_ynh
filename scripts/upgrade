@@ -13,6 +13,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -46,6 +47,7 @@ fi
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
+ynh_print_info "Ensure downward compatibility"
 
 # Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
@@ -71,6 +73,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
+ynh_print_info "Backup the app before upgrading"
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -100,6 +103,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_print_info "Download, check and unpack source"
 
 # Download, check integrity, uncompress and patch the source from app.src
 #ynh_setup_source "$final_path/$app"
@@ -108,6 +112,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Reconfigure nginx"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -128,6 +133,7 @@ fi
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
+ynh_print_info "Upgrade dependencies"
 
 # Add erlang for Debian Jessie 
 
@@ -147,6 +153,7 @@ ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql pos
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_print_info "Create a dedicated user"
 
 # Create a dedicated user (if not existing)
 ynh_system_user_create "$app" "$final_path"
@@ -154,6 +161,7 @@ ynh_system_user_create "$app" "$final_path"
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
+ynh_print_info "Reconfigure php-fpm"
 
 # Create a dedicated php-fpm config
 #ynh_add_fpm_config
@@ -235,6 +243,7 @@ fi
 #=================================================
 # SETUP LOGROTATE
 #=================================================
+ynh_print_info "Reconfigure logrotate"
 
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
@@ -242,6 +251,8 @@ ynh_use_logrotate --non-append
 #=================================================
 # SETUP SYSTEMD
 #=================================================
+ynh_print_info "Reconfigure systemd"
+
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
@@ -258,6 +269,7 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # SETUP SSOWAT
 #=================================================
+ynh_print_info "Reconfigure SSOwat"
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
@@ -269,6 +281,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
+ynh_print_info "Reload nginx"
 
 systemctl reload nginx
 
@@ -277,3 +290,9 @@ systemctl reload nginx
 #=================================================
 
 ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Upgrade completed"
