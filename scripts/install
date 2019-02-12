@@ -16,7 +16,6 @@ source /usr/share/yunohost/helpers
 
 ynh_clean_setup () {
 	### Remove this function if there's nothing to clean before calling the remove script.
-	read -p "Press any key..."
 	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
@@ -262,10 +261,6 @@ fi
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
-	#Generate key pair
-    sudo -u "$app" mix web_push.gen.keypair >> "config/prod.secret.web_push.exs"
-	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.web_push.exs" 
-	
     # App setup and db migration
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
@@ -274,6 +269,10 @@ pushd $final_path/$app
 
     # Add user
     sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
+
+	#Generate key pair
+    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
+	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs" 
 popd
 
 #=================================================
