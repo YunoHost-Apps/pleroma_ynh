@@ -63,7 +63,6 @@ Go to **cd /var/www/pleroma/pleroma**.
     
 This will generate a **password reset link** that you can then send to the user.
 
-
 ### Moderators
 
 You can make users **moderators**. They will then be able to **delete any post**.
@@ -82,8 +81,9 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 #### Multi-users support
 
-LDAP and HTTP auth are not supported?
-The app can be used by multiple users?
+LDAP and HTTP auth are not supported.
+
+The app can be used by multiple users.
 
 #### Supported architectures
 
@@ -116,4 +116,3 @@ sudo yunohost app install https://github.com/YunoHost-Apps/pleroma_ynh/tree/test
 or
 sudo yunohost app upgrade pleroma -u https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing --debug
 ```
-
