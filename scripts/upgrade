@@ -210,7 +210,7 @@ pushd $final_path/$app
 	if [ ! -f "$final_path/$app/config/prod.secret.web_push.exs" ]
 	then
 		#Generate key pair
-	    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.web_push.exs"
+	    sudo -u "$app" mix web_push.gen.keypair >> "config/prod.secret.web_push.exs"
 		ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.web_push.exs" 
 	fi
     sudo -u "$app" MIX_ENV=prod mix deps.get
