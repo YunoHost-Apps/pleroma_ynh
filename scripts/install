@@ -277,8 +277,8 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
 
 	#Generate key pair
-    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs" 
+    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.web_push.exs"
+	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.web_push.exs" 
 popd
 
 #=================================================
