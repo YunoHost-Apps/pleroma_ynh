@@ -38,10 +38,6 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ![pleroma-screenshot1](https://user-images.githubusercontent.com/30271971/52231733-ff136500-28ba-11e9-902a-18f80e627db3.png)
 
-## License
-
-**LICENSE:** AGPL-3.0
-
 ## Demo
 
 * [List of instances](http://distsn.org/pleroma-instances.html)
