@@ -24,7 +24,6 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
-ynh_print_info "Retrieve arguments from the manifest ..."
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
@@ -60,7 +59,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_print_info "Validating arguments ..."
+ynh_print_info "Validating installation parameters..."
 
 ### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
 ### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
@@ -76,7 +75,7 @@ ynh_webpath_register $app $domain $path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_print_info "Store settings from manifest ..."
+ynh_print_info "Storing installation settings..."
 
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app path $path_url
@@ -137,6 +136,7 @@ ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql pos
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
+ynh_print_info "Creating a PostgreSQL database..."
 
 ### Use these lines if you need a database for the application.
 ### `ynh_psql_test_if_first_run` will create a master password and set up global settings.
@@ -177,7 +177,7 @@ git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Configuring nginx ..."
+ynh_print_info "Configuring nginx web server..."
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
@@ -405,7 +405,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx ..."
+ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
 
@@ -419,4 +419,4 @@ ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Installation completed"
+ynh_print_info "Installation of $app completed"
