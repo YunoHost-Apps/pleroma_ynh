@@ -13,7 +13,6 @@ source /usr/share/yunohost/helpers
 #=================================================
 # RETRIEVE ARGUMENTS
 #=================================================
-ynh_print_info "Retrieve arguments from the manifest"
 
 old_domain=$YNH_APP_OLD_DOMAIN
 old_path=$YNH_APP_OLD_PATH
@@ -26,7 +25,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info "Load settings"
+ynh_print_info "Loading installation settings..."
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get $app final_path)
@@ -38,7 +37,6 @@ final_path=$(ynh_app_setting_get $app final_path)
 #=================================================
 # CHECK THE SYNTAX OF THE PATHS
 #=================================================
-ynh_print_info "Check the syntax of the paths"
 
 test -n "$old_path" || old_path="/"
 test -n "$new_path" || new_path="/"
@@ -66,7 +64,7 @@ fi
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_print_info "Modify url in nginx configuration"
+ynh_print_info "Updating nginx web server configuration..."
 
 nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
 
@@ -127,7 +125,7 @@ ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reload nginx"
+ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
 
@@ -135,4 +133,4 @@ systemctl reload nginx
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Change of url completed"
+ynh_print_info "Change of URL completed for $app"

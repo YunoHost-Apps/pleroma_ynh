@@ -24,7 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info "Load settings"
+ynh_print_info "Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -40,6 +40,7 @@ cache=$(ynh_app_setting_get $app cache)
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
+ynh_print_info "Validating restoration parameters..."
 
 ynh_webpath_available $domain $path_url \
 	|| ynh_die "Path not available: ${domain}${path_url}"
@@ -61,14 +62,14 @@ fi
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_print_info "Restore the app main directory"
+ynh_print_info "Restoring the app main directory..."
 
 ynh_restore_file "$final_path"
 
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
-ynh_print_info "Recreate the dedicated user"
+ynh_print_info "Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create "$app" "$final_path"
@@ -91,7 +92,7 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
-ynh_print_info "Reinstall dependencies"
+ynh_print_info "Reinstalling dependencies..."
 
 # Add erlang for Debian Jessie 
 
@@ -111,7 +112,7 @@ ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql pos
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
 #=================================================
-ynh_print_info "Restore the postgresql database"
+ynh_print_info "Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
@@ -126,7 +127,7 @@ ynh_psql_execute_file_as_root ./db.sql "$db_name"
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
-ynh_print_info "Restore the systemd configuration"
+ynh_print_info "Restoring the systemd configuration..."
 
 ynh_restore_file "/etc/systemd/system/$app.service"
 systemctl enable $app.service
@@ -155,7 +156,7 @@ ynh_restore_file "/etc/logrotate.d/$app"
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
-ynh_print_info "Reload nginx and php-fpm"
+ynh_print_info "Reloading nginx web server and php-fpm..."
 
 #systemctl reload php7.0-fpm
 systemctl reload nginx
@@ -170,4 +171,4 @@ ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Restoration completed"
+ynh_print_info "Restoration completed for $app"
