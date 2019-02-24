@@ -70,6 +70,9 @@ if [ -z $final_path ]; then
 	ynh_app_setting_set $app final_path $final_path
 fi
 
+# Remove repository
+ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
