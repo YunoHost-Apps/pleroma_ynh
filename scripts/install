@@ -111,14 +111,14 @@ ynh_app_setting_set $app port $port
 #=================================================
 ynh_print_info "Installing erlang 1.21.2.6-1..."
 
-if [ "$(lsb_release --codename --short)" == "jessie" ]; then
+#if [ "$(lsb_release --codename --short)" == "jessie" ]; then
 	#sudo apt install -y ../sources/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
 	#sudo apt install -y ../sources/elixir_1.8.1-2~debian~jessie_amd64.deb
-elif 
-	[ "$(lsb_release --codename --short)" == "stretch" ]; then
+#elif 
+#	[ "$(lsb_release --codename --short)" == "stretch" ]; then
 	#sudo apt install -y ../sources/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
 	#sudo apt install -y ../sources/elixir_1.8.1-2~debian~stretch_amd64.deb
-fi
+#fi
 
 
 #=================================================
