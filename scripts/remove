@@ -74,7 +74,8 @@ ynh_remove_app_dependencies
 #=================================================
 ynh_print_info "Removing erlang 1.21.2.6-1..."
 
-#sudo apt remove -y esl-erlang
+sudo apt remove -y esl-erlang
+sudo apt remove -y elixir
 
 #=================================================
 # REMOVE APP MAIN DIR
