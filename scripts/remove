@@ -70,11 +70,10 @@ ynh_print_info "Removing dependencies"
 ynh_remove_app_dependencies
 
 #=================================================
-# REMOVE ERLANG 1.21.2.6-1
+# REMOVE ELIXIR 1.8.1-2
 #=================================================
-ynh_print_info "Removing erlang 1.21.2.6-1..."
+ynh_print_info "Removing elixir 1.8.1-2..."
 
-sudo apt remove -y esl-erlang
 sudo apt remove -y elixir
 
 #=================================================
