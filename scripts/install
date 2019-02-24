@@ -172,8 +172,7 @@ ynh_print_info "Setting up source files ..."
 
 ynh_app_setting_set $app final_path $final_path
 # Download, check integrity, uncompress and patch the source from app.src
-#ynh_setup_source "$final_path/$app"
-git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION

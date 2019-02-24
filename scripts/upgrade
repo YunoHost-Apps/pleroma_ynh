@@ -109,11 +109,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-#ynh_setup_source "$final_path/$app"
-pushd $final_path/$app
-    git reset --hard
-    git pull --quiet
-popd
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
