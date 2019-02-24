@@ -1,5 +1,5 @@
-SOURCE_URL=url of app's source
-SOURCE_SUM=sha256 checksum
+SOURCE_URL=https://git.pleroma.social/pleroma/pleroma/-/archive/v0.9.9/pleroma-v0.9.9.tar.gz
+SOURCE_SUM=21a25c34cfd9399e6b2feed570ea67f1f61a14304fadabb0283a03724b076a5f
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
