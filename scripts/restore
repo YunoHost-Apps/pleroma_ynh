@@ -90,21 +90,23 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # SPECIFIC RESTORATION
 #=================================================
+# INSTALL ERLANG and ELIXIR
+#=================================================
+ynh_print_info "Installing erlang and elixir ..."
+
+if [ "$(lsb_release --codename --short)" == "jessie" ]; then
+	sudo apt install -y ../settings/conf/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
+	sudo apt install -y ../settings/conf/elixir_1.8.1-2~debian~jessie_amd64.deb
+elif 
+	[ "$(lsb_release --codename --short)" == "stretch" ]; then
+	sudo apt install -y ../settings/conf/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
+	sudo apt install -y ../settings/conf/elixir_1.8.1-2~debian~stretch_amd64.deb
+fi
+
+#=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
 ynh_print_info "Reinstalling dependencies..."
-
-# Add erlang for Debian Jessie 
-
-if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
-elif 
-	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
-fi
-sudo wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
-sudo apt-key add erlang_solutions.asc
-sudo rm erlang_solutions.asc
 
 # Define and install dependencies
 ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
@@ -119,9 +121,11 @@ ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
 "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
 ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
+CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS citext;"
 ynh_psql_execute_file_as_root ./db.sql "$db_name"
 
 #=================================================
