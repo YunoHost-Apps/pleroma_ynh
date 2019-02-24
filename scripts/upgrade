@@ -138,12 +138,12 @@ fi
 ynh_print_info "Installing erlang and elixir ..."
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	sudo apt install -y ../sources/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
-	sudo apt install -y ../sources/elixir_1.8.1-2~debian~jessie_amd64.deb
+	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
+	sudo apt install -y ../conf/elixir_1.8.1-2~debian~jessie_amd64.deb
 elif 
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	sudo apt install -y ../sources/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
-	sudo apt install -y ../sources/elixir_1.8.1-2~debian~stretch_amd64.deb
+	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
+	sudo apt install -y ../conf/elixir_1.8.1-2~debian~stretch_amd64.deb
 fi
 
 #=================================================
