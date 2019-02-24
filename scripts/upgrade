@@ -70,6 +70,9 @@ if [ -z $final_path ]; then
 	ynh_app_setting_set $app final_path $final_path
 fi
 
+# Remove repository
+ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -106,11 +109,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-#ynh_setup_source "$final_path/$app"
-pushd $final_path/$app
-    git reset --hard
-    git pull --quiet
-popd
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -134,21 +133,23 @@ then
 fi
 
 #=================================================
+# INSTALL ERLANG and ELIXIR
+#=================================================
+ynh_print_info "Installing erlang and elixir ..."
+
+if [ "$(lsb_release --codename --short)" == "jessie" ]; then
+	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
+	sudo apt install -y ../conf/elixir_1.8.1-2~debian~jessie_amd64.deb
+elif 
+	[ "$(lsb_release --codename --short)" == "stretch" ]; then
+	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
+	sudo apt install -y ../conf/elixir_1.8.1-2~debian~stretch_amd64.deb
+fi
+
+#=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
 ynh_print_info "Upgrading dependencies..."
-
-# Add erlang for Debian Jessie 
-
-if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
-elif 
-	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
-fi
-sudo wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
-sudo apt-key add erlang_solutions.asc
-sudo rm erlang_solutions.asc
 
 # install dependencies
 ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools

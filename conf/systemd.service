@@ -3,15 +3,23 @@ Description=__APP__  social network
 After=network.target postgresql.service
 
 [Service]
-Environment="MIX_ENV=prod"
-User=__APP__
-Group=__APP__
-WorkingDirectory=__FINALPATH__/__APP__
-Environment="HOME=__FINALPATH__"
-ExecStart=/usr/bin/mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
+
+; Name of the user that runs the Pleroma service.
+User=__APP__
+Group=__APP__
+; Declares that Pleroma runs in production mode.
+Environment="MIX_ENV=prod"
+
+; Make sure that all paths fit your installation.
+; Path to the home directory of the user running the Pleroma service.
+Environment="HOME=__FINALPATH__"
+; Path to the folder containing the Pleroma installation.
+WorkingDirectory=__FINALPATH__/__APP__
+; Path to the Mix binary.
+ExecStart=/usr/bin/mix phx.server
 StandardOutput=syslog
 StandardError=syslog
 

@@ -68,7 +68,14 @@ ynh_print_info "Removing dependencies"
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
-ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
+
+#=================================================
+# REMOVE ERLANG AND ELIXIR
+#=================================================
+ynh_print_info "Removing erlang and elixir..."
+
+sudo apt remove -y esl-erlang
+sudo apt remove -y elixir
 
 #=================================================
 # REMOVE APP MAIN DIR
