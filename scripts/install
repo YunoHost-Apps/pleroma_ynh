@@ -112,12 +112,12 @@ ynh_app_setting_set $app port $port
 ynh_print_info "Installing erlang and elixir ..."
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	sudo apt install -y ../sources/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
-	sudo apt install -y ../sources/elixir_1.8.1-2~debian~jessie_amd64.deb
+	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
+	sudo apt install -y ../conf/elixir_1.8.1-2~debian~jessie_amd64.deb
 elif 
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	sudo apt install -y ../sources/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
-	sudo apt install -y ../sources/elixir_1.8.1-2~debian~stretch_amd64.deb
+	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
+	sudo apt install -y ../conf/elixir_1.8.1-2~debian~stretch_amd64.deb
 fi
 
 #=================================================
@@ -155,9 +155,11 @@ ynh_psql_create_user "$app" "$db_pwd"
 ynh_psql_execute_as_root \
 "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $db_name;"
 ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;CREATE EXTENSION IF NOT EXISTS citext;"
+CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS citext;"
 ynh_psql_execute_as_root "\connect $db_name 
 CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 
@@ -172,8 +174,7 @@ ynh_print_info "Setting up source files ..."
 
 ynh_app_setting_set $app final_path $final_path
 # Download, check integrity, uncompress and patch the source from app.src
-#ynh_setup_source "$final_path/$app"
-git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
