@@ -109,7 +109,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-git clone --quiet $git_repository "$final_path/upgrade"
+git clone --quiet https://git.pleroma.social/pleroma/pleroma "$final_path/upgrade"
 pushd "$final_path/upgrade"
 	git checkout -b master
 popd
