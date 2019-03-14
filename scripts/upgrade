@@ -109,6 +109,8 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
+#ynh_setup_source "$final_path"
+
 git clone --quiet https://git.pleroma.social/pleroma/pleroma "$final_path/upgrade"
 pushd "$final_path/upgrade"
 	git checkout -b master
@@ -157,7 +159,7 @@ fi
 ynh_print_info "Upgrading dependencies..."
 
 # install dependencies
-ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
