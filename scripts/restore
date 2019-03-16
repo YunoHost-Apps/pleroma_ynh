@@ -118,14 +118,10 @@ ynh_print_info "Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 ynh_psql_create_user "$app" "$db_pwd"
-ynh_psql_execute_as_root \
-"CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_psql_execute_as_root "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $app;"
+ynh_psql_execute_as_root "CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_psql_execute_as_root "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 ynh_psql_execute_file_as_root ./db.sql "$db_name"
 
 #=================================================
