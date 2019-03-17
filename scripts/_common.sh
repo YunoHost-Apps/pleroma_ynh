@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools"
+pkg_dependencies="git build-essential postgresql postgresql-contrib elixir erlang-dev erlang-tools erlang-parsetools erlang-eldap erlang-xmerl openssl ssh sudo"
 
 #=================================================
 # PERSONAL HELPERS
