@@ -8,7 +8,7 @@ use Mix.Config
 config :pleroma, Pleroma.Web.Endpoint,
    url: [host: "__DOMAIN__", scheme: "https", port: 443],
    secret_key_base: "__KEY__",
-   http: [port: __PORT__]
+   http: [ip: {127, 0, 0, 1}, port: __PORT__]
 
 config :pleroma, :instance,
   name: "__INSTANCE_NAME__",
