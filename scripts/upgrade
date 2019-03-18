@@ -144,6 +144,10 @@ fi
 #=================================================
 ynh_print_info "Installing erlang and elixir ..."
 
+#remove old erlang packages
+sudo apt remove -y esl-erlang
+sudo apt remove -y elixir
+
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
 	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 elif 
