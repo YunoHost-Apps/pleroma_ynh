@@ -109,6 +109,8 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
+#ynh_setup_source "$final_path"
+
 git clone --quiet https://git.pleroma.social/pleroma/pleroma "$final_path/upgrade"
 pushd "$final_path/upgrade"
 	git checkout -b master
@@ -138,18 +140,23 @@ then
 fi
 
 #=================================================
-# INSTALL ERLANG and ELIXIR
+# INSTALL ERLANG AND ELIXIR
 #=================================================
 ynh_print_info "Installing erlang and elixir ..."
 
+#remove old erlang packages
+sudo apt remove -y esl-erlang
+sudo apt remove -y elixir
+
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~jessie_amd64.deb
-	sudo apt install -y ../conf/elixir_1.8.1-2~debian~jessie_amd64.deb
+	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 elif 
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	sudo apt install -y ../conf/esl-erlang_21.2.6-1~debian~stretch_amd64.deb
-	sudo apt install -y ../conf/elixir_1.8.1-2~debian~stretch_amd64.deb
+	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 fi
+sudo wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+sudo apt-key add erlang_solutions.asc
+sudo rm erlang_solutions.asc
 
 #=================================================
 # UPGRADE DEPENDENCIES
@@ -157,7 +164,7 @@ fi
 ynh_print_info "Upgrading dependencies..."
 
 # install dependencies
-ynh_install_app_dependencies git build-essential openssl ssh sudo postgresql postgresql-contrib elixir erlang-dev erlang-parsetools erlang-xmerl erlang-tools
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
