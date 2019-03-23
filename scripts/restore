@@ -15,7 +15,6 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	#### Remove this function if there's nothing to clean before calling the remove script.
 	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
@@ -82,12 +81,6 @@ ynh_system_user_create "$app" "$final_path"
 chown -R "$app":"$app" "$final_path"
 
 #=================================================
-# RESTORE THE PHP-FPM CONFIGURATION
-#=================================================
-
-#ynh_restore_file "/etc/php/7.0/fpm/pool.d/$app.conf"
-
-#=================================================
 # SPECIFIC RESTORATION
 #=================================================
 # INSTALL ERLANG AND ELIXIR
@@ -146,12 +139,6 @@ systemctl daemon-reload
 yunohost service add $app --description "$app daemon for Pleroma" --log "/var/log/$app/$app.log"
 
 #=================================================
-# RESTORE THE CRON FILE
-#=================================================
-
-#ynh_restore_file "/etc/cron.d/$app"
-
-#=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
 #=================================================
 
@@ -162,9 +149,8 @@ ynh_restore_file "/etc/logrotate.d/$app"
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
-ynh_print_info "Reloading nginx web server and php-fpm..."
+ynh_print_info "Reloading nginx web server..."
 
-#systemctl reload php7.0-fpm
 systemctl reload nginx
 
 #=================================================

@@ -37,7 +37,7 @@ then
 fi
 
 #=================================================
-# START SERVICE
+# STOP SERVICE
 #=================================================
 
 ynh_systemd_action --action=stop --service_name=$app
@@ -95,14 +95,6 @@ ynh_remove_nginx_config
 ynh_secure_remove "/etc/nginx/conf.d/$app-cache.conf"
 
 #=================================================
-# REMOVE PHP-FPM CONFIGURATION
-#=================================================
-ynh_print_info "Removing php-fpm configuration"
-
-# Remove the dedicated php-fpm config
-#ynh_remove_fpm_config
-
-#=================================================
 # REMOVE LOGROTATE CONFIGURATION
 #=================================================
 ynh_print_info "Removing logrotate configuration"
@@ -126,9 +118,6 @@ fi
 #=================================================
 # REMOVE THE CRON FILE
 #=================================================
-
-# Remove a cron file
-#ynh_secure_remove "/etc/cron.d/$app"
 
 # Remove a directory securely
 ynh_secure_remove "/etc/$app/"

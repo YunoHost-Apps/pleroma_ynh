@@ -15,7 +15,6 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
 	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
@@ -83,12 +82,6 @@ ynh_backup "/etc/logrotate.d/$app"
 ynh_print_info "Backing up systemd configuration..."
 
 ynh_backup "/etc/systemd/system/$app.service"
-
-#=================================================
-# BACKUP A CRON FILE
-#=================================================
-
-#ynh_backup "/etc/cron.d/$app"
 
 #=================================================
 # END OF SCRIPT
