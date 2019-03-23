@@ -32,17 +32,6 @@ cache=$(ynh_app_setting_get "$app" cache)
 size=$(ynh_app_setting_get "$app" size)
 registration=$(ynh_app_setting_get "$app" registration)
 
-psql_db=$(ynh_app_setting_get "$app" psql_db)
-
-if [ -n "$psql_db" ]
-then
-    db_name=$(ynh_app_setting_get "$app" psql_db)
-    db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
-    ynh_app_setting_set "$app" db_name "$db_name"
-    ynh_app_setting_set "$app" db_pwd "$db_pwd"
-	ynh_app_setting_delete "$app" psql_db
-	ynh_app_setting_delete "$app" psqlpwd
-fi
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -72,6 +61,27 @@ fi
 
 # Remove repository
 ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
+
+#Switch variables name
+psql_db=$(ynh_app_setting_get "$app" psql_db)
+
+if [ -n "$psql_db" ]
+then
+    db_name=$(ynh_app_setting_get "$app" psql_db)
+    db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+    ynh_app_setting_set "$app" db_name "$db_name"
+    ynh_app_setting_set "$app" db_pwd "$db_pwd"
+	ynh_app_setting_delete "$app" psql_db
+	ynh_app_setting_delete "$app" psqlpwd
+fi
+
+#Close a port
+
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port" >&2
+	yunohost firewall disallow TCP $port 2>&1
+fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
@@ -175,14 +185,6 @@ ynh_print_info "Making sure dedicated system user exists..."
 ynh_system_user_create "$app" "$final_path"
 
 #=================================================
-# PHP-FPM CONFIGURATION
-#=================================================
-ynh_print_info "Upgrading php-fpm configuration..."
-
-# Create a dedicated php-fpm config
-#ynh_add_fpm_config
-
-#=================================================
 # SPECIFIC UPGRADE
 #=================================================
 # MODIFY A CONFIG FILE
@@ -228,21 +230,9 @@ pushd $final_path/$app
 	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs" 
 popd
 
-### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
-### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
 ynh_backup_if_checksum_is_different "$final_path/$app/config/prod.secret.exs"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
-
-#=================================================
-# CLOSE A PORT
-#=================================================
-
-if yunohost firewall list | grep -q "\- $port$"
-then
-	echo "Close port $port" >&2
-	yunohost firewall disallow TCP $port 2>&1
-fi
 
 #=================================================
 # SETUP LOGROTATE
