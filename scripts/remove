@@ -8,6 +8,7 @@
 
 source _common.sh
 source ynh_systemd_action
+source ynh_add_secure_repos__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -70,12 +71,11 @@ ynh_print_info "Removing dependencies"
 ynh_remove_app_dependencies
 
 #=================================================
-# REMOVE ERLANG AND ELIXIR
+# REMOVE ERLANG REPOSITORY
 #=================================================
-ynh_print_info "Removing erlang and elixir..."
+ynh_print_info "Removing erlang repository..."
 
-ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
-apt-key del A14F4FCA
+ynh_remove_extra_repo "erlang-solutions"
 
 #=================================================
 # REMOVE APP MAIN DIR
