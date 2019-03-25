@@ -80,6 +80,9 @@ then
 	yunohost firewall disallow TCP $port 2>&1
 fi
 
+# Remove old repository
+ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -139,6 +142,20 @@ then
 	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
 
+#=================================================
+# ADD ERLANG REPOSITORY
+#=================================================
+ynh_print_info "Adding Erlang repository..."
+
+wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+apt-key add erlang_solutions.asc
+rm erlang_solutions.asc
+if [ "$(lsb_release --codename --short)" == "jessie" ]; then
+	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/$app.list
+elif [ "$(lsb_release --codename --short)" == "stretch" ]; then
+	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/$app.list
+fi
+ynh_package_update
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
