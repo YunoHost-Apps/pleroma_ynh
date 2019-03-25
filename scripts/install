@@ -8,6 +8,7 @@
 
 source _common.sh
 source ynh_systemd_action
+source ynh_add_secure_repos__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -94,9 +95,9 @@ wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 apt-key add erlang_solutions.asc
 rm erlang_solutions.asc
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/$app.list
+	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian jessie contrib"
 elif [ "$(lsb_release --codename --short)" == "stretch" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/$app.list
+	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib"
 fi
 ynh_package_update
 
