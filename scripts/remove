@@ -75,7 +75,8 @@ ynh_remove_app_dependencies
 #=================================================
 ynh_print_info "Removing erlang repository..."
 
-ynh_remove_extra_repo
+ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
+apt-key del A14F4FCA
 
 #=================================================
 # REMOVE APP MAIN DIR
