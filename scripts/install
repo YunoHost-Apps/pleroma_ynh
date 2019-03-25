@@ -92,10 +92,10 @@ ynh_app_setting_set $app port $port
 ynh_print_info "Adding Erlang repository..."
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	ynh_install_extra_repo "deb http://packages.erlang-solutions.com/debian jessie contrib"
+	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian jessie contrib" --key=https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 elif 
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	ynh_install_extra_repo "deb http://packages.erlang-solutions.com/debian stretch contrib"
+	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib" --key=https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 fi
 
 #=================================================
@@ -133,7 +133,10 @@ ynh_print_info "Setting up source files ..."
 
 ynh_app_setting_set $app final_path $final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/$app"
+git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
+pushd $final_path/$app
+	git checkout -b master
+popd
 
 #=================================================
 # NGINX CONFIGURATION
