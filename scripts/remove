@@ -8,7 +8,6 @@
 
 source _common.sh
 source ynh_systemd_action
-source ynh_add_secure_repos__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -75,7 +74,7 @@ ynh_remove_app_dependencies
 #=================================================
 ynh_print_info "Removing erlang repository..."
 
-ynh_remove_extra_repo
+ynh_secure_remove "/etc/apt/sources.list.d/${app}.list"
 apt-key del A14F4FCA
 
 #=================================================
