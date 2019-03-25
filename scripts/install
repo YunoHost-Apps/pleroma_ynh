@@ -97,7 +97,7 @@ elif
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
 	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib" --key=https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 fi
-ynh_package_update
+apt update
 
 #=================================================
 # INSTALL DEPENDENCIES
