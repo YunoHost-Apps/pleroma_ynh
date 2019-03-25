@@ -100,6 +100,7 @@ if [ "$(lsb_release --codename --short)" == "jessie" ]; then
 elif [ "$(lsb_release --codename --short)" == "stretch" ]; then
 	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib"
 fi
+ynh_package_update
 
 #=================================================
 # INSTALL DEPENDENCIES
