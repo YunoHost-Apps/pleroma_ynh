@@ -76,6 +76,7 @@ ynh_remove_app_dependencies
 ynh_print_info "Removing erlang repository..."
 
 ynh_remove_extra_repo
+apt-key del A14F4FCA
 
 #=================================================
 # REMOVE APP MAIN DIR
