@@ -89,11 +89,15 @@ chown -R "$app":"$app" "$final_path"
 ynh_print_info "Adding Erlang repository..."
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian jessie contrib" --key=https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 elif 
 	[ "$(lsb_release --codename --short)" == "stretch" ]; then
-	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib" --key=https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
 fi
+sudo wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+sudo apt-key add erlang_solutions.asc
+sudo rm erlang_solutions.asc
+apt update
 
 #=================================================
 # REINSTALL DEPENDENCIES
