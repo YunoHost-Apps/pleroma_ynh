@@ -205,7 +205,7 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
 
     # Add user
     sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
