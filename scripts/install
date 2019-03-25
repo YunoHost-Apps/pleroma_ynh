@@ -92,9 +92,9 @@ ynh_app_setting_set $app port $port
 ynh_print_info "Adding Erlang repository..."
 
 if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian jessie contrib" --key="https://packages.erlang-solutions.com/debian/erlang_solutions.asc"
+	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian jessie contrib" --key="https://packages.erlang-solutions.com/debian/dists/jessie/Release.gpg"
 elif [ "$(lsb_release --codename --short)" == "stretch" ]; then
-	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib" --key="https://packages.erlang-solutions.com/debian/erlang_solutions.asc"
+	ynh_install_extra_repo --repo="deb http://packages.erlang-solutions.com/debian stretch contrib" --key="https://packages.erlang-solutions.com/debian/dists/stretch/Release.gpg"
 fi
 
 #=================================================
