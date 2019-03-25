@@ -37,7 +37,7 @@ size=$YNH_APP_ARG_SIZE
 random_key=$(ynh_string_random 64)
 admin_email=$(ynh_user_get_info $admin 'mail')
 
-## Bypass package_checker name not compatible with writefreely
+## Bypass package_checker name not compatible with pleroma
 if [ "$admin" = "package_checker" ]
 then
 	admin="test"
@@ -84,8 +84,6 @@ ynh_print_info "Configuring firewall ..."
 
 # Find a free port
 port=$(ynh_find_port 8095)
-# Open this port
-#ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
 ynh_app_setting_set $app port $port
 
 #=================================================
@@ -135,10 +133,7 @@ ynh_print_info "Setting up source files ..."
 
 ynh_app_setting_set $app final_path $final_path
 # Download, check integrity, uncompress and patch the source from app.src
-git clone https://git.pleroma.social/pleroma/pleroma "$final_path/$app"
-pushd $final_path/$app
-	git checkout -b master
-popd
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION

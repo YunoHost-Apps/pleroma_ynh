@@ -59,9 +59,6 @@ if [ -z $final_path ]; then
 	ynh_app_setting_set $app final_path $final_path
 fi
 
-# Remove repository
-ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
-
 #Switch variables name
 psql_db=$(ynh_app_setting_get "$app" psql_db)
 
@@ -119,14 +116,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-#ynh_setup_source "$final_path"
-
-git clone --quiet https://git.pleroma.social/pleroma/pleroma "$final_path/upgrade"
-pushd "$final_path/upgrade"
-	git checkout -b master
-popd
-cp -a "$final_path/upgrade/." "$final_path/$app/."
-rm -r "$final_path/upgrade"
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -239,7 +229,6 @@ ynh_add_systemd_config
 
 # Set permissions on app files
 chown -R "$app":"$app" "$final_path"
-
 
 #=================================================
 # SETUP SSOWAT
