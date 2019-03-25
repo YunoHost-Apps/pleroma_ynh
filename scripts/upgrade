@@ -116,7 +116,12 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/$app"
+git clone --quiet https://git.pleroma.social/pleroma/pleroma "$final_path/upgrade"
+pushd "$final_path/upgrade"
+	git checkout -b master
+popd
+cp -a "$final_path/upgrade/." "$final_path/$app/."
+rm -r "$final_path/upgrade"
 
 #=================================================
 # NGINX CONFIGURATION
