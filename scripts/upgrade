@@ -156,6 +156,7 @@ wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 apt-key add erlang_solutions.asc
 rm erlang_solutions.asc
 ynh_package_update
+
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
