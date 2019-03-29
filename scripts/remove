@@ -37,7 +37,7 @@ then
 fi
 
 #=================================================
-# START SERVICE
+# STOP SERVICE
 #=================================================
 
 ynh_systemd_action --action=stop --service_name=$app
@@ -70,9 +70,9 @@ ynh_print_info "Removing dependencies"
 ynh_remove_app_dependencies
 
 #=================================================
-# REMOVE ERLANG AND ELIXIR
+# REMOVE ERLANG REPOSITORY
 #=================================================
-ynh_print_info "Removing erlang and elixir..."
+ynh_print_info "Removing erlang repository..."
 
 ynh_secure_remove "/etc/apt/sources.list.d/erlang-solutions.list"
 apt-key del A14F4FCA
@@ -93,14 +93,6 @@ ynh_print_info "Removing nginx web server configuration"
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
 ynh_secure_remove "/etc/nginx/conf.d/$app-cache.conf"
-
-#=================================================
-# REMOVE PHP-FPM CONFIGURATION
-#=================================================
-ynh_print_info "Removing php-fpm configuration"
-
-# Remove the dedicated php-fpm config
-#ynh_remove_fpm_config
 
 #=================================================
 # REMOVE LOGROTATE CONFIGURATION
@@ -126,9 +118,6 @@ fi
 #=================================================
 # REMOVE THE CRON FILE
 #=================================================
-
-# Remove a cron file
-#ynh_secure_remove "/etc/cron.d/$app"
 
 # Remove a directory securely
 ynh_secure_remove "/etc/$app/"
