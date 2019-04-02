@@ -8,7 +8,7 @@
 
 source ../settings/scripts/_common.sh
 source ../settings/scripts/ynh_systemd_action
-source ../settings/scriptsynh_add_secure_repos__3
+source ../settings/scripts/ynh_add_secure_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
