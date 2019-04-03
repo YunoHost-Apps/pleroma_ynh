@@ -8,6 +8,7 @@
 
 source _common.sh
 source ynh_systemd_action
+source ynh_add_secure_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -86,26 +87,19 @@ port=$(ynh_find_port 8095)
 ynh_app_setting_set $app port $port
 
 #=================================================
-# ADD ERLANG REPOSITORY
-#=================================================
-ynh_print_info "Adding Erlang repository..."
-
-if [ "$(lsb_release --codename --short)" == "jessie" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian jessie contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
-elif [ "$(lsb_release --codename --short)" == "stretch" ]; then
-	echo "deb http://packages.erlang-solutions.com/debian stretch contrib" | tee /etc/apt/sources.list.d/erlang-solutions.list
-fi
-wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
-apt-key add erlang_solutions.asc
-rm erlang_solutions.asc
-ynh_package_update
-
-#=================================================
 # INSTALL DEPENDENCIES
 #=================================================
 ynh_print_info "Installing dependencies ..."
 
 ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# INSTALL EXTRA DEPENDENCIES
+#=================================================
+ynh_print_info "Installing extra dependencies ..."
+
+lsb_name="$(lsb_release --codename --short)"
+ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
