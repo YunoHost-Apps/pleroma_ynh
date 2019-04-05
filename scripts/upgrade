@@ -207,7 +207,7 @@ fi
 chown -R "$app":"$app" "$final_path"
 pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate --force
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
 	
 	#Generate key pair
     sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
