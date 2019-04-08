@@ -114,7 +114,7 @@ ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-ynh_backup_if_checksum_is_different "$final_path/config.ini"
+ynh_backup_if_checksum_is_different "$final_path/$app/config/prod.secret.exs"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
 
