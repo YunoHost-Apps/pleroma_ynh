@@ -29,7 +29,7 @@ ynh_print_info "Loading settings..."
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get $app domain)
-path_url="/"
+path_url=$(ynh_app_setting_get $app path)
 final_path=$(ynh_app_setting_get $app final_path)
 port=$(ynh_app_setting_get $app port)
 db_name=$(ynh_app_setting_get $app db_name)
@@ -97,8 +97,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_print_info "Reinstalling extra dependencies ..."
 
 lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key="https://packages.erlang-solutions.com/debian/erlang_solutions.asc"
-
+ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
