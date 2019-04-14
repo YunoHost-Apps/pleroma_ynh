@@ -149,6 +149,8 @@ fi
 #=================================================
 ynh_print_info "Upgrading dependencies..."
 
+ynh_remove_app_dependencies
+
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
