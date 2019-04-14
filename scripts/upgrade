@@ -19,7 +19,7 @@ ynh_print_info "Loading installation settings..."
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get $app domain)
-path_url="/"
+path_url=$(ynh_app_setting_get $app path)
 admin=$(ynh_app_setting_get $app admin)
 is_public=$(ynh_app_setting_get $app is_public)
 final_path=$(ynh_app_setting_get $app final_path)
@@ -149,7 +149,6 @@ fi
 #=================================================
 ynh_print_info "Upgrading dependencies..."
 
-# install dependencies
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
@@ -158,7 +157,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_print_info "Installing extra dependencies ..."
 
 lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key="https://packages.erlang-solutions.com/debian/erlang_solutions.asc"
+ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # CREATE DEDICATED USER
