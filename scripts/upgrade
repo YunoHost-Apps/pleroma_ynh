@@ -149,9 +149,9 @@ fi
 #=================================================
 ynh_print_info "Upgrading dependencies..."
 
-ynh_package_autoremove $pkg_dependencies_to_remove
-
 ynh_install_app_dependencies $pkg_dependencies
+
+apt autoremove
 
 #=================================================
 # INSTALL EXTRA DEPENDENCIES
