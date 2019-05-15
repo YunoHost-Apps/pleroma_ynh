@@ -7,8 +7,7 @@
 #=================================================
 
 source _common.sh
-source ynh_systemd_action
-source ynh_add_secure_repos__3
+source ynh_add_extra_apt_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -34,8 +33,8 @@ name=$YNH_APP_ARG_NAME
 registration=$YNH_APP_ARG_REGISTRATION
 cache=$YNH_APP_ARG_CACHE
 size=$YNH_APP_ARG_SIZE
-random_key=$(ynh_string_random 64)
-admin_email=$(ynh_user_get_info $admin 'mail')
+random_key=$(ynh_string_random --length=64)
+admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 
 ## Bypass package_checker name not compatible with pleroma
 if [ "$admin" = "package_checker" ]
@@ -48,55 +47,47 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_print_info "Validating installation parameters..."
+ynh_print_info --message="Validating installation parameters..."
 
 final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
-
-# Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_print_info "Storing installation settings..."
+ynh_print_info --message="Storing installation settings..."
 
-ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
-ynh_app_setting_set $app admin $admin
-ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set "$app" name         "$name"
-ynh_app_setting_set "$app" registration "$registration"
-ynh_app_setting_set "$app" cache        "$cache"
-ynh_app_setting_set "$app" size         "$size"
-ynh_app_setting_set "$app" admin_email  "$admin_email"
-ynh_app_setting_set "$app" random_key   "$random_key"
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=name --value="$name"
+ynh_app_setting_set --app=$app --key=registration --value="$registration"
+ynh_app_setting_set --app=$app --key=cache --value="$cache"
+ynh_app_setting_set --app=$app --key=size --value="$size"
+ynh_app_setting_set --app=$app --key=admin_email --value="$admin_email"
+ynh_app_setting_set --app=$app --key=random_key --value="$random_key"
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_print_info "Configuring firewall ..."
+ynh_print_info --message="Configuring firewall..."
 
 # Find a free port
-port=$(ynh_find_port 8095)
-ynh_app_setting_set $app port $port
+port=$(ynh_find_port --port=8095)
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_print_info "Installing dependencies ..."
+ynh_print_info --message="Installing dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# INSTALL EXTRA DEPENDENCIES
-#=================================================
-ynh_print_info "Installing extra dependencies ..."
 
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
@@ -104,59 +95,55 @@ ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
-ynh_print_info "Creating a PostgreSQL database..."
+ynh_print_info --message="Creating a PostgreSQL database..."
 
-db_name=$(ynh_sanitize_dbid $app)
-db_pwd=$(ynh_string_random 30)
-ynh_app_setting_set $app db_name $db_name
-ynh_app_setting_set "$app" db_pwd "$db_pwd"
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user=$db_name
+db_pwd=$(ynh_string_random --length=30)
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
 ynh_psql_test_if_first_run
-ynh_psql_create_user "$app" "$db_pwd"
-ynh_psql_execute_as_root "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $db_name;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS citext;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS citext;" --database=$db_name
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" --database=$db_name
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info "Setting up source files ..."
+ynh_print_info --message="Setting up source files..."
 
-ynh_app_setting_set $app final_path $final_path
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/$app"
+ynh_setup_source --dest_dir="$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Configuring nginx web server..."
+ynh_print_info --message="Configuring nginx web server..."
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
 if [ $cache -eq 1 ]
 then
 	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string "{APP}"    "$app"  "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string "__SIZE__" "$size" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_store_file_checksum "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string  "{APP}"     "$app"  "../conf/media.conf"
-	ynh_replace_string  "__PORT__"  "$port" "../conf/media.conf"
+	ynh_replace_string --match_string="{APP}" --replace_string="$app" --target_file="/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string --match_string="__SIZE__" --replace_string="$size" --target_file="/etc/nginx/conf.d/$app-cache.conf"
+	ynh_store_file_checksum --file="/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string --match_string="{APP}" --replace_string="$app" --target_file="../conf/media.conf"
+	ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/media.conf"
 	sudo su -c "cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf"
-	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
+	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info "Configuring system user ..."
+ynh_print_info --message="Configuring system user ..."
 
 # Create a system user
-ynh_system_user_create "$app" "$final_path"
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # SPECIFIC SETUP
@@ -166,27 +153,27 @@ ynh_system_user_create "$app" "$final_path"
 
 cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
-ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__KEY__" --replace_string="$random_key" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__INSTANCE_NAME__" --replace_string="$name" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$final_path/$app/config/prod.secret.exs"
 
 if [ $cache -eq 1 ]
 then
-	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
 else
-	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
 fi
 
 #  Set registrations open/closed
 if [ $registration -eq 1 ]
 then
- ynh_replace_string "__REG__" "true"  "$final_path/$app/config/prod.secret.exs"
+ ynh_replace_string --match_string="__REG__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
 else
- ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
+ ynh_replace_string --match_string="__REG__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
 fi
 
 #=================================================
@@ -208,7 +195,7 @@ pushd $final_path/$app
 
 	#Generate key pair
     sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string --match_string="administrator@example.com" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs"
 
 	#Create uploads dir
 	mkdir uploads
@@ -217,7 +204,7 @@ popd
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info "Configuring a systemd service ..."
+ynh_print_info --message="Configuring a systemd service..."
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -227,7 +214,7 @@ ynh_add_systemd_config
 #=================================================
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
+ynh_store_file_checksum --file="$final_path/$app/config/prod.secret.exs"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -241,7 +228,7 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_print_info "Configuring log rotation ..."
+ynh_print_info --message="Configuring log rotation..."
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
@@ -255,32 +242,33 @@ ynh_use_logrotate
 yunohost service add $app --description "$app daemon for Pleroma" --log "/var/log/$app/$app.log"
 
 #=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Starting a systemd service..."
+
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info "Configuring SSOwat ..."
+ynh_print_info --message="Configuring SSOwat..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set $app unprotected_uris "/"
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx web server..."
+ynh_print_info --message="Reloading nginx web server..."
 
-systemctl reload nginx
-
-#=================================================
-# START SERVICE
-#=================================================
-
-ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Installation of $app completed"
+ynh_print_info --message="Installation of $app completed"

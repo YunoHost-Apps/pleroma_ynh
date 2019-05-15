@@ -18,7 +18,7 @@
             "name": "yalh76"
         }],
     "requirements": {
-        "yunohost": ">= 3.4"
+        "yunohost": ">= 3.5"
     },
     "multi_instance": true,
     "services": [
