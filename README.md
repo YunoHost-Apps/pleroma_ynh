@@ -1,9 +1,9 @@
 # Pleroma app for Yunohost
 
 [![Integration level](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma)  
-[![Install pleroma with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=pleroma)
+[![Install Pleroma with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=pleroma)
 
-> *This package allow you to install pleroma quickly and simply on a YunoHost server.  
+> *This package allow you to install Pleroma quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
 
 ## Overview
@@ -83,9 +83,9 @@ The app can be used by multiple users.
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/pleroma%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/pleroma%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/pleroma/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/pleroma%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/pleroma/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/pleroma/)
+* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/pleroma/)
 
 ## Limitations
 
@@ -95,7 +95,7 @@ The app can be used by multiple users.
 
  * Report a bug: https://github.com/YunoHost-Apps/pleroma_ynh/issues
  * App website: https://pleroma.social/
- * Pleroma Gitlab repo: https://git.pleroma.social/pleroma/pleroma/
+ * Upstream app repository: https://git.pleroma.social/pleroma/pleroma/
  * YunoHost website: https://yunohost.org/
 
 ---
