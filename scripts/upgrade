@@ -13,71 +13,77 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info "Loading installation settings..."
+ynh_print_info --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
-admin=$(ynh_app_setting_get $app admin)
-is_public=$(ynh_app_setting_get $app is_public)
-final_path=$(ynh_app_setting_get $app final_path)
-db_name=$(ynh_app_setting_get "$app" db_name)
-admin_email=$(ynh_app_setting_get "$app" admin_email)
-random_key=$(ynh_app_setting_get "$app" random_key)
-name=$(ynh_app_setting_get "$app" name)
-port=$(ynh_app_setting_get "$app" port)
-db_pwd=$(ynh_app_setting_get "$app" db_pwd)
-cache=$(ynh_app_setting_get "$app" cache)
-size=$(ynh_app_setting_get "$app" size)
-registration=$(ynh_app_setting_get "$app" registration)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+admin=$(ynh_app_setting_get --app=$app --key=admin)
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
+random_key=$(ynh_app_setting_get --app=$app --key=random_key)
+name=$(ynh_app_setting_get --app=$app --key=name)
+port=$(ynh_app_setting_get --app=$app --key=port)
+db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+cache=$(ynh_app_setting_get --app=$app --key=cache)
+size=$(ynh_app_setting_get --app=$app --key=size)
+registration=$(ynh_app_setting_get --app=$app --key=registration)
 
+
+#=================================================
+# CHECK VERSION
+#=================================================
+
+upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_print_info "Ensuring downward compatibility..."
+ynh_print_info --message="Ensuring downward compatibility..."
 
 # Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set $app is_public 1
+	ynh_app_setting_set --app=$app --key=is_public --value=1
 	is_public=1
 elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set $app is_public 0
+	ynh_app_setting_set --app=$app --key=is_public --value=0
 	is_public=0
 fi
 
 # If db_name doesn't exist, create it
-if [ -z $db_name ]; then
-	db_name=$(ynh_sanitize_dbid $app)
-	ynh_app_setting_set $app db_name $db_name
+if [ -z "$db_name" ]; then
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 fi
 
 # If final_path doesn't exist, create it
-if [ -z $final_path ]; then
+if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
-	ynh_app_setting_set $app final_path $final_path
+	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
 #Switch variables name
-psql_db=$(ynh_app_setting_get "$app" psql_db)
+psql_db=$(ynh_app_setting_get --app=$app --key=psql_db)
 
 if [ -n "$psql_db" ]
 then
-    db_name=$(ynh_app_setting_get "$app" psql_db)
-    db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
-    ynh_app_setting_set "$app" db_name "$db_name"
-    ynh_app_setting_set "$app" db_pwd "$db_pwd"
-	ynh_app_setting_delete "$app" psql_db
-	ynh_app_setting_delete "$app" psqlpwd
+    db_name=$(ynh_app_setting_get --app=$app --key=psql_db)
+    db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+    ynh_app_setting_set --app=$app --key=db_name --value="$db_name"
+    ynh_app_setting_set --app=$app --key=db_pwd --value="$db_pwd"
+	ynh_app_setting_delete --app=$app --key=psql_db
+	ynh_app_setting_delete --app=$app --key=psqlpwd
 fi
 
 #Close a port
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	echo "Close port $port" >&2
-	yunohost firewall disallow TCP $port 2>&1
+	ynh_print_info --message="Closing port $port..."
+	ynh_exec_warn_less yunohost firewall disallow TCP $port
 fi
 
 # Remove old repository
@@ -87,7 +93,7 @@ apt-key del A14F4FCA
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_print_info "Backing up the app before upgrading (may take a while)..."
+ynh_print_info --message="Backing up the app before upgrading (may take a while)..."
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -100,60 +106,53 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# STOP SERVICE
-#=================================================
-
-ynh_systemd_action --action=stop --service_name=$app
-
-#=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
-#=================================================
 # STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Stopping a systemd service..."
+
+ynh_systemd_action --service_name=$app --action=stop
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info "Upgrading source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/$app"
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_print_info --message="Upgrading source files..."
+
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path/$app"
+fi
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Upgrading nginx web server configuration..."
+ynh_print_info --message="Upgrading nginx web server configuration..."
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
-ynh_secure_remove /etc/nginx/conf.d/$app-cache.conf
+ynh_secure_remove --file="/etc/nginx/conf.d/$app-cache.conf"
 if [ $cache -eq 1 ]
 then
 	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string "{APP}"    "$app"  "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string "__SIZE__" "$size" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_store_file_checksum "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string  "{APP}"     "$app"  "../conf/media.conf"
-	ynh_replace_string  "__PORT__"  "$port" "../conf/media.conf"
+	ynh_replace_string --match_string="{APP}" --replace_string="$app"  --target_file="/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string --match_string="__SIZE__" --replace_string="$size" --target_file="/etc/nginx/conf.d/$app-cache.conf"
+	ynh_store_file_checksum --file="/etc/nginx/conf.d/$app-cache.conf"
+	ynh_replace_string  --match_string="{APP}" --replace_string="$app"  --target_file="../conf/media.conf"
+	ynh_replace_string  --match_string="__PORT__" --replace_string="$port" --target_file="../conf/media.conf"
 	sudo su -c "cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf"
-	ynh_store_file_checksum "/etc/nginx/conf.d/$domain.d/$app.conf"
+	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
 
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_print_info "Upgrading dependencies..."
+ynh_print_info --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# INSTALL EXTRA DEPENDENCIES
-#=================================================
-ynh_print_info "Installing extra dependencies ..."
 
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
@@ -161,45 +160,47 @@ ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info "Making sure dedicated system user exists..."
+ynh_print_info --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create "$app" "$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_print_info --message="Modifying a config file..."
 
 cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
-ynh_replace_string "__DOMAIN__"        "$domain"        "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__KEY__"           "$random_key"    "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__INSTANCE_NAME__" "$name"          "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_NAME__"       "$db_name"           "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__DB_PWD__"        "$db_pwd"        "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__ADMIN_EMAIL__"   "$admin_email"   "$final_path/$app/config/prod.secret.exs"
-ynh_replace_string "__PORT__"          "$port"          "$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__KEY__" --replace_string="$random_key" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__INSTANCE_NAME__" --replace_string="$name" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs"
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$final_path/$app/config/prod.secret.exs"
 
 if [ $cache -eq 1 ]
 then
-	ynh_replace_string "__MEDIA_CACHE__"    "true"        "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
 else
-	ynh_replace_string "__MEDIA_CACHE__"    "false"        "$final_path/$app/config/prod.secret.exs"
+	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
 fi
 
 #  Set registrations open/closed
 if [ $registration -eq 1 ]
 then
- ynh_replace_string "__REG__" "true"  "$final_path/$app/config/prod.secret.exs"
+ ynh_replace_string --match_string="__REG__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
 else
- ynh_replace_string "__REG__" "false" "$final_path/$app/config/prod.secret.exs"
+ ynh_replace_string --match_string="__REG__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
 fi
 
 #=================================================
 # MAKE UPGRADE
 #=================================================
+ynh_print_info --message="Making upgrade..."
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
@@ -209,17 +210,22 @@ pushd $final_path/$app
 	
 	#Generate key pair
     sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-	ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs" 
+	ynh_replace_string --match_string="administrator@example.com" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs" 
 popd
 
-ynh_backup_if_checksum_is_different "$final_path/$app/config/prod.secret.exs"
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+ynh_print_info --message="Storing the config file checksum..."
+
+ynh_backup_if_checksum_is_different --file="$final_path/$app/config/prod.secret.exs"
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum "$final_path/$app/config/prod.secret.exs"
+ynh_store_file_checksum --file="$final_path/$app/config/prod.secret.exs"
 
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_print_info "Upgrading logrotate configuration..."
+ynh_print_info --message="Upgrading logrotate configuration..."
 
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
@@ -227,7 +233,7 @@ ynh_use_logrotate --non-append
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info "Upgrading systemd configuration..."
+ynh_print_info --message="Upgrading systemd configuration..."
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -237,6 +243,7 @@ ynh_add_systemd_config
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_print_info --message="Securing files and directories..."
 
 # Set permissions on app files
 chown -R "$app":"$app" "$final_path"
@@ -244,31 +251,32 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info "Upgrading SSOwat configuration..."
+ynh_print_info --message="Upgrading SSOwat configuration..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set $app unprotected_uris "/"
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Starting a systemd service..."
+
+ynh_systemd_action --service_name=$app --action=start --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+sleep 10
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx web server..."
+ynh_print_info --message="Reloading nginx web server..."
 
-systemctl reload nginx
-
-#=================================================
-# START SERVICE
-#=================================================
-
-ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
-sleep 10
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Upgrade of $app completed"
+ynh_print_info --message="Upgrade of $app completed"
