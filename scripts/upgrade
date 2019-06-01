@@ -177,6 +177,7 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 # MODIFY A CONFIG FILE
 #=================================================
 
+ynh_backup_if_checksum_is_different --file="$final_path/$app/config/prod.secret.exs"
 cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
 
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/$app/config/prod.secret.exs"
@@ -221,7 +222,6 @@ popd
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-ynh_backup_if_checksum_is_different --file="$final_path/$app/config/prod.secret.exs"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$final_path/$app/config/prod.secret.exs"
 
