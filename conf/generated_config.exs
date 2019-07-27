@@ -3,19 +3,21 @@
 # NOTE: This file should not be committed to a repo or otherwise made public
 # without removing sensitive information.
 
-use Mix.Config
+import Config
 
 config :pleroma, Pleroma.Web.Endpoint,
    url: [host: "__DOMAIN__", scheme: "https", port: 443],
    secret_key_base: "__KEY__",
+   signing_salt: "__SIGNING_SALT__",
    http: [ip: {127, 0, 0, 1}, port: __PORT__]
 
 config :pleroma, :instance,
   name: "__INSTANCE_NAME__",
   email: "__ADMIN_EMAIL__",
+  notify_email: "__ADMIN_EMAIL__",
   limit: 5000,
   registrations_open: __REG__,
-  dedupe_media: false
+  dynamic_configuration: false
 
 config :pleroma, :media_proxy,
   enabled: __MEDIA_CACHE__,
@@ -29,6 +31,16 @@ config :pleroma, Pleroma.Repo,
   database: "__DB_NAME__",
   hostname: "localhost",
   pool_size: 10
+
+# Configure web push notifications
+config :web_push_encryption, :vapid_details,
+  subject: "mailto:__ADMIN_EMAIL__",
+  public_key: "__PUBLIC_KEY__",
+  private_key: "__PRIVATE_KEY__"
+
+config :pleroma, :database, rum_enabled: false
+config :pleroma, :instance, static_dir: "__DATADIR__/static"
+config :pleroma, Pleroma.Uploaders.Local, uploads: "__DATADIR__/uploads"
 
 # Enable Strict-Transport-Security once SSL is working:
 # config :pleroma, :http_security,
@@ -69,5 +81,3 @@ config :pleroma, Pleroma.Repo,
 #  storage_url: "https://swift-endpoint.prodider.com/v1/AUTH_<tenant>/<container>",
 #  object_url: "https://cdn-endpoint.provider.com/<container>"
 #
-
-

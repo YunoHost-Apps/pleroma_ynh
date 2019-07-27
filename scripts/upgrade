@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_detect_arch__2
 source ynh_add_extra_apt_repos__3
 source /usr/share/yunohost/helpers
 
@@ -129,7 +130,8 @@ then
 	ynh_print_info --message="Upgrading source files..."
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path/$app"
+	architecture=$(ynh_detect_arch)
+	ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 fi
 
 #=================================================
@@ -160,8 +162,8 @@ ynh_print_info --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
-lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+#lsb_name="$(lsb_release --codename --short)"
+#ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # CREATE DEDICATED USER

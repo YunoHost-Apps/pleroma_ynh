@@ -90,8 +90,8 @@ ynh_print_info --message="Reinstalling dependencies..."
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
 
-lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+#lsb_name="$(lsb_release --codename --short)"
+#ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
