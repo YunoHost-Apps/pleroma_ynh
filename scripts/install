@@ -37,8 +37,7 @@ random_key=$(ynh_string_random --length=64)
 admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 
 ## Bypass package_checker name not compatible with pleroma
-if [ "$admin" = "package_checker" ]
-then
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
 	admin="test"
 fi
 
