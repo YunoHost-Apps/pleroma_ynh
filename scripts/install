@@ -231,7 +231,7 @@ pushd $final_path/$app
 
 	#Generate key pair
     #sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-    su pleroma -s $SHELL -lc "PLEROMA_CONFIG_PATH=$config $final_path/$app/bin/pleroma_ctl gen keypair"  >> "$config"
+    #su pleroma -s $SHELL -lc "PLEROMA_CONFIG_PATH=$config $final_path/$app/bin/pleroma_ctl gen keypair"  >> "$config"
 	#ynh_replace_string --match_string="administrator@example.com" --replace_string="$admin_email" --target_file="$config"
 popd
 
@@ -272,7 +272,7 @@ yunohost service add $app --description "$app daemon for Pleroma" --log "/var/lo
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="restart" --log_path=systemd --line_match="Started pleroma  social network"
+ynh_systemd_action --service_name=$app --action="restart" --log_path=systemd --line_match="Started pleroma"
 
 #=================================================
 # SETUP SSOWAT

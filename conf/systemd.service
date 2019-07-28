@@ -1,5 +1,5 @@
 [Unit]
-Description=__APP__  social network
+Description=__APP__ social network
 After=network.target postgresql.service nginx.service
 
 [Service]
