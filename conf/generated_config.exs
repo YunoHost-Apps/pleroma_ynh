@@ -9,7 +9,7 @@ config :pleroma, Pleroma.Web.Endpoint,
    url: [host: "__DOMAIN__", scheme: "https", port: 443],
    secret_key_base: "__KEY__",
    signing_salt: "__SIGNING_SALT__",
-   http: [ip: {127, 0, 0, 1}, port: __PORT__]
+   http: [ip: {127, 0, 0, 1}, port: 8095]
 
 config :pleroma, :instance,
   name: "__INSTANCE_NAME__",
@@ -81,3 +81,15 @@ config :pleroma, Pleroma.Uploaders.Local, uploads: "__DATADIR__/uploads"
 #  storage_url: "https://swift-endpoint.prodider.com/v1/AUTH_<tenant>/<container>",
 #  object_url: "https://cdn-endpoint.provider.com/<container>"
 #
+
+config :pleroma, Pleroma.Web.Auth.Authenticator, Pleroma.Web.Auth.LDAPAuthenticator
+config :pleroma, :ldap,
+  enabled: true,
+  host: "localhost",
+  port: 389,
+  ssl: false,
+  # sslopts: [],
+  tls: false,
+  # tlsopts: [],
+  base: "ou=users,dc=yunohost,dc=org",
+  uid:  "cn"

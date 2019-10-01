@@ -179,32 +179,32 @@ chown -R $app /etc/$app
 
 config="/etc/$app/config.exs"
 
-cp -f ../conf/generated_config.exs $config
+#cp -f ../conf/generated_config.exs $config
 
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
-ynh_replace_string --match_string="__KEY__" --replace_string="$random_key" --target_file="$config"
-ynh_replace_string --match_string="__SIGNING_SALT__" --replace_string="$signing_salt" --target_file="$config"
-ynh_replace_string --match_string="__INSTANCE_NAME__" --replace_string="$name" --target_file="$config"
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$config"
-ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$config"
-ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$config"
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$config"
-ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="$config"
+# ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
+#ynh_replace_string --match_string="__KEY__" --replace_string="$random_key" --target_file="$config"
+#ynh_replace_string --match_string="__SIGNING_SALT__" --replace_string="$signing_salt" --target_file="$config"
+# ynh_replace_string --match_string="__INSTANCE_NAME__" --replace_string="$name" --target_file="$config"
+# ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$config"
+# ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$config"
+# ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$config"
+# ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$config"
+# ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="$config"
 
-if [ $cache -eq 1 ]
-then
-	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="true" --target_file="$config"
-else
-	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="false" --target_file="$config"
-fi
+#if [ $cache -eq 1 ]
+#then
+#	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="true" --target_file="$config"
+#else
+#	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="false" --target_file="$config"
+#fi
 
 #  Set registrations open/closed
-if [ $registration -eq 1 ]
-then
- ynh_replace_string --match_string="__REG__" --replace_string="true" --target_file="$config"
-else
- ynh_replace_string --match_string="__REG__" --replace_string="false" --target_file="$config"
-fi
+#if [ $registration -eq 1 ]
+#then
+# ynh_replace_string --match_string="__REG__" --replace_string="true" --target_file="$config"
+#else
+# ynh_replace_string --match_string="__REG__" --replace_string="false" --target_file="$config"
+#fi
 
 #=================================================
 # SETUP SYSTEMD
@@ -222,12 +222,32 @@ ynh_add_systemd_config
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
-    su "$app" -s $SHELL -lc "PLEROMA_CONFIG_PATH=$config $final_path/$app/bin/pleroma_ctl migrate"
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
+    --output $config \
+    --output-psql /tmp/setup_db.psql \
+    --domain $domain \
+    --instance-name \"$name\" \
+    --admin-email $admin_email \
+    --notify-email $admin_email \
+    --dbhost localhost \
+    --dbname $db_name \
+    --dbuser $db_user \
+    --dbpass $db_pwd \
+    --rum N \
+    --indexable Y \
+    --db-configurable Y \
+    --uploads-dir $datadir/uploads \
+    --static-dir $datadir/static \
+    --listen-ip 127.0.0.1 \
+    --listen-port $port"
 
-    ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="check_if_time_to_update"
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+
+    ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app social network."
+    sleep 20
 
     # Add user
-    su pleroma -s $SHELL -lc "PLEROMA_CONFIG_PATH=$config $final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+    su pleroma -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
 
 	#Generate key pair
     #sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
@@ -272,7 +292,7 @@ yunohost service add $app --description "$app daemon for Pleroma" --log "/var/lo
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="restart" --log_path=systemd --line_match="Started pleroma"
+ynh_systemd_action --service_name=$app --action="restart" --log_path=systemd --line_match="Started $app social network."
 
 #=================================================
 # SETUP SSOWAT
