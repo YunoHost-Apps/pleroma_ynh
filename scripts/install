@@ -222,6 +222,7 @@ ynh_add_systemd_config
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
+    ynh_replace_string --match_string="static_dir" --replace_string="static" --target_file="$final_path/$app/releases/1.0.91-2-gac113f67-maint-1-1/releases.exs"
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
     --output $config \
     --output-psql /tmp/setup_db.psql \
@@ -235,7 +236,6 @@ pushd $final_path/$app
     --dbpass $db_pwd \
     --rum N \
     --indexable Y \
-    --db-configurable Y \
     --uploads-dir $datadir/uploads \
     --static-dir $datadir/static \
     --listen-ip 127.0.0.1 \
@@ -244,7 +244,7 @@ pushd $final_path/$app
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 
     ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app social network."
-    sleep 20
+    sleep 60
 
     # Add user
     su pleroma -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
