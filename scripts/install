@@ -222,6 +222,7 @@ ynh_add_systemd_config
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
+    #ynh_replace_string --match_string="_dir" --replace_string="" --target_file="/var/www/pleroma/pleroma/releases/1.1.2-2-g59d447d5-release-1-1-2/releases.exs"
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
     --output $config \
     --output-psql /tmp/setup_db.psql \
@@ -234,7 +235,6 @@ pushd $final_path/$app
     --dbuser $db_user \
     --dbpass $db_pwd \
     --rum N \
-    --db-configurable Y \
     --indexable Y \
     --uploads-dir $datadir/uploads \
     --static-dir $datadir/static \
