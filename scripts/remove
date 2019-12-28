@@ -37,6 +37,13 @@ then
 fi
 
 #=================================================
+# STOP ALL PLEROMA SERVICES
+#=================================================
+ynh_print_info --message="Stopping all pleroma services..."
+
+pkill -u $app
+
+#=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
 ynh_print_info --message="Stopping and removing the systemd service..."
