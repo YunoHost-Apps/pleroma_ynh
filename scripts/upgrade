@@ -7,8 +7,8 @@
 #=================================================
 
 source _common.sh
+source ynh_package_version
 source ynh_detect_arch__2
-source ynh_add_extra_apt_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -90,6 +90,7 @@ fi
 ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
 apt-key del A14F4FCA
 
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -106,20 +107,46 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path --path_url=$path_url)
-
-#=================================================
 # STANDARD UPGRADE STEPS
+#=================================================
+# UPGRADE TO OTP RELEASE
+#=================================================
+ynh_print_info --message="Upgrading to OTP release..."
+
+if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
+	# Define app's data directory
+	datadir="/home/yunohost.app/${app}"
+	ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+	# Create app folders
+	mkdir -p "$datadir"
+	mkdir -p "$datadir/uploads"
+	mkdir -p "$datadir/static"
+	mkdir -p "$datadir/static/emoji"
+
+	# Give permission to the datadir
+	chown -R "$app":"$app" "$datadir"
+
+	mv $final_path/$app/uploads/* "$datadir/uploads"
+	mv $final_path/$app/instance/static "$datadir/static"
+
+	ls -d $final_path/$app/priv/static/emoji/*/ | xargs -i sh -c 'mv "{}" "$datadir/static/emoji/$(basename {})"'
+	mv $final_path/$app/priv/static/emoji /var/lib/pleroma/static/emoji
+
+	mkdir -p /etc/$app
+	chown -R $app /etc/$app
+	config="/etc/$app/config.exs"
+	mv $final_path/$app/config/prod.secret.exs /etc/pleroma/config.exs
+
+	rm -r $final_path/$app/*
+fi
+
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop"
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma social network"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -162,9 +189,6 @@ ynh_print_info --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
-#lsb_name="$(lsb_release --codename --short)"
-#ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
-
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -179,31 +203,9 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 # MODIFY A CONFIG FILE
 #=================================================
 
-ynh_backup_if_checksum_is_different --file="$final_path/$app/config/prod.secret.exs"
-cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
+config="/etc/$app/config.exs"
 
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__KEY__" --replace_string="$random_key" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__INSTANCE_NAME__" --replace_string="$name" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$final_path/$app/config/prod.secret.exs"
-
-if [ $cache -eq 1 ]
-then
-	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
-else
-	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
-fi
-
-#  Set registrations open/closed
-if [ $registration -eq 1 ]
-then
- ynh_replace_string --match_string="__REG__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
-else
- ynh_replace_string --match_string="__REG__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
-fi
+ynh_store_file_checksum --file="$config"
 
 #=================================================
 # MAKE UPGRADE
@@ -211,13 +213,10 @@ fi
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
+
 pushd $final_path/$app
-    sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
-	
-	#Generate key pair
-    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-	ynh_replace_string --match_string="administrator@example.com" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs" 
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl update"
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 popd
 
 #=================================================
@@ -225,15 +224,7 @@ popd
 #=================================================
 
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/$app/config/prod.secret.exs"
-
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_print_info --message="Upgrading logrotate configuration..."
-
-# Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append
+ynh_store_file_checksum --file="$config"
 
 #=================================================
 # SETUP SYSTEMD
@@ -265,7 +256,7 @@ then
 fi
 
 #=================================================
-# START SERVICE
+# START SYSTEMD SERVICE
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 

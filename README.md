@@ -25,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 - Tootdon (Android + iOS)
 - Tootle (iOS)
 
-**Shipped version:** 1.1.6
+**Shipped version:** 1.1.7
 
 ## Important points to read before installing
 

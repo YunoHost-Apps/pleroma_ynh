@@ -57,7 +57,7 @@ fi
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop"
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma social network"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
