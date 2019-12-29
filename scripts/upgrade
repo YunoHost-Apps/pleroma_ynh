@@ -109,6 +109,13 @@ ynh_abort_if_errors
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Stopping a systemd service..."
+
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma social network"
+
+#=================================================
 # UPGRADE TO OTP RELEASE
 #=================================================
 ynh_print_info --message="Upgrading to OTP release..."
@@ -142,15 +149,9 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 fi
 
 #=================================================
-# STOP SYSTEMD SERVICE
-#=================================================
-ynh_print_info --message="Stopping a systemd service..."
-
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma social network"
-
-#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_print_info --message="Upgrading source files..."
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
@@ -202,14 +203,16 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_print_info --message="Modifying a config file..."
 
 config="/etc/$app/config.exs"
 
-ynh_store_file_checksum --file="$config"
+ynh_backup_if_checksum_is_different --file="$config"
 
 #=================================================
 # MAKE UPGRADE
 #=================================================
+ynh_print_info --message="Making upgrade..."
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
@@ -222,6 +225,7 @@ popd
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
+ynh_print_info --message="Storing the config file checksum..."
 
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
@@ -239,6 +243,7 @@ ynh_add_systemd_config
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_print_info --message="Securing files and directories..."
 
 # Set permissions on app files
 chown -R "$app":"$app" "$final_path"
@@ -261,7 +266,9 @@ fi
 ynh_print_info --message="Starting a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
-sleep 10
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
+	sleep 60
+fi
 
 #=================================================
 # RELOAD NGINX

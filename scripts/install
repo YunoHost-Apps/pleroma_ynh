@@ -13,6 +13,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
+ynh_print_info --message="Managing script failure..."
 
 ynh_clean_setup () {
 	ynh_clean_check_starting
@@ -23,6 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
+ynh_print_info --message="Retrieving arguments from the manifest..."
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
@@ -64,13 +66,13 @@ ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
-ynh_app_setting_set --app=$app --key=name --value="$name"
-ynh_app_setting_set --app=$app --key=registration --value="$registration"
-ynh_app_setting_set --app=$app --key=cache --value="$cache"
-ynh_app_setting_set --app=$app --key=size --value="$size"
-ynh_app_setting_set --app=$app --key=admin_email --value="$admin_email"
-ynh_app_setting_set --app=$app --key=random_key --value="$random_key"
-ynh_app_setting_set --app=$app --key=signing_salt --value="$signing_salt"
+ynh_app_setting_set --app=$app --key=name --value=$name
+ynh_app_setting_set --app=$app --key=registration --value=$registration
+ynh_app_setting_set --app=$app --key=cache --value=$cache
+ynh_app_setting_set --app=$app --key=size --value=$size
+ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
+ynh_app_setting_set --app=$app --key=random_key --value=$random_key
+ynh_app_setting_set --app=$app --key=signing_salt --value=$signing_salt
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -233,6 +235,7 @@ ynh_store_file_checksum --file="$config"
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_print_info --message="Securing files and directories..."
 
 # Set permissions to app files
 chown -R "$app":"$app" "$final_path"
@@ -240,16 +243,9 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_print_info --message="Integrating service in YunoHost..."
 
 yunohost service add $app --description "$app daemon for Pleroma" --log_type "systemd"
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_print_info --message="Starting a systemd service..."
-
-# Start a systemd service
-ynh_systemd_action --service_name=$app --action="restart" --log_path=systemd --line_match="Started $app social network."
 
 #=================================================
 # SETUP SSOWAT

@@ -85,7 +85,6 @@ The app can be used by multiple users.
 
 * x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/pleroma/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/pleroma/)
 
 ## Limitations
 
