@@ -90,6 +90,13 @@ fi
 ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
 apt-key del A14F4FCA
 
+#=================================================
+# CHECK VERSION NUMBER
+#=================================================
+
+abort_if_up_to_date
+# previous function is what defines 'version', more precisely the 'previous version'
+previous_version="${version}"
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
