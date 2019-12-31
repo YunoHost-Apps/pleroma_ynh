@@ -94,6 +94,9 @@ apt-key del A14F4FCA
 # CHECK VERSION NUMBER
 #=================================================
 
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
+  sleep 60
+fi
 abort_if_up_to_date
 # previous function is what defines 'version', more precisely the 'previous version'
 previous_version="${version}"
