@@ -6,12 +6,14 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
+#Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
+ynh_print_info --message="Managing script failure..."
 
 ynh_clean_setup () {
 	ynh_clean_check_starting
@@ -29,6 +31,7 @@ app=$YNH_APP_INSTANCE_NAME
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+
 cache=$(ynh_app_setting_get --app=$app --key=cache)
 
 #=================================================
@@ -38,7 +41,7 @@ cache=$(ynh_app_setting_get --app=$app --key=cache)
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop"
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma social network"
 
 #=================================================
 # BACKUP THE APP MAIN DIR
@@ -69,11 +72,11 @@ ynh_psql_dump_db --database="$db_name" > db.sql
 #=================================================
 # SPECIFIC BACKUP
 #=================================================
-# BACKUP LOGROTATE
+# BACKUP CONFIG FILE
 #=================================================
-ynh_print_info --message="Backing up logrotate configuration..."
+ynh_print_info --message="Backing up configuration file..."
 
-ynh_backup --src_path="/etc/logrotate.d/$app"
+ynh_backup --src_path="/etc/$app/config.exs"
 
 #=================================================
 # BACKUP SYSTEMD
@@ -87,7 +90,10 @@ ynh_backup --src_path="/etc/systemd/system/$app.service"
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
+	sleep 60
+fi
 
 #=================================================
 # END OF SCRIPT

@@ -7,12 +7,13 @@
 #=================================================
 
 source _common.sh
-source ynh_add_extra_apt_repos__3
+source ynh_detect_arch__2
 source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
+ynh_print_info --message="Managing script failure..."
 
 ynh_clean_setup () {
 	ynh_clean_check_starting
@@ -23,6 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
+ynh_print_info --message="Retrieving arguments from the manifest..."
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
@@ -34,11 +36,11 @@ registration=$YNH_APP_ARG_REGISTRATION
 cache=$YNH_APP_ARG_CACHE
 size=$YNH_APP_ARG_SIZE
 random_key=$(ynh_string_random --length=64)
+signing_salt=$(ynh_string_random --length=8)
 admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 
 ## Bypass package_checker name not compatible with pleroma
-if [ "$admin" = "package_checker" ]
-then
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
 	admin="test"
 fi
 
@@ -64,12 +66,13 @@ ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
-ynh_app_setting_set --app=$app --key=name --value="$name"
-ynh_app_setting_set --app=$app --key=registration --value="$registration"
-ynh_app_setting_set --app=$app --key=cache --value="$cache"
-ynh_app_setting_set --app=$app --key=size --value="$size"
-ynh_app_setting_set --app=$app --key=admin_email --value="$admin_email"
-ynh_app_setting_set --app=$app --key=random_key --value="$random_key"
+ynh_app_setting_set --app=$app --key=name --value=$name
+ynh_app_setting_set --app=$app --key=registration --value=$registration
+ynh_app_setting_set --app=$app --key=cache --value=$cache
+ynh_app_setting_set --app=$app --key=size --value=$size
+ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
+ynh_app_setting_set --app=$app --key=random_key --value=$random_key
+ynh_app_setting_set --app=$app --key=signing_salt --value=$signing_salt
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -78,7 +81,7 @@ ynh_app_setting_set --app=$app --key=random_key --value="$random_key"
 #=================================================
 ynh_print_info --message="Configuring firewall..."
 
-# Find a free port
+# Find an available port
 port=$(ynh_find_port --port=8095)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
@@ -88,9 +91,6 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 ynh_print_info --message="Installing dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
-
-lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -116,7 +116,8 @@ ynh_print_info --message="Setting up source files..."
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path/$app"
+architecture=$(ynh_detect_arch)
+ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 
 #=================================================
 # NGINX CONFIGURATION
@@ -140,7 +141,7 @@ fi
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info --message="Configuring system user ..."
+ynh_print_info --message="Configuring system user..."
 
 # Create a system user
 ynh_system_user_create --username=$app --home_dir="$final_path"
@@ -148,58 +149,32 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# CREATE THE DATA DIRECTORY
+#=================================================
+ynh_print_info --message="Create the data directory..."
+
+# Define app's data directory
+datadir="/home/yunohost.app/${app}"
+
+# Create app folders
+mkdir -p "$datadir"
+mkdir -p "$datadir/uploads"
+mkdir -p "$datadir/static"
+mkdir -p "$datadir/static/emoji"
+
+# Give permission to the datadir
+chown -R "$app":"$app" "$datadir"
+
+ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+#=================================================
 # MODIFY A CONFIG FILE
 #=================================================
 
-cp -f ../conf/generated_config.exs "$final_path/$app/config/prod.secret.exs"
+mkdir -p /etc/$app
+chown -R $app /etc/$app
 
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__KEY__" --replace_string="$random_key" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__INSTANCE_NAME__" --replace_string="$name" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs"
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$final_path/$app/config/prod.secret.exs"
-
-if [ $cache -eq 1 ]
-then
-	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
-else
-	ynh_replace_string --match_string="__MEDIA_CACHE__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
-fi
-
-#  Set registrations open/closed
-if [ $registration -eq 1 ]
-then
- ynh_replace_string --match_string="__REG__" --replace_string="true" --target_file="$final_path/$app/config/prod.secret.exs"
-else
- ynh_replace_string --match_string="__REG__" --replace_string="false" --target_file="$final_path/$app/config/prod.secret.exs"
-fi
-
-#=================================================
-# MAKE SETUP
-#=================================================
-
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
-
-pushd $final_path/$app
-    # App setup and db migration
-    sudo -u "$app" MIX_ENV=prod mix local.hex --force
-    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-    sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
-
-    # Add user
-    sudo -u "$app" MIX_ENV=prod mix pleroma.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
-
-	#Generate key pair
-    sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
-	ynh_replace_string --match_string="administrator@example.com" --replace_string="$admin_email" --target_file="$final_path/$app/config/prod.secret.exs"
-
-	#Create uploads dir
-	mkdir uploads
-popd
+config="/etc/$app/config.exs"
 
 #=================================================
 # SETUP SYSTEMD
@@ -210,43 +185,67 @@ ynh_print_info --message="Configuring a systemd service..."
 ynh_add_systemd_config
 
 #=================================================
+# MAKE SETUP
+#=================================================
+
+# Give permission to the final_path
+chown -R "$app":"$app" "$final_path"
+
+pushd $final_path/$app
+    #Workaround for static-dir error
+    ynh_replace_string --match_string="_dir" --replace_string="" --target_file="/var/www/pleroma/pleroma/releases/1.1.7/releases.exs"
+    
+    #Generate instance
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
+    --output $config \
+    --output-psql /tmp/setup_db.psql \
+    --domain $domain \
+    --instance-name \"$name\" \
+    --admin-email $admin_email \
+    --notify-email $admin_email \
+    --dbhost localhost \
+    --dbname $db_name \
+    --dbuser $db_user \
+    --dbpass $db_pwd \
+    --rum N \
+    --indexable Y \
+    --uploads-dir $datadir/uploads \
+    --static-dir $datadir/static \
+    --listen-ip 127.0.0.1 \
+    --listen-port $port"
+
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+
+    ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app social network."
+    sleep 60
+
+    # Add user
+    su pleroma -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+popd
+
+#=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$final_path/$app/config/prod.secret.exs"
+ynh_store_file_checksum --file="$config"
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_print_info --message="Securing files and directories..."
 
 # Set permissions to app files
 chown -R "$app":"$app" "$final_path"
 
 #=================================================
-# SETUP LOGROTATE
+# INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_print_info --message="Configuring log rotation..."
+ynh_print_info --message="Integrating service in YunoHost..."
 
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate
-
-#=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
-#=================================================
-
-#yunohost service add $app --log "/var/log/$app/APP.log"
-# if using yunohost version 3.2 or more in the 'manifest.json', a description can be added
-yunohost service add $app --description "$app daemon for Pleroma" --log "/var/log/$app/$app.log"
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_print_info --message="Starting a systemd service..."
-
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+yunohost service add $app --description "$app daemon for Pleroma" --log_type "systemd"
 
 #=================================================
 # SETUP SSOWAT

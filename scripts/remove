@@ -21,20 +21,28 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-cache=$(ynh_app_setting_get --app=$app --key=cache)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE SERVICE FROM ADMIN PANEL
+# REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
+ynh_print_info --message="Removing service integration in YunoHost..."
 
-# Remove a service from the admin panel, added by `yunohost service add`
-if yunohost service status $app >/dev/null 2>&1
+# Remove the service from the list of services known by Yunohost (added from `yunohost service add`)
+if ynh_exec_warn_less yunohost service status $app >/dev/null
 then
 	ynh_print_info --message="Removing $app service..."
 	yunohost service remove $app
 fi
+
+#=================================================
+# STOP ALL PLEROMA SERVICES
+#=================================================
+ynh_print_info --message="Stopping all pleroma services..."
+
+pkill -u $app
 
 #=================================================
 # STOP AND REMOVE SERVICE
@@ -78,17 +86,9 @@ ynh_remove_nginx_config
 ynh_secure_remove --file="/etc/nginx/conf.d/$app-cache.conf"
 
 #=================================================
-# REMOVE LOGROTATE CONFIGURATION
-#=================================================
-ynh_print_info --message="Removing logrotate configuration..."
-
-# Remove the app-specific logrotate config
-ynh_remove_logrotate
-
-#=================================================
 # CLOSE A PORT
 #=================================================
-ynh_print_info --message="Closing ports"
+ynh_print_info --message="Closing a port"
 
 if yunohost firewall list | grep -q "\- $port$"
 then
@@ -99,14 +99,14 @@ fi
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
-# REMOVE THE CRON FILE
+# REMOVE DIRECTORIES
 #=================================================
 
-# Remove a directory securely
+# Remove the config directory securely
 ynh_secure_remove "/etc/$app/"
 
-# Remove the log files
-ynh_secure_remove "/var/log/$app/"
+# Remove the data directory securely
+ynh_secure_remove "$datadir/"
 
 #=================================================
 # GENERIC FINALIZATION
