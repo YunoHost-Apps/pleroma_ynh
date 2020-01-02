@@ -144,11 +144,11 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 	# Give permission to the datadir
 	chown -R "$app":"$app" "$datadir"
 
-	mv $final_path/$app/uploads/* "$datadir/uploads"
-	mv $final_path/$app/instance/static "$datadir/static"
+	mv $final_path/$app/uploads/* "$datadir/uploads" 2>/dev/null
+	mv $final_path/$app/instance/static "$datadir/static" 2>/dev/null
 
 	ls -d $final_path/$app/priv/static/emoji/*/ | xargs -i sh -c 'mv "{}" "$datadir/static/emoji/$(basename {})"'
-	mv $final_path/$app/priv/static/emoji /var/lib/pleroma/static/emoji
+	mv $final_path/$app/priv/static/emoji /var/lib/pleroma/static/emoji 2>/dev/null
 
 	mkdir -p /etc/$app
 	chown -R $app /etc/$app
