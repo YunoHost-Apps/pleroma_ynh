@@ -28,6 +28,7 @@ admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
 random_key=$(ynh_app_setting_get --app=$app --key=random_key)
 name=$(ynh_app_setting_get --app=$app --key=name)
 port=$(ynh_app_setting_get --app=$app --key=port)
+db_user=$(ynh_app_setting_get --app=$app --key=db_user)
 db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 cache=$(ynh_app_setting_get --app=$app --key=cache)
 size=$(ynh_app_setting_get --app=$app --key=size)
@@ -109,6 +110,7 @@ ynh_print_info --message="Backing up the app before upgrading (may take a while)
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	read -p "key"
 	# restore it if the upgrade fails
 	ynh_restore_upgradebackup
 	ynh_clean_check_starting
@@ -123,7 +125,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma"
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
 
 #=================================================
 # UPGRADE TO OTP RELEASE
@@ -136,24 +138,29 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 	ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
 
 	# Create app folders
-	mkdir -p "$datadir"
-	mkdir -p "$datadir/uploads"
-	mkdir -p "$datadir/static"
-	mkdir -p "$datadir/static/emoji"
+	mkdir -p "$datadir/"
+	mkdir -p "$datadir/uploads/"
+	mkdir -p "$datadir/static/"
+	mkdir -p "$datadir/static/emoji/"
 
 	# Give permission to the datadir
 	chown -R "$app":"$app" "$datadir"
 
-	mv $final_path/$app/uploads/* "$datadir/uploads" 2>/dev/null
-	mv $final_path/$app/instance/static "$datadir/static" 2>/dev/null
+	rsync -a "$final_path/$app/uploads/" "$datadir/uploads/"
+	if [ -d "$final_path/$app/instance/static/" ]; then
+		rsync -a "$final_path/$app/instance/static/" "$datadir/static/"
+	fi
 
 	ls -d $final_path/$app/priv/static/emoji/*/ | xargs -i sh -c 'mv "{}" "$datadir/static/emoji/$(basename {})"'
-	mv $final_path/$app/priv/static/emoji /var/lib/pleroma/static/emoji 2>/dev/null
+	rsync -a "$final_path/$app/priv/static/emoji/" "$datadir/static/emoji/"
 
 	mkdir -p /etc/$app
 	chown -R $app /etc/$app
 	config="/etc/$app/config.exs"
-	mv $final_path/$app/config/prod.secret.exs /etc/pleroma/config.exs
+	mv $final_path/$app/config/prod.secret.exs $config
+	ynh_replace_string --match_string="use Mix.Config" --replace_string="import Config" --target_file="$config"
+
+	ynh_backup_if_checksum_is_different --file="$config"
 
 	rm -r $final_path/$app/*
 fi
@@ -275,7 +282,7 @@ fi
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
 	sleep 60
 fi

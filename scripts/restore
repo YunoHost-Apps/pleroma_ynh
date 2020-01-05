@@ -91,10 +91,10 @@ chown -R "$app":"$app" "$final_path"
 ynh_print_info --message="Recreate the data directory..."
 
 # Create app folders
-mkdir -p "$datadir"
-mkdir -p "$datadir/uploads"
-mkdir -p "$datadir/static"
-mkdir -p "$datadir/static/emoji"
+mkdir -p "$datadir/"
+mkdir -p "$datadir/uploads/"
+mkdir -p "$datadir/static/"
+mkdir -p "$datadir/static/emoji/"
 
 # Give permission to the datadir
 chown -R "$app":"$app" "$datadir"
@@ -149,7 +149,7 @@ yunohost service add $app --description "$app daemon for Pleroma" --log_type "sy
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Running Pleroma.Web.Endpoint"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
 	sleep 60
 fi

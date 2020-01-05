@@ -157,10 +157,10 @@ ynh_print_info --message="Create the data directory..."
 datadir="/home/yunohost.app/${app}"
 
 # Create app folders
-mkdir -p "$datadir"
-mkdir -p "$datadir/uploads"
-mkdir -p "$datadir/static"
-mkdir -p "$datadir/static/emoji"
+mkdir -p "$datadir/"
+mkdir -p "$datadir/uploads/"
+mkdir -p "$datadir/static/"
+mkdir -p "$datadir/static/emoji/"
 
 # Give permission to the datadir
 chown -R "$app":"$app" "$datadir"
@@ -216,7 +216,7 @@ pushd $final_path/$app
 
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 
-    ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app social network."
+    ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
     sleep 60
 
     # Add user
