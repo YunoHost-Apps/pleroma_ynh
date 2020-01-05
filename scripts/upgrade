@@ -123,7 +123,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma social network"
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped pleroma"
 
 #=================================================
 # UPGRADE TO OTP RELEASE
