@@ -193,7 +193,7 @@ chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
     #Workaround for static-dir error
-    ynh_replace_string --match_string="_dir" --replace_string="" --target_file="/var/www/pleroma/pleroma/releases/1.1.7/releases.exs"
+    ynh_replace_string --match_string="_dir" --replace_string="" --target_file="/var/www/pleroma/pleroma/releases/1.1.8/releases.exs"
     
     #Generate instance
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
