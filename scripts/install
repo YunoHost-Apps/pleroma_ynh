@@ -126,6 +126,7 @@ ynh_print_info --message="Configuring nginx web server..."
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
+
 if [ $cache -eq 1 ]
 then
 	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
@@ -151,7 +152,7 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 # CREATE THE DATA DIRECTORY
 #=================================================
-ynh_print_info --message="Create the data directory..."
+ynh_print_info --message="Creating the data directory..."
 
 # Define app's data directory
 datadir="/home/yunohost.app/${app}"
@@ -168,8 +169,9 @@ chown -R "$app":"$app" "$datadir"
 ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
 
 #=================================================
-# MODIFY A CONFIG FILE
+# CREATE THE CONFIG DIRECTORY
 #=================================================
+ynh_print_info --message="Creating the config directory..."
 
 mkdir -p /etc/$app
 chown -R $app /etc/$app
@@ -187,6 +189,7 @@ ynh_add_systemd_config
 #=================================================
 # MAKE SETUP
 #=================================================
+ynh_print_info --message="Making setup..."
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
@@ -226,6 +229,7 @@ popd
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
+ynh_print_info --message="Storing the config file checksum..."
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$config"
