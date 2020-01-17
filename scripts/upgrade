@@ -236,7 +236,6 @@ ynh_print_info --message="Making upgrade..."
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
-    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl update"
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 popd
 
