@@ -128,6 +128,10 @@ ynh_print_info --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
 
+if ynh_version_gt "${previous_version}" "1.1.1~ynh1"  ; then
+	pkill -u $app
+fi
+
 #=================================================
 # UPGRADE TO OTP RELEASE
 #=================================================
@@ -236,7 +240,6 @@ ynh_print_info --message="Making upgrade..."
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
-    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl update"
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 popd
 
