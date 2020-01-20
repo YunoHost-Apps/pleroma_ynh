@@ -128,7 +128,7 @@ ynh_print_info --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
 
-if ynh_version_gt "1.1.7~ynh1" "${previous_version}" ; then
+if ynh_version_gt "${previous_version}" "1.1.1~ynh1"  ; then
 	pkill -u $app
 fi
 
