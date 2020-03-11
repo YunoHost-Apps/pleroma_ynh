@@ -76,6 +76,8 @@ ynh_print_info --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
 
+pkill -u $app
+
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
@@ -110,16 +112,19 @@ fi
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_print_info --message="Modifying a config file..."
 
-ynh_replace_string --match_string="$old_domain" --replace_string="$new_domain" --target_file="$final_path/$app/config/prod.secret.exs"
+config="/etc/$app/config.exs"
+ynh_backup_if_checksum_is_different --file="$config"
+ynh_replace_string --match_string="$old_domain" --replace_string="$new_domain" --target_file="$config"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
+ynh_print_info --message="Storing the config file checksum..."
 
-ynh_backup_if_checksum_is_different --file="$final_path/$app/config/prod.secret.exs"
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/$app/config/prod.secret.exs"
+ynh_store_file_checksum --file="$config"
 
 #=================================================
 # GENERIC FINALISATION

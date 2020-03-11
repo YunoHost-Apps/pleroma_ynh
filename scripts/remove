@@ -42,6 +42,8 @@ fi
 #=================================================
 ynh_print_info --message="Stopping all pleroma services..."
 
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
+
 pkill -u $app
 
 #=================================================
@@ -88,7 +90,7 @@ ynh_secure_remove --file="/etc/nginx/conf.d/$app-cache.conf"
 #=================================================
 # CLOSE A PORT
 #=================================================
-ynh_print_info --message="Closing a port"
+ynh_print_info --message="Closing a port..."
 
 if yunohost firewall list | grep -q "\- $port$"
 then
@@ -101,12 +103,13 @@ fi
 #=================================================
 # REMOVE DIRECTORIES
 #=================================================
+ynh_print_info --message="Removing directories..."
 
 # Remove the config directory securely
-ynh_secure_remove "/etc/$app/"
+ynh_secure_remove --file="/etc/$app"
 
 # Remove the data directory securely
-ynh_secure_remove "$datadir/"
+ynh_secure_remove --file="$datadir"
 
 #=================================================
 # GENERIC FINALIZATION
