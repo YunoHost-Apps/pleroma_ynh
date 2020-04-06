@@ -49,13 +49,13 @@ Go to **cd /var/www/pleroma/pleroma**.
 
 **Run:**
 
-    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod mix pleroma.user new <NICKNAME> <EMAIL> )
+    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user new <NICKNAME> <EMAIL> )
 
 ### Password reset
 
 **Run:** 
     
-    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod mix pleroma.user reset_password <NICKNAME> )
+    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user reset_password <NICKNAME> )
     
 This will generate a **password reset link** that you can then send to the user.
 
@@ -65,7 +65,7 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 **Run:**
 
-    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod mix pleroma.user set <NICKNAME> --[no-]admin )
+    $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user set <NICKNAME> --[no-]admin )
 
 **--admin** option will **make the user moderator** and **--no-admin** will **take away the moderator privileges** from the user.
 
