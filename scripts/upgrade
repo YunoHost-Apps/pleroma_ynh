@@ -172,7 +172,7 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 	ynh_secure_remove --file="$final_path/$app"
 fi
 
-if ynh_version_gt "1.1.7~ynh1" "${previous_version}" ; then
+if ynh_version_gt "2.0.5~ynh1" "${previous_version}" ; then
 	config="/etc/$app/config.exs"
 	cat "../conf/ldap.exs" "$config"
 fi
