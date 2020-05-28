@@ -157,7 +157,6 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 		rsync -a "$final_path/$app/instance/static/" "$datadir/static/"
 	fi
 
-	ls -d $final_path/$app/priv/static/emoji/*/ | xargs -i sh -c 'mv "{}" "$datadir/static/emoji/$(basename {})"'
 	rsync -a "$final_path/$app/priv/static/emoji/" "$datadir/static/emoji/"
 
 	mkdir -p /etc/$app
