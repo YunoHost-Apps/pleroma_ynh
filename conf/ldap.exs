@@ -8,4 +8,4 @@ config :pleroma, :ldap,
   tls: false,
   # tlsopts: [],
   base: "ou=users,dc=yunohost,dc=org",
-  uid:  "cn"
+  uid:  "uid"

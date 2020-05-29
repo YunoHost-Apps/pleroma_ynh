@@ -216,7 +216,7 @@ pushd $final_path/$app
     --db-configurable Y"
 popd
 
-cat "../conf/ldap.exs" "$config"
+cat "../conf/ldap.exs" >> "$config"
 
 pushd $final_path/$app
 
