@@ -174,7 +174,8 @@ fi
 
 if ynh_version_gt "2.0.5~ynh1" "${previous_version}" ; then
 	config="/etc/$app/config.exs"
-	cat "../conf/ldap.exs" "$config"
+	cat "../conf/ldap.exs" >> "$config"
+	ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
 fi
 
 #=================================================
