@@ -32,7 +32,6 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 1. **Pleroma** require a dedicated **root domain**, eg. pleroma.domain.tld
 1. **Pleroma** require a valid **certificate** installed on the domain. Yunohost can **install Letsencrypt certificate** on the domain from **admin web-interface** or through **command-line**.
 1. This package is **multi-instance** that means you can run **multiple Pleroma instances** on a **single server**.
-1. There is **No LDAP** support for Pleroma yet.
 
 ## Screenshots
 
@@ -78,7 +77,7 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 #### Multi-users support
 
-LDAP and HTTP auth are not supported.
+LDAP supported but HTTP auth not.
 
 The app can be used by multiple users.
 
