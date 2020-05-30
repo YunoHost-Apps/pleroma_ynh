@@ -164,6 +164,8 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 	config="/etc/$app/config.exs"
 	mv $final_path/$app/config/prod.secret.exs $config
 	ynh_replace_string --match_string="use Mix.Config" --replace_string="import Config" --target_file="$config"
+	echo "config :pleroma, :instance, static_dir: \"/home/yunohost.app/$app/static\"" >> $config
+	echo "config :pleroma, Pleroma.Uploaders.Local, uploads: \"/home/yunohost.app/$app/uploads\"" >> $config
 
 	ynh_backup_if_checksum_is_different --file="$config"
 
