@@ -214,6 +214,13 @@ pushd $final_path/$app
     --listen-ip 127.0.0.1 \
     --listen-port $port \
     --db-configurable Y"
+popd
+
+cat "../conf/ldap.exs" >> "$config"
+
+ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
+
+pushd $final_path/$app
 
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 
