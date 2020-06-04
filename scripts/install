@@ -135,7 +135,7 @@ then
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$app-cache.conf"
 	ynh_replace_string --match_string="{APP}" --replace_string="$app" --target_file="../conf/media.conf"
 	ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/media.conf"
-	sudo su -c "cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf"
+	cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
 
