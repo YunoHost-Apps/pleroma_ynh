@@ -1,10 +1,10 @@
 # Pleroma app for Yunohost
 
-[![Integration level](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma)  
+[![Integration level](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)  
 [![Install Pleroma with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=pleroma)
 
-> *This package allow you to install Pleroma quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
+> *This package allows you to install Pleroma quickly and simply on a YunoHost server.  
+If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
 Pleroma is a microblogging server software that can federate (= exchange messages with) other servers that support ActivityPub. What that means is that you can host a server for yourself or your friends and stay in control of your online identity, but still exchange messages with people on larger servers. Pleroma will federate with all servers that implement ActivityPub, like Friendica, GNU Social, Hubzilla, Mastodon, Misskey, Peertube, and Pixelfed.
@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 - Tootdon (Android + iOS)
 - Tootle (iOS)
 
-**Shipped version:** 2.0.5
+**Shipped version:** 2.0.7
 
 ## Important points to read before installing
 
@@ -73,7 +73,7 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 ## YunoHost specific features
 
-#### Multi-users support
+#### Multi-user support
 
 LDAP supported but HTTP auth not.
 
@@ -81,12 +81,8 @@ The app can be used by multiple users.
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/pleroma%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/pleroma/)
-
-## Limitations
-
-* No known limitations.
 
 ## Links
 
@@ -98,10 +94,10 @@ The app can be used by multiple users.
 
 ---
 
-Developers info
+Developer info
 ----------------
 
-Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing).
+Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
 ```
