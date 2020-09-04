@@ -6,7 +6,7 @@
         "en": "An OStatus-compatible social networking server written in Elixir, compatible with GNU Social and Mastodon",
         "fr": "Un réseau social écrit en Elixir, compatible avec OStatus, GNU Social et Mastodon"
     },
-    "version": "2.0.7~ynh1",
+    "version": "2.1.0~ynh1",
     "url": "https://git.pleroma.social/pleroma/pleroma",
     "license": "AGPL-3.0-only",
     "maintainer": [
