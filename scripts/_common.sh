@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="curl unzip libncurses5 postgresql postgresql-contrib"
+pkg_dependencies="curl unzip libncurses5 postgresql postgresql-contrib imagemagick ffmpeg libimage-exiftool-perl"
 
 #=================================================
 # PERSONAL HELPERS
