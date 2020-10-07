@@ -3,8 +3,8 @@
     "id": "pleroma",
     "packaging_format": 1,
     "description": {
-        "en": "An OStatus-compatible social networking server written in Elixir, compatible with GNU Social and Mastodon",
-        "fr": "Un réseau social écrit en Elixir, compatible avec OStatus, GNU Social et Mastodon"
+        "en": "A free, federated social networking server built on open protocols.",
+        "fr": "Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts."
     },
     "version": "2.1.0~ynh1",
     "url": "https://git.pleroma.social/pleroma/pleroma",
