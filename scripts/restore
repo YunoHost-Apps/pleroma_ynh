@@ -43,7 +43,7 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 ynh_script_progression --message="Validating restoration parameters..."
 
 if [ "$(lsb_release --codename --short)" != "buster" ]; then
-    ynh_die --message="Sorry, but this app can only be installed on Buster :("
+	ynh_die --message="Sorry, but this app can only be restored on Buster :("
 fi
 
 ynh_webpath_available --domain=$domain --path_url=$path_url \
