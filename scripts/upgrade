@@ -46,10 +46,6 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
-if [ "$(lsb_release --codename --short)" != "buster" ]; then
-	ynh_die --message="Sorry, but this app can only be upgraded on Buster :("
-fi
-
 # Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
 	ynh_app_setting_set --app=$app --key=is_public --value=1
