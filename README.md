@@ -29,7 +29,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 1. **Pleroma** require a dedicated **root domain**, eg. pleroma.domain.tld
 1. **Pleroma** require a valid **certificate** installed on the domain. Yunohost can **install Letsencrypt certificate** on the domain from **admin web-interface** or through **command-line**.
-1. This package is **multi-instance** that means you can run **multiple Pleroma instances** on a **single server**.
+1. This package is currently set to **single-instance** that means you can run a **single Pleroma instance** on a **single server**.
 
 ## Screenshots
 
