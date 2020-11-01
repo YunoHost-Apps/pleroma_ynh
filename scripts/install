@@ -227,7 +227,7 @@ pushd $final_path/$app
     sleep 60
 
     # Add user
-    su pleroma -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
 popd
 
 #=================================================
