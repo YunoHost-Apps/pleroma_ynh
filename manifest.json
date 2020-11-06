@@ -6,7 +6,7 @@
         "en": "A free, federated social networking server built on open protocols.",
         "fr": "Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts."
     },
-    "version": "2.0.7~ynh2",
+    "version": "2.1.2~ynh1",
     "url": "https://git.pleroma.social/pleroma/pleroma",
     "license": "AGPL-3.0-only",
     "maintainer": [
@@ -18,7 +18,7 @@
             "name": "yalh76"
         }],
     "requirements": {
-        "yunohost": ">= 3.5"
+        "yunohost": ">= 4.0"
     },
     "multi_instance": false,
     "services": [
