@@ -40,7 +40,7 @@ admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 
 ## Bypass package_checker name not compatible with pleroma
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-	admin="test"
+    admin="test"
 fi
 
 app=$YNH_APP_INSTANCE_NAME
@@ -227,7 +227,7 @@ pushd $final_path/$app
     sleep 60
 
     # Add user
-    su pleroma -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
 popd
 
 #=================================================
