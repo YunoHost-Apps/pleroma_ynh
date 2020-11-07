@@ -40,7 +40,7 @@ admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 
 ## Bypass package_checker name not compatible with pleroma
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-	admin="test"
+    admin="test"
 fi
 
 app=$YNH_APP_INSTANCE_NAME
