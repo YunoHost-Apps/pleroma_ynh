@@ -253,7 +253,7 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --description "$app daemon for Pleroma" --log_type "systemd"
+yunohost service add $app --description "$app daemon for Pleroma"
 
 #=================================================
 # SETUP SSOWAT
