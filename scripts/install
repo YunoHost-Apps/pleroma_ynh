@@ -30,7 +30,7 @@ path_url="/"
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 password=$YNH_APP_ARG_PASSWORD
-name=$YNH_APP_ARG_NAME
+name="${YNH_APP_ARG_NAME// /_}"
 registration=$YNH_APP_ARG_REGISTRATION
 cache=$YNH_APP_ARG_CACHE
 size=$YNH_APP_ARG_SIZE
@@ -253,7 +253,7 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --description "$app daemon for Pleroma" --log_type "systemd"
+yunohost service add $app --description "$app daemon for Pleroma"
 
 #=================================================
 # SETUP SSOWAT
