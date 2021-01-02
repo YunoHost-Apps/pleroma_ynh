@@ -3,12 +3,15 @@ Description=__APP__ social network
 After=network.target postgresql.service nginx.service
 
 [Service]
+ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
 
 ; Name of the user that runs the Pleroma service.
 User=__APP__
 Group=__APP__
+; Declares that Pleroma runs in production mode.
+Environment="MIX_ENV=prod"
 
 ; Make sure that all paths fit your installation.
 ; Path to the home directory of the user running the Pleroma service.
