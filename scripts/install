@@ -208,11 +208,14 @@ pushd $final_path/$app
     --dbpass $db_pwd \
     --rum N \
     --indexable Y \
+    --db-configurable Y \
     --uploads-dir $datadir/uploads \
     --static-dir $datadir/static \
     --listen-ip 127.0.0.1 \
     --listen-port $port \
-    --db-configurable Y"
+    --strip-uploads Y \
+    --anonymize-uploads Y \
+    --dedupe-uploads Y"
 popd
 
 cat "../conf/ldap.exs" >> "$config"
