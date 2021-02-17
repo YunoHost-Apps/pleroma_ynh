@@ -91,7 +91,6 @@ The app can be used by multiple users.
  * App website: https://pleroma.social/
  * Upstream app repository https://git.pleroma.social/pleroma/pleroma/
  * YunoHost website: https://yunohost.org/
- * Report usage problems with yunohost on [Yunohost Forum](https://forum.yunohost.org/c/support/apps)
 
 ---
 
