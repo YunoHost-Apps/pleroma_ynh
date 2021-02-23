@@ -1,6 +1,6 @@
-SOURCE_URL=https://git.pleroma.social/pleroma/pleroma/-/jobs/165407/artifacts/download
-SOURCE_SUM=2bcb5836d12f46698640039b57d1b9b8917e0c59d273be2d3e2057e5ede84ef9
+SOURCE_URL=https://git.pleroma.social/pleroma/pleroma/-/jobs/175288/artifacts/download
+SOURCE_SUM=dc6a210759f099219528a1d2df111110d4fbcf267d7216668f34608e7fb9f380
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=pleroma-v2.2.0-arm64.zip
+SOURCE_FILENAME=pleroma-v2.2.2-arm64.zip
