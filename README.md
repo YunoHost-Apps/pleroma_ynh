@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 - Tootdon (Android + iOS)
 - Tootle (iOS)
 
-**Shipped version:** 2.2.0
+**Shipped version:** 2.2.2
 
 ## Important points to read before installing
 
@@ -91,7 +91,6 @@ The app can be used by multiple users.
  * App website: https://pleroma.social/
  * Upstream app repository https://git.pleroma.social/pleroma/pleroma/
  * YunoHost website: https://yunohost.org/
- * Report usage problems with yunohost on [Yunohost Forum](https://forum.yunohost.org/c/support/apps)
 
 ---
 
