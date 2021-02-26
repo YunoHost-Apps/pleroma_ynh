@@ -52,9 +52,9 @@ Go to **cd /var/www/pleroma/pleroma**.
 ### Password reset
 
 **Run:** 
-    
+
     $ ( cd /var/www/pleroma/pleroma && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user reset_password <NICKNAME> )
-    
+
 This will generate a **password reset link** that you can then send to the user.
 
 ### Moderators
