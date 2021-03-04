@@ -23,7 +23,6 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
-ynh_script_progression --message="Retrieving arguments from the manifest..."
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
@@ -40,7 +39,7 @@ admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 
 ## Bypass package_checker name not compatible with pleroma
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-    admin="test"
+	admin="test"
 fi
 
 app=$YNH_APP_INSTANCE_NAME
@@ -127,11 +126,9 @@ ynh_add_nginx_config
 
 if [ $cache -eq 1 ]
 then
-	cp -rf "../conf/cache.conf" "/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string --match_string="{APP}" --replace_string="$app" --target_file="/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string --match_string="__SIZE__" --replace_string="$size" --target_file="/etc/nginx/conf.d/$app-cache.conf"
-	ynh_store_file_checksum --file="/etc/nginx/conf.d/$app-cache.conf"
-	ynh_replace_string --match_string="{APP}" --replace_string="$app" --target_file="../conf/media.conf"
+	ynh_add_config --template="../conf/cache.conf" --destination="/etc/nginx/conf.d/$app-cache.conf"
+
+	ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="../conf/media.conf"
 	ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/media.conf"
 	cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
@@ -193,28 +190,28 @@ ynh_script_progression --message="Making setup..."
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
-    #Generate instance
-    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
-    --output $config \
-    --output-psql /tmp/setup_db.psql \
-    --domain $domain \
-    --instance-name \"$name\" \
-    --admin-email $admin_email \
-    --notify-email $admin_email \
-    --dbhost localhost \
-    --dbname $db_name \
-    --dbuser $db_user \
-    --dbpass $db_pwd \
-    --rum N \
-    --indexable Y \
-    --db-configurable Y \
-    --uploads-dir $datadir/uploads \
-    --static-dir $datadir/static \
-    --listen-ip 127.0.0.1 \
-    --listen-port $port \
-    --strip-uploads Y \
-    --anonymize-uploads Y \
-    --dedupe-uploads Y"
+	#Generate instance
+	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
+	--output $config \
+	--output-psql /tmp/setup_db.psql \
+	--domain $domain \
+	--instance-name \"$name\" \
+	--admin-email $admin_email \
+	--notify-email $admin_email \
+	--dbhost localhost \
+	--dbname $db_name \
+	--dbuser $db_user \
+	--dbpass $db_pwd \
+	--rum N \
+	--indexable Y \
+	--db-configurable Y \
+	--uploads-dir $datadir/uploads \
+	--static-dir $datadir/static \
+	--listen-ip 127.0.0.1 \
+	--listen-port $port \
+	--strip-uploads Y \
+	--anonymize-uploads Y \
+	--dedupe-uploads Y"
 popd
 
 cat "../conf/ldap.exs" >> "$config"
@@ -222,14 +219,13 @@ cat "../conf/ldap.exs" >> "$config"
 ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
 
 pushd $final_path/$app
+	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 
-    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+	ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
+	sleep 60
 
-    ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
-    sleep 60
-
-    # Add user
-    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+	# Add user
+	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
 popd
 
 #=================================================
@@ -269,6 +265,8 @@ then
 	# The "main" permission is automatically created before the install script.
 	ynh_permission_update --permission="main" --add="visitors"
 fi
+
+ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
 
 #=================================================
 # RELOAD NGINX
