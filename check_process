@@ -51,10 +51,12 @@
 		upgrade=1	from_commit=059ddc457aabe6962f5960612ed2dc1db53daeeb
 		# 2.2.2~ynh1
 		upgrade=1	from_commit=63723f18af5b035a41e967078cc3128423b1f9ae
+		# 2.3.0~ynh1
+		upgrade=1	from_commit=9f5c0970d2bf8bb6111785184b1d3762228b04ec
 		backup_restore=1
 		multi_instance=0
 		port_already_use=0
-		change_url=0
+		change_url=1
 ;;; Options
 Email=anmol@datamol.org;yalh@yahoo.com
 Notification=yes
@@ -89,3 +91,5 @@ Notification=yes
 		name=2.2.0~ynh1
 	; commit=63723f18af5b035a41e967078cc3128423b1f9ae
 		name=2.2.2~ynh1
+	; commit=9f5c0970d2bf8bb6111785184b1d3762228b04ec
+		name=2.3.0~ynh1
