@@ -106,9 +106,6 @@ ynh_script_progression --message="Removing directories..."
 # Remove the config directory securely
 ynh_secure_remove --file="/etc/$app"
 
-# Remove the data directory securely
-ynh_secure_remove --file="$datadir"
-
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
