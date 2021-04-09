@@ -90,6 +90,14 @@ ynh_script_progression --message="Installing dependencies..."
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
 ynh_script_progression --message="Creating a PostgreSQL database..."
@@ -116,12 +124,16 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 architecture=$(ynh_detect_arch)
 ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R root:$app "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..."
+ynh_script_progression --message="Configuring NGINX web server..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 if [ $cache -eq 1 ]
@@ -133,14 +145,6 @@ then
 	cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..."
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # SPECIFIC SETUP
@@ -162,6 +166,10 @@ mkdir -p "$datadir/static/emoji/"
 chown -R "$app":"$app" "$datadir"
 
 ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R root:$app "$datadir"
 
 #=================================================
 # CREATE THE CONFIG DIRECTORY
@@ -239,14 +247,6 @@ ynh_store_file_checksum --file="$config"
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions to app files
-chown -R "$app":"$app" "$final_path"
-
-#=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
@@ -271,7 +271,7 @@ ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --aut
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
