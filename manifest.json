@@ -44,10 +44,6 @@
             {
                 "name": "password",
                 "type": "password",
-                "ask": {
-                    "en": "Set the administrator password",
-                    "fr": "Définissez le mot de passe administrateur"
-                },
                 "example": "Choose a password"
             },
             {

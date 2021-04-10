@@ -107,6 +107,9 @@ ynh_script_progression --message="Restoring the config file..."
 
 ynh_restore_file --origin_path="/etc/$app/config.exs"
 
+chmod 400 "/etc/$app/config.exs"
+chown $app:$app "/etc/$app/config.exs"
+
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================

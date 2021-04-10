@@ -236,13 +236,11 @@ pushd $final_path/$app
 	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
 popd
 
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-ynh_script_progression --message="Storing the config file checksum..."
-
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$config"
+
+chmod 400 "$config"
+chown $app:$app "$config"
 
 #=================================================
 # GENERIC FINALIZATION
