@@ -126,7 +126,7 @@ ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R root:$app "$final_path"
+chown -R $app:$app "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -156,20 +156,17 @@ ynh_script_progression --message="Creating the data directory..."
 # Define app's data directory
 datadir="/home/yunohost.app/${app}"
 
+ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
 # Create app folders
 mkdir -p "$datadir/"
 mkdir -p "$datadir/uploads/"
 mkdir -p "$datadir/static/"
 mkdir -p "$datadir/static/emoji/"
 
-# Give permission to the datadir
-chown -R "$app":"$app" "$datadir"
-
-ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
-
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
-chown -R root:$app "$datadir"
+chown -R $app:$app "$datadir"
 
 #=================================================
 # CREATE THE CONFIG DIRECTORY
