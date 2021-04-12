@@ -159,7 +159,7 @@ fi
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# RELOAD NGINX AND PHP-FPM
+# RELOAD NGINX
 #=================================================
 ynh_script_progression --message="Reloading NGINX web server..."
 
