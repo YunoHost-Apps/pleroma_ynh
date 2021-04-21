@@ -21,7 +21,6 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # STANDARD REMOVE
@@ -29,7 +28,7 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
-# Remove the service from the list of services known by Yunohost (added from `yunohost service add`)
+# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
 if ynh_exec_warn_less yunohost service status $app >/dev/null
 then
 	ynh_script_progression --message="Removing $app service integration..."
@@ -59,7 +58,7 @@ ynh_remove_systemd_config
 ynh_script_progression --message="Removing the PostgreSQL database..."
 
 # Remove a database if it exists, along with the associated user
-ynh_psql_remove_db --db_user="$db_user" --db_name="$db_name"
+ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
 # REMOVE DEPENDENCIES
@@ -80,9 +79,9 @@ ynh_secure_remove --file="$final_path"
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing nginx web server configuration..."
+ynh_script_progression --message="Removing NGINX web server configuration..."
 
-# Remove the dedicated nginx config
+# Remove the dedicated NGINX config
 ynh_remove_nginx_config
 ynh_secure_remove --file="/etc/nginx/conf.d/$app-cache.conf"
 
@@ -99,9 +98,9 @@ fi
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
-# REMOVE DIRECTORIES
+# REMOVE CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing directories..."
+ynh_script_progression --message="Removing configuration..."
 
 # Remove the config directory securely
 ynh_secure_remove --file="/etc/$app"
