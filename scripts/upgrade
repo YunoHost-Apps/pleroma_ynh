@@ -99,19 +99,11 @@ previous_version="${version}"
 #=================================================
 ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
 
-# Inform the backup/restore process that it should not save the data directory
-# Use only for the previous backup script that doesn't set 'is_big'
-ynh_app_setting_set --app=$app --key=backup_core_only --value=1
-
 # Backup the current version of the app
 ynh_backup_before_upgrade
-
-# Remove the option backup_core_only after the backup.
-ynh_app_setting_delete --app=$app --key=backup_core_only
-
 ynh_clean_setup () {
 	ynh_clean_check_starting
-	# restore it if the upgrade fails
+	# Restore it if the upgrade fails
 	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
@@ -129,6 +121,14 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line
 if ynh_version_gt "${previous_version}" "1.1.1~ynh1"  ; then
 	pkill -u $app
 fi
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..."
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # UPGRADE TO OTP RELEASE
@@ -189,12 +189,16 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 fi
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..."
+ynh_script_progression --message="Upgrading NGINX web server configuration..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 ynh_secure_remove --file="/etc/nginx/conf.d/$app-cache.conf"
@@ -216,19 +220,11 @@ ynh_script_progression --message="Upgrading dependencies..."
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-#=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# MODIFY A CONFIG FILE
+# UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Modifying a config file..."
+ynh_script_progression --message="Updating a config file..."
 
 config="/etc/$app/config.exs"
 
@@ -238,9 +234,6 @@ ynh_backup_if_checksum_is_different --file="$config"
 # MAKE UPGRADE
 #=================================================
 ynh_script_progression --message="Making upgrade..."
-
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
 	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
@@ -254,6 +247,9 @@ ynh_script_progression --message="Storing the config file checksum..."
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
+chmod 400 "$config"
+chown $app:$app "$config"
+
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -264,14 +260,6 @@ ynh_add_systemd_config
 
 #=================================================
 # GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions on app files
-chown -R "$app":"$app" "$final_path"
-
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
@@ -292,7 +280,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
