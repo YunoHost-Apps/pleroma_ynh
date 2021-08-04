@@ -25,23 +25,23 @@
 		# 1.1.9
 		# upgrade=1	from_commit=eedad6977760c31d7fb94ced247b9136824da580
 		# 2.0.0
-		upgrade=1	from_commit=0693dd5efd5ab2a06267993cc7106ed2efc26ea2
+		# upgrade=1	from_commit=0693dd5efd5ab2a06267993cc7106ed2efc26ea2
 		# 2.0.1~ynh1
 		# upgrade=1	from_commit=7c3680c82b9c3f2449c6dbb346a5729a18636ac1
 		# 2.0.1~ynh2
-		upgrade=1	from_commit=723df4423d80baa31e9717628bc5b5fd50114bc8
+		# upgrade=1	from_commit=723df4423d80baa31e9717628bc5b5fd50114bc8
 		# 2.0.2~ynh1
 		# upgrade=1	from_commit=8f418ba020cee267f76bb781b03a41d384707a5b
 		# 2.0.2~ynh2
-		upgrade=1	from_commit=251a08383f59be006803fd12013baa92b03c1ef7
+		# upgrade=1	from_commit=251a08383f59be006803fd12013baa92b03c1ef7
 		# 2.0.5~ynh1
 		# upgrade=1	from_commit=06f0005707e77fae566fedbd6e5e37f390df5173
 		# 2.0.5~ynh2
-		upgrade=1	from_commit=30696599937984e9879da22220253f005e290cd0
+		# upgrade=1	from_commit=30696599937984e9879da22220253f005e290cd0
 		# 2.0.7~ynh1
-		upgrade=1	from_commit=e13745923a2e06e780e7b9d34ae084f600a9a2a2
+		# upgrade=1	from_commit=e13745923a2e06e780e7b9d34ae084f600a9a2a2
 		# 2.1.2~ynh1
-		upgrade=1	from_commit=ade89203b611fd178bc9d1cf35804bc08ea3a78b
+		# upgrade=1	from_commit=ade89203b611fd178bc9d1cf35804bc08ea3a78b
 		# 2.2.0~ynh1
 		upgrade=1	from_commit=059ddc457aabe6962f5960612ed2dc1db53daeeb
 		# 2.2.2~ynh1
