@@ -50,6 +50,8 @@
 		upgrade=1	from_commit=9f5c0970d2bf8bb6111785184b1d3762228b04ec
 		# 2.3.0~ynh2
 		upgrade=1	from_commit=4757df265b0c3e8d1fc5280190ccfe5705dcb691
+		# 2.3.0~ynh3
+		upgrade=1	from_commit=28ed2fd7ab7b5e55154991c990d8e780560a56db
 		backup_restore=1
 		multi_instance=0
 		port_already_use=0
@@ -92,3 +94,5 @@ Notification=yes
 		name=2.3.0~ynh1
 	; commit=4757df265b0c3e8d1fc5280190ccfe5705dcb691
 		name=2.3.0~ynh2
+	; commit=28ed2fd7ab7b5e55154991c990d8e780560a56db
+		name=2.3.0~ynh3
