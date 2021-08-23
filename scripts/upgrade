@@ -8,7 +8,6 @@
 
 source _common.sh
 source ynh_package_version
-source ynh_detect_arch__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -21,7 +20,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
@@ -29,7 +27,7 @@ random_key=$(ynh_app_setting_get --app=$app --key=random_key)
 name=$(ynh_app_setting_get --app=$app --key=name)
 port=$(ynh_app_setting_get --app=$app --key=port)
 db_user=$(ynh_app_setting_get --app=$app --key=db_user)
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 cache=$(ynh_app_setting_get --app=$app --key=cache)
 size=$(ynh_app_setting_get --app=$app --key=size)
 registration=$(ynh_app_setting_get --app=$app --key=registration)
@@ -42,18 +40,24 @@ ynh_script_progression --message="Checking version..."
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	ynh_clean_check_starting
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
-
-# Fix is_public as a boolean value
-if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=1
-	is_public=1
-elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=0
-	is_public=0
-fi
 
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
@@ -80,17 +84,12 @@ then
 	ynh_app_setting_delete --app=$app --key=psqlpwd
 fi
 
-#Close a port
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
 
-if yunohost firewall list | grep -q "\- $port$"
-then
-	ynh_script_progression --message="Closing port $port..."
-	ynh_exec_warn_less yunohost firewall disallow TCP $port
+	ynh_app_setting_delete --app=$app --key=is_public
 fi
-
-# Remove old repository
-ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
-apt-key del A14F4FCA
 
 #=================================================
 # CHECK VERSION NUMBER
@@ -105,19 +104,12 @@ abort_if_up_to_date
 previous_version="${version}"
 
 #=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+# CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
+ynh_script_progression --message="Making sure dedicated system user exists..."
 
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	ynh_clean_check_starting
-	# restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -191,6 +183,10 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 fi
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
@@ -220,14 +216,6 @@ ynh_script_progression --message="Upgrading dependencies..."
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-#=================================================
 # SPECIFIC UPGRADE
 #=================================================
 # MODIFY A CONFIG FILE
@@ -244,7 +232,7 @@ ynh_backup_if_checksum_is_different --file="$config"
 ynh_script_progression --message="Making upgrade..."
 
 # Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
+chown -R $app: "$final_path"
 
 pushd $final_path/$app
     su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
@@ -267,26 +255,11 @@ ynh_script_progression --message="Upgrading systemd configuration..."
 ynh_add_systemd_config
 
 #=================================================
-# GENERIC FINALIZATION
+# INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
+ynh_script_progression --message="Integrating service in YunoHost..."
 
-# Set permissions on app files
-chown -R "$app":"$app" "$final_path"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..."
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
-fi
+yunohost service add $app --description "$app daemon for Pleroma" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE

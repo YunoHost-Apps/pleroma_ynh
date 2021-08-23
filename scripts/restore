@@ -32,7 +32,7 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 cache=$(ynh_app_setting_get --app=$app --key=cache)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
@@ -52,7 +52,7 @@ test ! -d $final_path \
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Restoring the nginx configuration..."
+ynh_script_progression --message="Restoring the NGINX configuration..."
 
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
@@ -60,13 +60,6 @@ if [ $cache -eq 1 ]
 then
 	ynh_restore_file --origin_path="/etc/nginx/conf.d/$app-cache.conf"
 fi
-
-#=================================================
-# RESTORE THE APP MAIN DIR
-#=================================================
-ynh_script_progression --message="Restoring the app main directory..."
-
-ynh_restore_file --origin_path="$final_path"
 
 #=================================================
 # RECREATE THE DEDICATED USER
@@ -77,12 +70,15 @@ ynh_script_progression --message="Recreating the dedicated system user..."
 ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
-# RESTORE USER RIGHTS
+# RESTORE THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Restoring user rights..."
+ynh_script_progression --message="Restoring the app main directory..."
 
-# Restore permissions on app files
-chown -R "$app":"$app" "$final_path"
+ynh_restore_file --origin_path="$final_path"
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -98,7 +94,7 @@ mkdir -p "$datadir/static/"
 mkdir -p "$datadir/static/emoji/"
 
 # Give permission to the datadir
-chown -R "$app":"$app" "$datadir"
+chown -R $app: "$datadir"
 
 ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
 
@@ -115,7 +111,7 @@ ynh_restore_file --origin_path="/etc/$app/config.exs"
 ynh_script_progression --message="Reinstalling dependencies..."
 
 # Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
@@ -136,14 +132,14 @@ ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
 ynh_script_progression --message="Restoring the systemd configuration..."
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
-systemctl enable $app.service
+systemctl enable $app.service --quiet
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --description "$app daemon for Pleroma" --log_type "systemd"
+yunohost service add $app --description "$app daemon for Pleroma" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE

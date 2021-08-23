@@ -18,7 +18,7 @@
             "name": "yalh76"
         }],
     "requirements": {
-        "yunohost": ">= 3.5"
+        "yunohost": ">= 4.2.0"
     },
     "multi_instance": false,
     "services": [
@@ -29,37 +29,21 @@
             {
                 "name": "domain",
                 "type": "domain",
-                "ask": {
-                    "en": "Choose a domain name for Pleroma",
-                    "fr": "Choisissez un nom de domaine pour Pleroma"
-                },
                 "example": "example.com"
             },
             {
                 "name": "admin",
                 "type": "user",
-                "ask": {
-                    "en": "Choose an admin user",
-                    "fr": "Choisissez l'administrateur"
-                },
                 "example": "johndoe"
             },
             {
                 "name": "is_public",
                 "type": "boolean",
-                "ask": {
-                    "en": "Is it a public application?",
-                    "fr": "Est-ce une application publique ?"
-                },
                 "default": true
             },
             {
                 "name": "password",
                 "type": "password",
-                "ask": {
-                    "en": "Set the administrator password",
-                    "fr": "Définissez le mot de passe administrateur"
-                },
                 "example": "Choose a password"
             },
             {
@@ -99,7 +83,7 @@
                 },
                 "choices": ["2g","5g","10g","20g","40g","80g"],
                 "default": "5g"
-               }
+            }
         ]
     }
 }

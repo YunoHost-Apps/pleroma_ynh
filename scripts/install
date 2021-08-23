@@ -7,7 +7,6 @@
 #=================================================
 
 source _common.sh
-source ynh_detect_arch__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -64,7 +63,6 @@ ynh_script_progression --message="Storing installation settings..."
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=name --value=$name
 ynh_app_setting_set --app=$app --key=registration --value=$registration
 ynh_app_setting_set --app=$app --key=cache --value=$cache
@@ -78,7 +76,7 @@ ynh_app_setting_set --app=$app --key=signing_salt --value=$signing_salt
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Configuring firewall..."
+ynh_script_progression --message="Finding an available port..."
 
 # Find an available port
 port=$(ynh_find_port --port=8095)
@@ -89,7 +87,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 #=================================================
 ynh_script_progression --message="Installing dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -98,15 +96,22 @@ ynh_script_progression --message="Creating a PostgreSQL database..."
 
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
-db_pwd=$(ynh_string_random --length=30)
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
 ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_setup_db --db_user=$db_name --db_name=$db_name
+
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS citext;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" --database=$db_name
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -118,10 +123,14 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 architecture=$(ynh_detect_arch)
 ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..."
+ynh_script_progression --message="Configuring NGINX web server..."
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -137,14 +146,6 @@ then
 	cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..."
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # SPECIFIC SETUP
@@ -163,7 +164,7 @@ mkdir -p "$datadir/static/"
 mkdir -p "$datadir/static/emoji/"
 
 # Give permission to the datadir
-chown -R "$app":"$app" "$datadir"
+chown -R $app: "$datadir"
 
 ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
 
@@ -195,7 +196,7 @@ chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
     #Generate instance
-    su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
+    ynh_exec_warn_less su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
     --output $config \
     --output-psql /tmp/setup_db.psql \
     --domain $domain \
@@ -239,38 +240,28 @@ ynh_script_progression --message="Storing the config file checksum..."
 ynh_store_file_checksum --file="$config"
 
 #=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions to app files
-chown -R "$app":"$app" "$final_path"
-
-#=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --description "$app daemon for Pleroma" --log_type "systemd"
+yunohost service add $app --description "$app daemon for Pleroma" --log_path=systemd
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..."
+ynh_script_progression --message="Configuring permissions..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+    ynh_permission_update --permission="main" --add="visitors"
 fi
+
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
