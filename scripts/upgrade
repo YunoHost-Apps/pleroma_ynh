@@ -41,48 +41,6 @@ ynh_script_progression --message="Checking version..."
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..."
-
-# Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-# Create a permission if needed
-if ! ynh_permission_exists --permission="api"; then
-	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
-fi
-
-#Switch variables name
-psql_db=$(ynh_app_setting_get --app=$app --key=psql_db)
-
-if [ -n "$psql_db" ]
-then
-	db_name=$(ynh_app_setting_get --app=$app --key=psql_db)
-	db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-	ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
-	ynh_app_setting_delete --app=$app --key=psql_db
-	ynh_app_setting_delete --app=$app --key=psqlpwd
-fi
-
-#Close a port
-
-if yunohost firewall list | grep -q "\- $port$"
-then
-	ynh_script_progression --message="Closing port $port..."
-	ynh_exec_warn_less yunohost firewall disallow TCP $port
-fi
-
-# Remove old repository
-ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
-apt-key del A14F4FCA
-
-#=================================================
 # CHECK VERSION NUMBER
 #=================================================
 ynh_script_progression --message="Checking version number..."
@@ -123,12 +81,53 @@ if ynh_version_gt "${previous_version}" "1.1.1~ynh1"  ; then
 fi
 
 #=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..."
+
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
+# Create a permission if needed
+if ! ynh_permission_exists --permission="api"; then
+	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
+fi
+
+#Switch variables name
+psql_db=$(ynh_app_setting_get --app=$app --key=psql_db)
+
+if [ -n "$psql_db" ]
+then
+	db_name=$(ynh_app_setting_get --app=$app --key=psql_db)
+	db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+	ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
+	ynh_app_setting_delete --app=$app --key=psql_db
+	ynh_app_setting_delete --app=$app --key=psqlpwd
+fi
+
+#Close a port
+if yunohost firewall list | grep -q "\- $port$"
+then
+	ynh_script_progression --message="Closing port $port..."
+	ynh_exec_warn_less yunohost firewall disallow TCP $port
+fi
+
+# Remove old repository
+ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
+apt-key del A14F4FCA
+
+#=================================================
 # CREATE DEDICATED USER
 #=================================================
 ynh_script_progression --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # UPGRADE TO OTP RELEASE
@@ -222,15 +221,6 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# UPDATE A CONFIG FILE
-#=================================================
-ynh_script_progression --message="Updating a config file..."
-
-config="/etc/$app/config.exs"
-
-ynh_backup_if_checksum_is_different --file="$config"
-
-#=================================================
 # MAKE UPGRADE
 #=================================================
 ynh_script_progression --message="Making upgrade..."
@@ -240,12 +230,13 @@ pushd $final_path/$app
 popd
 
 #=================================================
-# STORE THE CONFIG FILE CHECKSUM
+# UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Storing the config file checksum..."
+ynh_script_progression --message="Updating a configuration file..."
 
-# Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$config"
+config="/etc/$app/config.exs"
+
+ynh_backup_if_checksum_is_different --file="$config"
 
 chmod 400 "$config"
 chown $app:$app "$config"

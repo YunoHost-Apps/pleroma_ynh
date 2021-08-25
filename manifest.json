@@ -6,8 +6,16 @@
         "en": "A free, federated social networking server built on open protocols.",
         "fr": "Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts."
     },
-    "version": "2.4.0~ynh1",
-    "url": "https://git.pleroma.social/pleroma/pleroma",
+    "version": "2.4.0~ynh2",
+    "url": "https://pleroma.social/",
+    "upstream": {
+        "license": "AGPL-3.0-only",
+        "website": "https://pleroma.social/",
+        "demo": "http://distsn.org/pleroma-instances.html",
+        "admindoc": "https://docs.pleroma.social/",
+        "userdoc": "https://yunohost.org/apps",
+        "code": "https://git.pleroma.social/pleroma/pleroma/"
+    },
     "license": "AGPL-3.0-only",
     "maintainer": [
         {
@@ -65,7 +73,7 @@
                 },
                 "default": false
             },
-           {
+            {
                 "name": "cache",
                 "type": "boolean",
                 "ask": {
@@ -73,7 +81,7 @@
                     "fr": "Activer le cache média pour votre instance"
                 },
                 "default": true
-               },
+            },
             {
                 "name": "size",
                 "type": "string",
@@ -83,7 +91,7 @@
                 },
                 "choices": ["2g","5g","10g","20g","40g","80g"],
                 "default": "5g"
-               }
+            }
         ]
     }
 }

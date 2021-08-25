@@ -67,7 +67,7 @@ fi
 ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # RESTORE THE APP MAIN DIR
@@ -81,17 +81,14 @@ chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
 
 #=================================================
-# SPECIFIC RESTORATION
+# RESTORE THE DATA DIRECTORY
 #=================================================
-# RECREATE THE DATA DIRECTORY
-#=================================================
-ynh_script_progression --message="Recreating the data directory..."
+ynh_script_progression --message="Restoring the data directory..."
 
-# Use --not_mandatory for the data directory, because if the backup has been made with BACKUP_CORE_ONLY, there's no data into the backup.
 ynh_restore_file --origin_path="$datadir" --not_mandatory
 
 # Create app folders
-mkdir -p "$datadir/"
+mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 mkdir -p "$datadir/static/"
 mkdir -p "$datadir/static/emoji/"
@@ -101,15 +98,7 @@ chmod -R o-rwx "$datadir"
 chown -R $app:$app "$datadir"
 
 #=================================================
-# RESTORE THE CONFIG FILE
-#=================================================
-ynh_script_progression --message="Restoring the config file..."
-
-ynh_restore_file --origin_path="/etc/$app/config.exs"
-
-chmod 400 "/etc/$app/config.exs"
-chown $app:$app "/etc/$app/config.exs"
-
+# SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
@@ -130,6 +119,16 @@ ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --datab
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS citext;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" --database=$db_name
 ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
+
+#=================================================
+# RESTORE VARIOUS FILES
+#=================================================
+ynh_script_progression --message="Restoring various files..."
+
+ynh_restore_file --origin_path="/etc/$app/config.exs"
+
+chmod 400 "/etc/$app/config.exs"
+chown $app:$app "/etc/$app/config.exs"
 
 #=================================================
 # RESTORE SYSTEMD
