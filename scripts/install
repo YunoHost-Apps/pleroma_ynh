@@ -218,7 +218,7 @@ cat "../conf/ldap.exs" >> "$config"
 ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
 
 pushd $final_path/$app
-	ynh_exec_warn_less su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 
 	ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
 	sleep 60

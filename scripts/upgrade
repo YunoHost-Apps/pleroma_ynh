@@ -226,7 +226,7 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Making upgrade..."
 
 pushd $final_path/$app
-	ynh_exec_warn_less su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 popd
 
 #=================================================
