@@ -216,7 +216,7 @@ fi
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -226,7 +226,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Making upgrade..."
 
 pushd $final_path/$app
-	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+	ynh_exec_warn_less su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
 popd
 
 #=================================================
