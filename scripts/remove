@@ -36,18 +36,13 @@ then
 fi
 
 #=================================================
-# STOP ALL PLEROMA SERVICES
+# STOP AND REMOVE SERVICE
 #=================================================
-ynh_script_progression --message="Stopping all pleroma services..."
+ynh_script_progression --message="Stopping and removing the systemd service..."
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
 
 pkill -u $app
-
-#=================================================
-# STOP AND REMOVE SERVICE
-#=================================================
-ynh_script_progression --message="Stopping and removing the systemd service..."
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config
@@ -98,9 +93,9 @@ fi
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
-# REMOVE CONFIGURATION
+# REMOVE VARIOUS FILES
 #=================================================
-ynh_script_progression --message="Removing configuration..."
+ynh_script_progression --message="Removing various files..."
 
 # Remove the config directory securely
 ynh_secure_remove --file="/etc/$app"

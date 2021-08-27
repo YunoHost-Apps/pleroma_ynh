@@ -87,7 +87,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 #=================================================
 ynh_script_progression --message="Installing dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
@@ -95,7 +95,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -149,17 +149,14 @@ fi
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# CREATE THE DATA DIRECTORY
+# CREATE DATA DIRECTORY
 #=================================================
-ynh_script_progression --message="Creating the data directory..."
+ynh_script_progression --message="Creating a data directory..."
 
-# Define app's data directory
-datadir="/home/yunohost.app/${app}"
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
-ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
-
-# Create app folders
-mkdir -p "$datadir/"
+mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 mkdir -p "$datadir/static/"
 mkdir -p "$datadir/static/emoji/"
@@ -169,9 +166,9 @@ chmod -R o-rwx "$datadir"
 chown -R $app:$app "$datadir"
 
 #=================================================
-# CREATE THE CONFIG DIRECTORY
+# ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Creating the config directory..."
+ynh_script_progression --message="Adding a configuration file..."
 
 mkdir -p /etc/$app
 chown -R $app /etc/$app
@@ -190,9 +187,6 @@ ynh_add_systemd_config
 # MAKE SETUP
 #=================================================
 ynh_script_progression --message="Making setup..."
-
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app
 	#Generate instance
@@ -261,6 +255,9 @@ then
 	ynh_permission_update --permission="main" --add="visitors"
 fi
 
+# Everyone can access to the api part
+# We don't want to display the tile in the sso so we put --show_tile="false"
+# And we don't want that the YunoHost Admin can remove visitors group to this permission, so we put --protected="true"
 ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
 
 #=================================================

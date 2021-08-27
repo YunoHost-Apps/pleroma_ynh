@@ -1,12 +1,12 @@
 ;; Test complet
 	; Manifest
-		domain="domain.tld"	(DOMAIN)
-		admin="john" (USER)
-		is_public=1	(PUBLIC|public=1|private=0)
-		password="pass"
+		domain="domain.tld"
+		admin="john"
+		is_public=1
+		password="1Strong-Password"
 		name="My_Pleroma"
-		registration=0 (BOOLEAN)
-		cache=1 (BOOLEAN)
+		registration=0
+		cache=1
 		size="5g"
 	; Checks
 		pkg_linter=1
@@ -16,32 +16,6 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		# 0.9.99999
-		# upgrade=1	from_commit=9ec87c36793780f74365d3059d7b9d12885fbfcb
-		# 1.1.7
-		# upgrade=1	from_commit=3e88dd59d8e5593fb60a86ab955aafde76abdf2e
-		# 1.1.8
-		# upgrade=1	from_commit=0a839da33898b7a58f12a27b5b51799694021353
-		# 1.1.9
-		# upgrade=1	from_commit=eedad6977760c31d7fb94ced247b9136824da580
-		# 2.0.0
-		# upgrade=1	from_commit=0693dd5efd5ab2a06267993cc7106ed2efc26ea2
-		# 2.0.1~ynh1
-		# upgrade=1	from_commit=7c3680c82b9c3f2449c6dbb346a5729a18636ac1
-		# 2.0.1~ynh2
-		# upgrade=1	from_commit=723df4423d80baa31e9717628bc5b5fd50114bc8
-		# 2.0.2~ynh1
-		# upgrade=1	from_commit=8f418ba020cee267f76bb781b03a41d384707a5b
-		# 2.0.2~ynh2
-		# upgrade=1	from_commit=251a08383f59be006803fd12013baa92b03c1ef7
-		# 2.0.5~ynh1
-		# upgrade=1	from_commit=06f0005707e77fae566fedbd6e5e37f390df5173
-		# 2.0.5~ynh2
-		# upgrade=1	from_commit=30696599937984e9879da22220253f005e290cd0
-		# 2.0.7~ynh1
-		# upgrade=1	from_commit=e13745923a2e06e780e7b9d34ae084f600a9a2a2
-		# 2.1.2~ynh1
-		# upgrade=1	from_commit=ade89203b611fd178bc9d1cf35804bc08ea3a78b
 		# 2.2.0~ynh1
 		upgrade=1	from_commit=059ddc457aabe6962f5960612ed2dc1db53daeeb
 		# 2.2.2~ynh1
@@ -52,6 +26,8 @@
 		upgrade=1	from_commit=4757df265b0c3e8d1fc5280190ccfe5705dcb691
 		# 2.3.0~ynh3
 		upgrade=1	from_commit=28ed2fd7ab7b5e55154991c990d8e780560a56db
+		# 2.4.0~ynh1
+		upgrade=1	from_commit=2c4a57afdc92a6428ccfea3ccb74c7e33dc9b9ff
 		backup_restore=1
 		multi_instance=0
 		port_already_use=0
@@ -60,32 +36,6 @@
 Email=anmol@datamol.org;yalh@yahoo.com
 Notification=yes
 ;;; Upgrade options
-	; commit=9ec87c36793780f74365d3059d7b9d12885fbfcb
-		name=0.9.99999
-	; commit=3e88dd59d8e5593fb60a86ab955aafde76abdf2e
-		name=1.1.7
-	; commit=0a839da33898b7a58f12a27b5b51799694021353
-		name=1.1.8
-	; commit=eedad6977760c31d7fb94ced247b9136824da580
-		name=1.1.9
-	; commit=0693dd5efd5ab2a06267993cc7106ed2efc26ea2
-		name=2.0.0
-	; commit=7c3680c82b9c3f2449c6dbb346a5729a18636ac1
-		name=2.0.1~ynh1
-	; commit=723df4423d80baa31e9717628bc5b5fd50114bc8
-		name=2.0.1~ynh2
-	; commit=8f418ba020cee267f76bb781b03a41d384707a5b
-		name=2.0.2~ynh1
-	; commit=251a08383f59be006803fd12013baa92b03c1ef7
-		name=2.0.2~ynh2
-	; commit=06f0005707e77fae566fedbd6e5e37f390df5173
-		name=2.0.5~ynh1
-	; commit=30696599937984e9879da22220253f005e290cd0
-		name=2.0.5~ynh2
-	; commit=e13745923a2e06e780e7b9d34ae084f600a9a2a2
-		name=2.0.7~ynh1
-	; commit=ade89203b611fd178bc9d1cf35804bc08ea3a78b
-		name=2.1.2~ynh1
 	; commit=059ddc457aabe6962f5960612ed2dc1db53daeeb
 		name=2.2.0~ynh1
 	; commit=63723f18af5b035a41e967078cc3128423b1f9ae
@@ -96,3 +46,5 @@ Notification=yes
 		name=2.3.0~ynh2
 	; commit=28ed2fd7ab7b5e55154991c990d8e780560a56db
 		name=2.3.0~ynh3
+	; commit=2c4a57afdc92a6428ccfea3ccb74c7e33dc9b9ff
+		name=2.4.0~ynh1
