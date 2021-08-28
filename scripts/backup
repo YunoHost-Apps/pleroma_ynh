@@ -45,6 +45,12 @@ ynh_print_info --message="Declaring files to be backed up..."
 ynh_backup --src_path="$final_path"
 
 #=================================================
+# BACKUP THE DATA DIR
+#=================================================
+
+ynh_backup --src_path="$datadir" --is_big
+
+#=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
 
@@ -68,8 +74,6 @@ ynh_backup --src_path="/etc/systemd/system/$app.service"
 #=================================================
 
 ynh_backup --src_path="/etc/$app/config.exs"
-
-ynh_backup --src_path="$datadir" --is_big
 
 #=================================================
 # BACKUP THE POSTGRESQL DATABASE
