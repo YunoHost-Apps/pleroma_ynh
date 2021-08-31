@@ -70,7 +70,6 @@ You can make users **moderators**. They will then be able to **delete any post**
 ## Documentations et ressources
 
 * Site officiel de l'app : https://pleroma.social/
-* Documentation officielle utilisateur : https://yunohost.org/apps
 * Documentation officielle de l'admin : https://docs.pleroma.social/
 * Dépôt de code officiel de l'app : https://git.pleroma.social/pleroma/pleroma/
 * Documentation YunoHost pour cette app : https://yunohost.org/app_pleroma

@@ -74,7 +74,6 @@ You can make users **moderators**. They will then be able to **delete any post**
 ## Documentation and resources
 
 * Official app website: https://pleroma.social/
-* Official user documentation: https://yunohost.org/apps
 * Official admin documentation: https://docs.pleroma.social/
 * Upstream app code repository: https://git.pleroma.social/pleroma/pleroma/
 * YunoHost documentation for this app: https://yunohost.org/app_pleroma
