@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 A free, federated social networking server built on open protocols.
 
-**Shipped version:** 2.4.0~ynh2
+**Shipped version:** 2.4.1~ynh1
 
 **Demo:** http://distsn.org/pleroma-instances.html
 

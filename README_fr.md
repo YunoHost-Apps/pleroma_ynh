@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts.
 
-**Version incluse :** 2.4.0~ynh2
+**Version incluse :** 2.4.1~ynh1
 
 **Démo :** http://distsn.org/pleroma-instances.html
 
