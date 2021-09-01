@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 A free, federated social networking server built on open protocols.
 
-**Shipped version:** 2.4.0~ynh2
+**Shipped version:** 2.4.1~ynh1
 
 **Demo:** http://distsn.org/pleroma-instances.html
 
@@ -74,7 +74,6 @@ You can make users **moderators**. They will then be able to **delete any post**
 ## Documentation and resources
 
 * Official app website: https://pleroma.social/
-* Official user documentation: https://yunohost.org/apps
 * Official admin documentation: https://docs.pleroma.social/
 * Upstream app code repository: https://git.pleroma.social/pleroma/pleroma/
 * YunoHost documentation for this app: https://yunohost.org/app_pleroma

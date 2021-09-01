@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts.
 
-**Version incluse :** 2.4.0~ynh2
+**Version incluse :** 2.4.1~ynh1
 
 **Démo :** http://distsn.org/pleroma-instances.html
 
@@ -70,7 +70,6 @@ You can make users **moderators**. They will then be able to **delete any post**
 ## Documentations et ressources
 
 * Site officiel de l'app : https://pleroma.social/
-* Documentation officielle utilisateur : https://yunohost.org/apps
 * Documentation officielle de l'admin : https://docs.pleroma.social/
 * Dépôt de code officiel de l'app : https://git.pleroma.social/pleroma/pleroma/
 * Documentation YunoHost pour cette app : https://yunohost.org/app_pleroma
