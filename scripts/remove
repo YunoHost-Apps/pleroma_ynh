@@ -56,14 +56,6 @@ ynh_script_progression --message="Removing the PostgreSQL database..."
 ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..."
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
-#=================================================
 # REMOVE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Removing app main directory..."
@@ -79,6 +71,14 @@ ynh_script_progression --message="Removing NGINX web server configuration..."
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
 ynh_secure_remove --file="/etc/nginx/conf.d/$app-cache.conf"
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Removing dependencies..."
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
 
 #=================================================
 # CLOSE A PORT

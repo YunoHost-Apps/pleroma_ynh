@@ -7,7 +7,6 @@
 #=================================================
 
 source _common.sh
-source ynh_detect_arch__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -121,7 +120,7 @@ ynh_script_progression --message="Setting up source files..."
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-architecture=$(ynh_detect_arch)
+architecture=$YNH_ARCH
 ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
 
 chmod 750 "$final_path"
@@ -170,10 +169,10 @@ chown -R $app:$app "$datadir"
 #=================================================
 ynh_script_progression --message="Adding a configuration file..."
 
-mkdir -p /etc/$app
-chown -R $app /etc/$app
-
 config="/etc/$app/config.exs"
+
+mkdir -p /etc/$app
+chown $app:$app /etc/$app
 
 #=================================================
 # SETUP SYSTEMD

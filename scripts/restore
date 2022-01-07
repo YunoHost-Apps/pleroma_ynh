@@ -125,7 +125,7 @@ ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
 #=================================================
 ynh_script_progression --message="Restoring various files..."
 
-ynh_restore_file --origin_path="/etc/$app/config.exs"
+ynh_restore_file --origin_path="/etc/$app/"
 
 chmod 400 "/etc/$app/config.exs"
 chown $app:$app "/etc/$app/config.exs"
