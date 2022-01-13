@@ -25,7 +25,7 @@
             "name": "yalh76"
         }],
     "requirements": {
-        "yunohost": ">= 4.1.7.3"
+        "yunohost": ">= 4.3.1.8"
     },
     "multi_instance": false,
     "services": [
@@ -35,13 +35,11 @@
         "install" : [
             {
                 "name": "domain",
-                "type": "domain",
-                "example": "example.com"
+                "type": "domain"
             },
             {
                 "name": "admin",
-                "type": "user",
-                "example": "johndoe"
+                "type": "user"
             },
             {
                 "name": "is_public",
