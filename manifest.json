@@ -65,8 +65,8 @@
                 "name": "registration",
                 "type": "boolean",
                 "ask": {
-                    "en": "Is the registration open for new users?",
-                    "fr": "Est-ce que l'inscription est ouverte aux nouveaux utilisateurs ?"
+                    "en": "Should registration be open to users who do not have a Yunohost account on the system?",
+                    "fr": "L'inscription doit-elle être ouverte aux utilisateurs qui n'ont pas de compte YunoHost sur le système ?"
                 },
                 "default": false
             },
