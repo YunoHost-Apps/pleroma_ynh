@@ -22,7 +22,7 @@ assets=$(echo $latest_release_json | jq -r '[ .assets.sources[].url ] | join(" "
 release=$(echo $latest_release_json | jq -r '[ ._links.self ] | join(" ")' | tr -d "'")
 description=$(echo $latest_release_json | jq -r '[ .description ] | join(" ")' | tr -d "'")
 commit_id=$(echo $latest_release_json | jq -r '[ .commit.id ] | join(" ")' | tr -d "'")
-pipeline_id=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/pipelines" | jq -r '[ .[] | select((.ref=="stable") and (.sha=="'$commit_id'")).id|tostring ] | join(" ") ' | tr -d "'")
+pipeline_id=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/pipelines?sha=$commit_id&ref=stable" | jq -r '[ .[] | .id|tostring ] | join(" ") ' | tr -d "'")
 
 # Later down the script, we assume the version has only digits and dots
 # Sometimes the release name starts with a "v", so let's filter it out.
