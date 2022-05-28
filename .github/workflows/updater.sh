@@ -16,11 +16,12 @@
 # Fetching information
 current_version=$(cat manifest.json | jq -j '.version|split("~")[0]')
 # Some jq magic is needed, because the latest upstream release is not always the latest version (e.g. security patches for older versions)
-version=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/releases" | jq -r '.[] | select( .upcoming_release != true ) | .tag_name' | sort -V | tail -1)
-assets=($(curl --silent "https://git.pleroma.social/api/v4/projects/2/releases" | jq -r '[ .[] | select(.tag_name=="'$version'").assets.sources[].url ] | join(" ") | @sh' | tr -d "'"))
-release=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/releases" | jq -r '[ .[] | select(.tag_name=="'$version'")._links.self ] | join(" ") ' | tr -d "'")
-description=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/releases" | jq -r '[ .[] | select(.tag_name=="'$version'").description ] | join(" ") ' | tr -d "'")
-commit_id=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/releases" | jq -r '[ .[] | select(.tag_name=="'$version'").commit.id ] | join(" ") ' | tr -d "'")
+latest_release_json=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/releases" | jq -r '[.[] | select( .upcoming_release != true )][0]')
+version=$(echo $latest_release_json | jq -r '.tag_name')
+assets=$(echo $latest_release_json | jq -r '[ .assets.sources[].url ] | join(" ") | @sh' | tr -d "'")
+release=$(echo $latest_release_json | jq -r '[ ._links.self ] | join(" ")' | tr -d "'")
+description=$(echo $latest_release_json | jq -r '[ .description ] | join(" ")' | tr -d "'")
+commit_id=$(echo $latest_release_json | jq -r '[ .commit.id ] | join(" ")' | tr -d "'")
 pipeline_id=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/pipelines" | jq -r '[ .[] | select((.ref=="stable") and (.sha=="'$commit_id'")).id|tostring ] | join(" ") ' | tr -d "'")
 
 # Later down the script, we assume the version has only digits and dots
