@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Pleroma for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Working status](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)  
 [![Install Pleroma with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -28,7 +28,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ## Screenshots
 
-![](./doc/screenshots/screenshot1.png)
+![Screenshot of Pleroma](./doc/screenshots/screenshot1.png)
 
 ## Disclaimers / important information
 
@@ -78,21 +78,22 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 ## Documentation and resources
 
-* Official app website: https://pleroma.social/
-* Official admin documentation: https://docs.pleroma.social/
-* Upstream app code repository: https://git.pleroma.social/pleroma/pleroma/
-* YunoHost documentation for this app: https://yunohost.org/app_pleroma
-* Report a bug: https://github.com/YunoHost-Apps/pleroma_ynh/issues
+* Official app website: <https://pleroma.social/>
+* Official admin documentation: <https://docs.pleroma.social/>
+* Upstream app code repository: <https://git.pleroma.social/pleroma/pleroma/>
+* YunoHost documentation for this app: <https://yunohost.org/app_pleroma>
+* Report a bug: <https://github.com/YunoHost-Apps/pleroma_ynh/issues>
 
 ## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
-```
+
+``` bash
 sudo yunohost app install https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing --debug
 or
 sudo yunohost app upgrade pleroma -u https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing --debug
 ```
 
-**More info regarding app packaging:** https://yunohost.org/packaging_apps
+**More info regarding app packaging:** <https://yunohost.org/packaging_apps>
