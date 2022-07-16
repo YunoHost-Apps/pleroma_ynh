@@ -6,7 +6,7 @@
         "en": "A free, federated social networking server built on open protocols.",
         "fr": "Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts."
     },
-    "version": "2.4.2~ynh1",
+    "version": "2.4.3~ynh1",
     "url": "https://pleroma.social/",
     "upstream": {
         "license": "AGPL-3.0-only",
