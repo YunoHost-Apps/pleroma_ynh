@@ -25,8 +25,8 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
-admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
+admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
 name="${YNH_APP_ARG_NAME// /_}"
 registration=$YNH_APP_ARG_REGISTRATION
@@ -103,11 +103,9 @@ ynh_script_progression --message="Creating a PostgreSQL database..."
 
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
-db_pwd=$(ynh_string_random --length=30)
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
 ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS citext;" --database=$db_name
@@ -120,8 +118,7 @@ ynh_script_progression --message="Setting up source files..."
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-architecture=$YNH_ARCH
-ynh_setup_source --dest_dir="$final_path/$app" --source_id=$architecture
+ynh_setup_source --dest_dir="$final_path/live" --source_id=$YNH_ARCH
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -132,18 +129,15 @@ chown -R $app:$app "$final_path"
 #=================================================
 ynh_script_progression --message="Configuring NGINX web server..."
 
-# Create a dedicated NGINX config
-ynh_add_nginx_config
-
 if [ $cache -eq 1 ]
 then
 	ynh_add_config --template="../conf/cache.conf" --destination="/etc/nginx/conf.d/$app-cache.conf"
 
-	ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="../conf/media.conf"
-	ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/media.conf"
-	cat ../conf/media.conf >> /etc/nginx/conf.d/$domain.d/$app.conf
-	ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
+	cat ../conf/media.conf >> ../conf/nginx.conf
 fi
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
 
 #=================================================
 # SPECIFIC SETUP
@@ -187,9 +181,9 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Making setup..."
 
-pushd $final_path/$app
+pushd $final_path/live
 	#Generate instance
-	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl instance gen --force \
+	ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl instance gen --force \
 	--output $config \
 	--output-psql /tmp/setup_db.psql \
 	--domain $domain \
@@ -216,14 +210,15 @@ cat "../conf/ldap.exs" >> "$config"
 
 ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
 
-pushd $final_path/$app
-	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl migrate"
+pushd $final_path/live
+	ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl migrate"
 
-	ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
-	sleep 60
+	ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Pleroma.Web.Endpoint"
 
 	# Add user
-	su "$app" -s $SHELL -lc "$final_path/$app/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+	ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl user new $admin $admin_email --password $password --moderator --admin -y"
+
+	ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 popd
 
 # Calculate and store the config file checksum into the app settings
@@ -240,6 +235,14 @@ chown $app:$app "$config"
 ynh_script_progression --message="Integrating service in YunoHost..."
 
 yunohost service add $app --description="$app daemon for Pleroma"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..."
+
+# Start a systemd service
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Pleroma.Web.Endpoint"
 
 #=================================================
 # SETUP SSOWAT
