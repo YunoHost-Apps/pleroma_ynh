@@ -43,6 +43,7 @@ ynh_script_progression --message="Backing up the app before changing its URL (ma
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	ynh_clean_check_starting
 	# Remove the new domain config file, the remove script won't do it as it doesn't know yet its location.
 	ynh_secure_remove --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 
@@ -128,11 +129,7 @@ ynh_store_file_checksum --file="$config"
 ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started $app"
-
-if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-	sleep 60
-fi
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Pleroma.Web.Endpoint"
 
 #=================================================
 # RELOAD NGINX
