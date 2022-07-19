@@ -22,7 +22,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Version incluse :** 2.4.2~ynh1
+**Version incluse :** 2.4.3~ynh1
 
 **Démo :** http://distsn.org/pleroma-instances.html
 
@@ -32,22 +32,12 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ## Avertissements / informations importantes
 
-* Any known limitations, constrains or stuff not working, such as (but not limited to):
+## Limitations
     * **Pleroma** require a dedicated **root domain**, eg. pleroma.domain.tld
     * **Pleroma** require a valid **certificate** installed on the domain. Yunohost can **install Letsencrypt certificate** on the domain from **admin web-interface** or through **command-line**.
     * This package is currently set to **single-instance** that means you can run a **single Pleroma instance** on a **single server**.
     * The admin **password** entered when installing must **not** contain **special characters**. (See [issue #132](https://github.com/YunoHost-Apps/pleroma_ynh/issues/132))
-    * requiring a full dedicated domain ?
-    * architectures not supported ?
     * LDAP supported but HTTP auth not.
-    * the app requires an important amount of RAM / disk / .. to install or to work properly
-    * etc...
-
-* Other infos that people should be aware of, such as:
-    * any specific step to perform after installing (such as manually finishing the install, specific admin credentials, ...)
-    * how to configure / administrate the application if it ain't obvious
-    * upgrade process / specificities / things to be aware of ?
-    * security considerations ?
 
 ## Admin Tasks
 Go to **cd /var/www/pleroma/pleroma**.
