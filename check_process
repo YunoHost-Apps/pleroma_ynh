@@ -30,6 +30,8 @@
 		upgrade=1	from_commit=2c4a57afdc92a6428ccfea3ccb74c7e33dc9b9ff
 		# 2.4.1~ynh1
 		upgrade=1	from_commit=e6d9935af254018baf326281662c55407170694d
+		# 2.4.3~ynh1
+		upgrade=1	from_commit=ba16bc8bee7715c479a7ee575ec5f7d9970a84f8
 		backup_restore=1
 		multi_instance=0
 		port_already_use=0
