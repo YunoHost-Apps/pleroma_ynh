@@ -14,7 +14,7 @@ read_manifest () {
 abort_if_up_to_date () {
     version=$(read_json "/etc/yunohost/apps/$YNH_APP_INSTANCE_NAME/manifest.json" 'version' 2> /dev/null || echo '20160501-7')
     last_version=$(read_manifest 'version')
-    if [ "${version}" = "${last_version}" ]; then
+    if [ "${version}" = "${last_version}" ] && [ "$YNH_APP_UPGRADE_TYPE" != "UPGRADE_FORCED" ]; then
         ynh_print_info "Up-to-date, nothing to do"
         ynh_die "" 0
     fi
