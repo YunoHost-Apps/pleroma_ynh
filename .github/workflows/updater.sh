@@ -28,7 +28,7 @@ pipeline_id=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/pipeli
 # Sometimes the release name starts with a "v", so let's filter it out.
 # You may need more tweaks here if the upstream repository has different naming conventions.
 if [[ ${version:0:1} == "v" || ${version:0:1} == "V" ]]; then
-    version=${version:1}
+	version=${version:1}
 fi
 
 # Setting up the environment variables
@@ -42,16 +42,13 @@ echo "PROCEED=false" >> $GITHUB_ENV
 
 # Proceed only if the retrieved version is greater than the current one
 if ! dpkg --compare-versions "$current_version" "lt" "$version" ; then
-    echo "::warning ::No new version available"
-    exit 0
+	echo "::warning ::No new version available"
+	exit 0
 # Proceed only if a PR for this new version does not already exist
 elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version ; then
-    echo "::warning ::A branch already exists for this update"
-    exit 0
+	echo "::warning ::A branch already exists for this update"
+	exit 0
 fi
-
-# Each release can hold multiple assets (e.g. binaries for different architectures, source code, etc.)
-echo "${#assets[@]} available asset(s)"
 
 #=================================================
 # UPDATE SOURCE FILES
@@ -61,29 +58,31 @@ echo "${#assets[@]} available asset(s)"
 architectures=("amd64" "arm64" "arm")
 for arch in ${architectures[@]}; do
 
-echo "Processing $arch release"
+	echo "Processing $arch release"
 
-artifact=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/pipelines/$pipeline_id/jobs" | jq -r '[ .[] | select((.status=="success") and (.stage=="release") and (.name=="'$arch'")).id|tostring ] | join(" ") ' | tr -d "'")
+	job_url=$(curl --silent "https://git.pleroma.social/api/v4/projects/2/pipelines/$pipeline_id/jobs" | jq -r '.[] | select((.status=="success") and (.stage=="release") and (.name=="'$arch'")) | .web_url')
 
-if [ ! -z "$artifact" ]; then
+	if [ ! -z "$job_url" ]; then
 
-# Create the temporary directory
-tempdir="$(mktemp -d)"
+		asset_url="$job_url/artifacts/download?file_type=archive"
 
-# Download sources and calculate checksum
-filename=${asset_url##*/}
-curl --silent -4 -L $asset_url -o "$tempdir/$filename"
-checksum=$(sha256sum "$tempdir/$filename" | head -c 64)
+		# Create the temporary directory
+		tempdir="$(mktemp -d)"
 
-# Delete temporary directory
-rm -rf $tempdir
+		# Download sources and calculate checksum
+		filename=${asset_url##*/}
+		curl --silent -4 -L $asset_url -o "$tempdir/$filename"
+		checksum=$(sha256sum "$tempdir/$filename" | head -c 64)
 
-if [ $arch == "arm" ]; then
-  arch="armhf"
-fi
+		# Delete temporary directory
+		rm -rf $tempdir
 
-# Rewrite source file
-cat <<EOT > conf/$arch.src
+		if [ $arch == "arm" ]; then
+			arch="armhf"
+		fi
+
+		# Rewrite source file
+		cat <<EOT > conf/$arch.src
 SOURCE_URL=$asset_url
 SOURCE_SUM=$checksum
 SOURCE_SUM_PRG=sha256sum
@@ -91,12 +90,12 @@ SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
 SOURCE_FILENAME=
 EOT
-echo "... conf/$arch.src updated"
+		echo "... conf/$arch.src updated"
 
-else
-echo "... artifact ignored"
-echo "::warning ::Artifact for $arch was not updated"
-fi
+	else
+		echo "... artifact ignored"
+		echo "::warning ::Artifact for $arch was not updated"
+	fi
 
 done
 
