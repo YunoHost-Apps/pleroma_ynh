@@ -70,7 +70,7 @@ for arch in ${architectures[@]}; do
 		tempdir="$(mktemp -d)"
 
 		# Download sources and calculate checksum
-		filename=${asset_url##*/}
+		filename="asset-$arch.zip"
 		curl --silent -4 -L $asset_url -o "$tempdir/$filename"
 		checksum=$(sha256sum "$tempdir/$filename" | head -c 64)
 
