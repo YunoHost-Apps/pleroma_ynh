@@ -36,7 +36,9 @@ echo "Current version: $current_version"
 echo "Latest release from upstream: $version"
 echo "VERSION=$version" >> $GITHUB_ENV
 echo "RELEASE=$release" >> $GITHUB_ENV
-echo "DESCRIPTION=$description" >> $GITHUB_ENV
+echo "DESCRIPTION<<EOF" >> $GITHUB_ENV
+echo "$description" >> $GITHUB_ENV
+echo "EOF" >> $GITHUB_ENV
 # For the time being, let's assume the script will fail
 echo "PROCEED=false" >> $GITHUB_ENV
 
@@ -70,7 +72,7 @@ for arch in ${architectures[@]}; do
 		tempdir="$(mktemp -d)"
 
 		# Download sources and calculate checksum
-		filename=${asset_url##*/}
+		filename="asset-$arch.zip"
 		curl --silent -4 -L $asset_url -o "$tempdir/$filename"
 		checksum=$(sha256sum "$tempdir/$filename" | head -c 64)
 
