@@ -3,10 +3,10 @@
     "id": "pleroma",
     "packaging_format": 1,
     "description": {
-        "en": "A free, federated social networking server built on open protocols.",
-        "fr": "Un serveur de réseautage social fédéré et gratuit basé sur des protocoles ouverts."
+        "en": "Federated social networking server built on open protocols",
+        "fr": "Serveur de réseautage social fédéré basé sur des protocoles ouverts"
     },
-    "version": "2.4.4~ynh2",
+    "version": "2.4.5~ynh1",
     "url": "https://pleroma.social/",
     "upstream": {
         "license": "AGPL-3.0-only",
@@ -65,7 +65,7 @@
                 "name": "registration",
                 "type": "boolean",
                 "ask": {
-                    "en": "Should registration be open to users who do not have a Yunohost account on the system?",
+                    "en": "Should registration be open to users who do not have a YunoHost account on the system?",
                     "fr": "L'inscription doit-elle être ouverte aux utilisateurs qui n'ont pas de compte YunoHost sur le système ?"
                 },
                 "default": false
