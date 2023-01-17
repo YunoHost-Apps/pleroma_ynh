@@ -209,6 +209,8 @@ popd
 cat "../conf/ldap.exs" >> "$config"
 
 ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
+registration_bool_value=`(($registration)) && echo "true" || echo "false"`
+ynh_replace_string --match_string="registrations_open: true" --replace_string="registrations_open: $registration_bool_value" --target_file="$config"
 
 pushd $final_path/live
 	ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl migrate"
@@ -268,6 +270,14 @@ ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --aut
 ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# POST INSTALL
+#=================================================
+
+# Correct path to 'static dir' in DB
+# This must be done when Pleroma is running (i.e. after install and start)
+ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl config migrate_to_db"
 
 #=================================================
 # END OF SCRIPT

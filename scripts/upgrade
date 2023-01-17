@@ -150,6 +150,7 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 # UPGRADE TO OTP RELEASE
 #=================================================
 
+config="/etc/$app/config.exs"
 if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 	ynh_script_progression --message="Upgrading to OTP release..." --weight=1
 
@@ -175,7 +176,6 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 
 	mkdir -p /etc/$app
 	chown -R $app /etc/$app
-	config="/etc/$app/config.exs"
 	mv $final_path/live/config/prod.secret.exs $config
 	ynh_replace_string --match_string="use Mix.Config" --replace_string="import Config" --target_file="$config"
 	echo "config :pleroma, :instance, static_dir: \"/home/yunohost.app/$app/static\"" >> $config
@@ -187,9 +187,13 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
 fi
 
 if ynh_version_gt "2.0.5~ynh1" "${previous_version}" ; then
-	config="/etc/$app/config.exs"
 	cat "../conf/ldap.exs" >> "$config"
 	ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
+fi
+
+if ynh_version_gt "2.4.4~ynh2" "${previous_version}"; then
+	registration_bool_value=`(($registration)) && echo "true" || echo "false"`
+	ynh_replace_string --match_string='registrations_open: true' --replace_string="registrations_open: $registration_bool_value" --target_file="$config"
 fi
 
 #=================================================
@@ -284,6 +288,14 @@ ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --lin
 ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# POST INSTALL
+#=================================================
+
+# Correct path to 'static dir' in DB
+# This must be done when Pleroma is running (i.e. after install/upgrade and start)
+ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl config migrate_to_db"
 
 #=================================================
 # END OF SCRIPT

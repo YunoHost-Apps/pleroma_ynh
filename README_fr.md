@@ -5,15 +5,15 @@ It shall NOT be edited by hand.
 
 # Pleroma pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)  
 [![Installer Pleroma avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Pleroma rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Pleroma rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 Pleroma is a microblogging server software that can federate (= exchange messages with) other servers that support ActivityPub. What that means is that you can host a server for yourself or your friends and stay in control of your online identity, but still exchange messages with people on larger servers. Pleroma will federate with all servers that implement ActivityPub, like Friendica, GNU Social, Hubzilla, Mastodon, Misskey, Peertube, and Pixelfed.
 
@@ -22,13 +22,13 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Version incluse :** 2.4.5~ynh1
+**Version incluse :** 2.4.5~ynh2
 
 **Démo :** http://distsn.org/pleroma-instances.html
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de Pleroma](./doc/screenshots/screenshot1.png)
+![Capture d’écran de Pleroma](./doc/screenshots/screenshot1.png)
 
 ## Avertissements / informations importantes
 
@@ -69,9 +69,9 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://pleroma.social/>
-* Documentation officielle de l'admin : <https://docs.pleroma.social/>
-* Dépôt de code officiel de l'app : <https://git.pleroma.social/pleroma/pleroma/>
+* Site officiel de l’app : <https://pleroma.social/>
+* Documentation officielle de l’admin : <https://docs.pleroma.social/>
+* Dépôt de code officiel de l’app : <https://git.pleroma.social/pleroma/pleroma/>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_pleroma>
 * Signaler un bug : <https://github.com/YunoHost-Apps/pleroma_ynh/issues>
 
@@ -87,4 +87,4 @@ ou
 sudo yunohost app upgrade pleroma -u https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
