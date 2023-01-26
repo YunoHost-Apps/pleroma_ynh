@@ -201,7 +201,8 @@ pushd $final_path/live
 	--static-dir $datadir/static \
 	--listen-ip 127.0.0.1 \
 	--listen-port $port \
-	--strip-uploads Y \
+	--strip-uploads-location Y \
+	--read-uploads-description Y \
 	--anonymize-uploads Y \
 	--dedupe-uploads Y"
 popd
