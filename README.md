@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Shipped version:** 2.5.0~ynh1
+**Shipped version:** 2.5.1~ynh1
 
 **Demo:** http://distsn.org/pleroma-instances.html
 
