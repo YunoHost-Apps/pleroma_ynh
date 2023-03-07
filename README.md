@@ -68,12 +68,6 @@ You can make users **moderators**. They will then be able to **delete any post**
 
 **--admin** option will **make the user moderator** and **--no-admin** will **take away the moderator privileges** from the user.
 
-### Database prune
-
-To avoid bigger backups than necessary, you can prune from the database objects which are more than 90 days old:
-
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl database prune_objects )
-
 ## Documentation and resources
 
 * Official app website: <https://pleroma.social/>
