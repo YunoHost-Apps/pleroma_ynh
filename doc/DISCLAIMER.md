@@ -9,7 +9,7 @@
 ## Admin Tasks
 
 Connect with SSH to your Yunohost server as YNH admin user.
-For the commands syntax, have in mind the specificities of [Yunohost Pleroma install](./yunohost.md).
+For the commands syntax, have in mind the specificities of [Yunohost Pleroma install](./doc/yunohost.md).
 
 
 ### Adding users
