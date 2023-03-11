@@ -9,7 +9,7 @@
 ## Tâches d’administration
 
 Se connecter avec SSH à votre serveur Yunohost avec le compte admin (nous parlons ici de l’admin YNH pas de l’admin de Pleroma).
-Pour la syntaxe des commandes, garder en tête les spécificités d’une installations de [Pleroma avec Yunohost](./yunohost_fr.md).
+Pour la syntaxe des commandes, garder en tête les spécificités d’une installations de [Pleroma avec Yunohost](./doc/yunohost_fr.md).
 
 
 ### Ajouter un utilisateur ou utilisatrice
