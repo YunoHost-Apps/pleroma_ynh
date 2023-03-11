@@ -7,28 +7,32 @@
 - LDAP supported but HTTP auth not.
 
 ## Admin Tasks
-Go to **cd /var/www/pleroma/live**.
+
+Connect with SSH to your Yunohost server as YNH admin user.
+For the commands syntax, have in mind the specificities of [Yunohost Pleroma install](./yunohost.md).
+
 
 ### Adding users
 
-**Run:**
-
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user new <NICKNAME> <EMAIL> )
+```
+sudo su pleroma -s $SHELL -lc "/var/www/pleroma/live/bin/pleroma_ctl user new <userName> <userEmail>"
+```
 
 ### Password reset
 
-**Run:** 
-
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user reset_password <NICKNAME> )
+```
+sudo su pleroma -s $SHELL -lc "/var/www/pleroma/live/bin/pleroma_ctl user reset_password <userName>"
+```
 
 This will generate a **password reset link** that you can then send to the user.
 
 ### Moderators
 
-You can make users **moderators**. They will then be able to **delete any post**.
+You can make users **moderators**. They will then be able to _delete any post_.
 
-**Run:**
 
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user set <NICKNAME> --[no-]admin )
+```
+sudo su pleroma -s $SHELL -lc "/var/www/pleroma/live/bin/pleroma_ctl user set <userName> --admin"
+```
 
-**--admin** option will **make the user moderator** and **--no-admin** will **take away the moderator privileges** from the user.
+Note: `--admin` option will _make the user moderator_ and `--no-admin` will _take away_ the moderator privileges from the user.
