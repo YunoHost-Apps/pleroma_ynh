@@ -25,8 +25,6 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 **Version incluse :** 2.5.1~ynh1
 
-**Démo :** http://distsn.org/pleroma-instances.html
-
 ## Captures d’écran
 
 ![Capture d’écran de Pleroma](./doc/screenshots/screenshot1.png)
