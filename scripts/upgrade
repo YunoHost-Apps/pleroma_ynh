@@ -290,14 +290,6 @@ ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
-# POST INSTALL
-#=================================================
-
-# Correct path to 'static dir' in DB
-# This must be done when Pleroma is running (i.e. after install/upgrade and start)
-ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl config migrate_to_db"
-
-#=================================================
 # END OF SCRIPT
 #=================================================
 

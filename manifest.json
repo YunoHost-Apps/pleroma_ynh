@@ -6,12 +6,11 @@
         "en": "Federated social networking server built on open protocols",
         "fr": "Serveur de réseautage social fédéré basé sur des protocoles ouverts"
     },
-    "version": "2.5.1~ynh1",
+    "version": "2.5.1~ynh2",
     "url": "https://pleroma.social/",
     "upstream": {
         "license": "AGPL-3.0-only",
         "website": "https://pleroma.social/",
-        "demo": "http://distsn.org/pleroma-instances.html",
         "admindoc": "https://docs.pleroma.social/",
         "code": "https://git.pleroma.social/pleroma/pleroma/"
     },

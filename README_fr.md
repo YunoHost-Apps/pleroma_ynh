@@ -16,16 +16,14 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 ## Vue d’ensemble
 
-Pleroma is a microblogging server software that can federate (= exchange messages with) other servers that support ActivityPub. What that means is that you can host a server for yourself or your friends and stay in control of your online identity, but still exchange messages with people on larger servers. Pleroma will federate with all servers that implement ActivityPub, like Friendica, GNU Social, Hubzilla, Mastodon, Misskey, Peertube, and Pixelfed.
+Pleroma est un logiciel serveur de microblog qui peut fédérer (c’est à dire échanger des messages) avec d’autres serveurs qui supportent le protocole ActivityPub. Cela signifie que vous pouvez héberger un serveur pour vous ou vos amis et garder le contrôle de votre identité en ligne, tout en communiquant avec des personnes hébergées sur des serveurs différents et plus importants tel que Friendica, GNU Social, Hubzilla, Mastodon, Misskey, Peertube, ou Pixelfed.
 
-For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post/what-is-pleroma/)
+Pour des informations plus détaillées sur Pleroma voir [What is Pleroma](https://blog.soykaf.com/post/what-is-pleroma/)
 
-**Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
+**Interface utilisateur Mastodon pour Pleroma :** Ajouter `/web` à la fin du nom de domaine (URL) de votre installation, par exemple : `https://pleroma.domain.tld/web`
 
 
-**Version incluse :** 2.5.1~ynh1
-
-**Démo :** http://distsn.org/pleroma-instances.html
+**Version incluse :** 2.5.1~ynh2
 
 ## Captures d’écran
 
@@ -35,38 +33,41 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ## Limitations
 
-- **Pleroma** require a dedicated **root domain**, eg. pleroma.domain.tld
-- **Pleroma** require a valid **certificate** installed on the domain. Yunohost can **install Letsencrypt certificate** on the domain from **admin web-interface** or through **command-line**.
-- This package is currently set to **single-instance** that means you can run a **single Pleroma instance** on a **single server**.
-- The admin **password** entered when installing must **not** contain **special characters**. (See [issue #132](https://github.com/YunoHost-Apps/pleroma_ynh/issues/132))
-- LDAP supported but HTTP auth not.
+- Pleroma doit impérativement s’installer sur son propre **nom de domaine dédié** (ou sous-domaine), par ex. pleroma.domain.tld
+- Pleroma nécessite par ailleurs un **certificat SSL** valide activé sur ce domaine. Yunohost peut installer et configurer un **certificat Letsencrypt** pour le domaine depuis l’interface d'administration de Yunohost ou avec la ligne de commande.
+- Ce paquet est actuellement configuré pour une **instance unique**, c’est-à-dire que l’on ne peut installer _qu’une seule instance_ de Pleroma sur un même serveur Yunohost.
+- Le **mot de passe** saisi durant l’installation ne doit _en aucun cas_ contenir de **caractères spéciaux**. (Voir [issue #132](https://github.com/YunoHost-Apps/pleroma_ynh/issues/132))
+- L’authentification LDAP fonctionne, mais pas `HTTP auth` en revanche.
 
-## Admin Tasks
-Go to **cd /var/www/pleroma/live**.
+## Tâches d’administration
 
-### Adding users
+Se connecter avec SSH à votre serveur Yunohost avec le compte admin (nous parlons ici de l’admin YNH pas de l’admin de Pleroma).
+Pour la syntaxe des commandes, garder en tête les spécificités d’une installations de [Pleroma avec Yunohost](./doc/yunohost_fr.md).
 
-**Run:**
 
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user new <NICKNAME> <EMAIL> )
+### Ajouter un utilisateur ou utilisatrice
 
-### Password reset
+```
+sudo su pleroma -s $SHELL -lc "/var/www/pleroma/live/bin/pleroma_ctl user new <userName> <userEmail>"
+```
 
-**Run:** 
+### Changer de mot de passe
 
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user reset_password <NICKNAME> )
+```
+sudo su pleroma -s $SHELL -lc "/var/www/pleroma/live/bin/pleroma_ctl user reset_password <userName>"
+```
 
-This will generate a **password reset link** that you can then send to the user.
+Ceci générera un **lien de réinitialisation** (URL) du mot de passe, que vous pouvez envoyer à l’utilisateur ou utilisatrice.
 
-### Moderators
+### Modérateurs
 
-You can make users **moderators**. They will then be able to **delete any post**.
+Vous pouvez donner à des utilisateurs ou utilisatrices les droits de **modération**. Ils ou elles pourront alors _supprimer_ n’importe quel billet publié par n’importe quel autre compte.
 
-**Run:**
+```
+sudo su pleroma -s $SHELL -lc "/var/www/pleroma/live/bin/pleroma_ctl user set <userName> --admin"
+```
 
-    $ ( cd /var/www/pleroma/live && sudo -u pleroma MIX_ENV=prod ./bin/pleroma_ctl user set <NICKNAME> --[no-]admin )
-
-**--admin** option will **make the user moderator** and **--no-admin** will **take away the moderator privileges** from the user.
+Note : l’option `--admin` donne au compte _les droits de moderation_ et avec l’option `--no-admin` à l’inverse on _enlève_ les privilèges de modération de celui-ci.
 
 ## Documentations et ressources
 
