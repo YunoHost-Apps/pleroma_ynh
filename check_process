@@ -16,16 +16,6 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		# 2.2.0~ynh1
-		# upgrade=1	from_commit=059ddc457aabe6962f5960612ed2dc1db53daeeb
-		# 2.2.2~ynh1
-		# upgrade=1	from_commit=63723f18af5b035a41e967078cc3128423b1f9ae
-		# 2.3.0~ynh1
-		# upgrade=1	from_commit=9f5c0970d2bf8bb6111785184b1d3762228b04ec
-		# 2.3.0~ynh2
-		# upgrade=1	from_commit=4757df265b0c3e8d1fc5280190ccfe5705dcb691
-		# 2.3.0~ynh3
-		# upgrade=1	from_commit=28ed2fd7ab7b5e55154991c990d8e780560a56db
 		# 2.4.0~ynh1
 		upgrade=1	from_commit=2c4a57afdc92a6428ccfea3ccb74c7e33dc9b9ff
 		# 2.4.1~ynh1
