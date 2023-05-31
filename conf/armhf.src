@@ -1,5 +1,5 @@
-SOURCE_URL=https://git.pleroma.social/pleroma/pleroma/-/jobs/230231/artifacts/download?file_type=archive
-SOURCE_SUM=bf7caba3ef502e2b21ec8749606a7b207b7c0a67fb767f33e9826fdfb24852c0
+SOURCE_URL=https://git.pleroma.social/pleroma/pleroma/-/jobs/234449/artifacts/download?file_type=archive
+SOURCE_SUM=abab2ad69704b999dbe1b995ce12aabc8069d9620ca332ecc621b20826d6db97
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
