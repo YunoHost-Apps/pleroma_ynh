@@ -86,10 +86,10 @@ ram.runtime = "50M"
     [resources.permissions]
     main.url = "/"
     api.url = "/api"
-    api.allowed="visitors"
-    api.auth_header="false"
-    api.show_tile="false"
-    api.protected="true"
+    api.allowed = "visitors"
+    api.auth_header = false
+    api.show_tile = false
+    api.protected = true
 
     [resources.apt]
     packages = "curl unzip libncurses5 postgresql postgresql-contrib imagemagick ffmpeg exiftool libimage-exiftool-perl"
