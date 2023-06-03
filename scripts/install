@@ -25,12 +25,8 @@ fi
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-#REMOVEME? ynh_script_progression --message="Storing installation settings..." --weight=1
+ynh_script_progression --message="Storing installation settings..." --weight=1
 
-ynh_app_setting_set --app=$app --key=name --value=$name
-ynh_app_setting_set --app=$app --key=registration --value=$registration
-ynh_app_setting_set --app=$app --key=cache --value=$cache
-ynh_app_setting_set --app=$app --key=size --value=$size
 ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
 ynh_app_setting_set --app=$app --key=random_key --value=$random_key
 ynh_app_setting_set --app=$app --key=signing_salt --value=$signing_salt
@@ -51,7 +47,7 @@ ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" -
 ynh_script_progression --message="Setting up source files..." --weight=1
 
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$install_dir/live" --source_id=$YNH_ARCH
+ynh_setup_source --dest_dir="$install_dir/live"
 
 chmod -R o-rwx "$install_dir"
 chown -R $app:$app "$install_dir"

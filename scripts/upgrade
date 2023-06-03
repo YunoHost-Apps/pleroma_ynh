@@ -18,12 +18,13 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # CHECK VERSION NUMBER
 #=================================================
-ynh_script_progression --message="Checking version number..." --weight=1
 
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
   sleep 60
 fi
+
 abort_if_up_to_date
+
 # previous function is what defines 'version', more precisely the 'previous version'
 previous_version="${version}"
 
