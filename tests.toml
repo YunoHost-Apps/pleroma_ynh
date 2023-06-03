@@ -6,7 +6,7 @@ test_format = 1.0
     # Default args to use for install
     # -------------------------------
     
-		arg.name = "My_Pleroma"
-		arg.registration = 0
-		arg.cache = 1
-		arg.size = "5g"
+		args.name = "My_Pleroma"
+		args.registration = 0
+		args.cache = 1
+		args.size = "5g"
