@@ -74,7 +74,7 @@ Note : l’option `--admin` donne au compte _les droits de moderation_ et avec l
 * Site officiel de l’app : <https://pleroma.social/>
 * Documentation officielle de l’admin : <https://docs.pleroma.social/>
 * Dépôt de code officiel de l’app : <https://git.pleroma.social/pleroma/pleroma/>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_pleroma>
+* YunoHost Store: <https://apps.yunohost.org/app/pleroma>
 * Signaler un bug : <https://github.com/YunoHost-Apps/pleroma_ynh/issues>
 
 ## Informations pour les développeurs
