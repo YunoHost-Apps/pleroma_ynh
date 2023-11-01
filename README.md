@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Shipped version:** 2.5.5~ynh1
+**Shipped version:** 2.6.0~ynh1
 
 ## Screenshots
 
@@ -75,7 +75,7 @@ Note: `--admin` option will _make the user moderator_ and `--no-admin` will _tak
 * Official app website: <https://pleroma.social/>
 * Official admin documentation: <https://docs.pleroma.social/>
 * Upstream app code repository: <https://git.pleroma.social/pleroma/pleroma/>
-* YunoHost documentation for this app: <https://yunohost.org/app_pleroma>
+* YunoHost Store: <https://apps.yunohost.org/app/pleroma>
 * Report a bug: <https://github.com/YunoHost-Apps/pleroma_ynh/issues>
 
 ## Developer info
