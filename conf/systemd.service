@@ -15,12 +15,12 @@ Environment="MIX_ENV=prod"
 
 ; Make sure that all paths fit your installation.
 ; Path to the home directory of the user running the Pleroma service.
-Environment="HOME=__FINALPATH__/live/"
+Environment="HOME=__INSTALL_DIR__/live/"
 ; Path to the folder containing the Pleroma installation.
-WorkingDirectory=__FINALPATH__/live/
+WorkingDirectory=__INSTALL_DIR__/live/
 ; Path to the Pleroma binary.
-ExecStart=__FINALPATH__/live/bin/pleroma start
-ExecStop=__FINALPATH__/live/bin/pleroma stop
+ExecStart=__INSTALL_DIR__/live/bin/pleroma start
+ExecStop=__INSTALL_DIR__/live/bin/pleroma stop
 
 ; Some security directives.
 ; Use private /tmp and /var/tmp folders inside a new file system namespace, which are discarded after the process stops.

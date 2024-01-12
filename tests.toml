@@ -1,0 +1,8 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/tests.v1.schema.json
+
+test_format = 1.0
+
+[default]
+
+    test_upgrade_from.e6d9935af254018baf326281662c55407170694d.name = "2.4.1"
+    test_upgrade_from.ba16bc8bee7715c479a7ee575ec5f7d9970a84f8.name = "2.4.3"
