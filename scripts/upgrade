@@ -48,8 +48,7 @@ fi
 
 config="/etc/$app/config.exs"
 
-# if ynh_compare_current_package_version --comparison gt --version "1.1.1~ynh1"; then
-if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
+if ynh_compare_current_package_version --comparison le --version "1.1.1~ynh1"; then
     ynh_script_progression --message="Upgrading to OTP release..." --weight=1
 
     # Give permission to the data_dir
@@ -73,8 +72,7 @@ if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
     ynh_backup_if_checksum_is_different --file="$config"
 fi
 
-# if ynh_compare_current_package_version --comparison gt --version "2.0.5~ynh1"; then
-if ynh_version_gt "2.0.5~ynh1" "${previous_version}" ; then
+if ynh_compare_current_package_version --comparison le --version "2.0.5~ynh1"; then
     cat "../conf/ldap.exs" >> "$config"
 fi
 
