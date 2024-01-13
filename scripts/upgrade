@@ -76,6 +76,11 @@ if ynh_compare_current_package_version --comparison le --version "2.0.5~ynh1"; t
     cat "../conf/ldap.exs" >> "$config"
 fi
 
+if ynh_compare_current_package_version --comparison lt --version "2.5.5~ynh2"; then
+    # packaging v1 did not set a shell
+    usermod -s /bin/sh "$app"
+fi
+
 ynh_replace_string --target_file="$config" \
     --match_string="config :pleroma, configurable_from_database: false" \
     --replace_string="config :pleroma, configurable_from_database: true"
