@@ -83,6 +83,8 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
     format = "zip"
     extract = true
 
+    autoupdate.strategy = "latest_gitlab_release"
+
     [resources.system_user]
 
     [resources.install_dir]
