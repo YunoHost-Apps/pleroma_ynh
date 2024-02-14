@@ -7,63 +7,7 @@
 #=================================================
 
 source _common.sh
-source ynh_package_version
 source /usr/share/yunohost/helpers
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading settings..." --weight=1
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-admin=$(ynh_app_setting_get --app=$app --key=admin)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
-random_key=$(ynh_app_setting_get --app=$app --key=random_key)
-name=$(ynh_app_setting_get --app=$app --key=name)
-port=$(ynh_app_setting_get --app=$app --key=port)
-cache=$(ynh_app_setting_get --app=$app --key=cache)
-size=$(ynh_app_setting_get --app=$app --key=size)
-registration=$(ynh_app_setting_get --app=$app --key=registration)
-
-#=================================================
-# CHECK VERSION
-#=================================================
-ynh_script_progression --message="Checking version..." --weight=1
-
-upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# CHECK VERSION NUMBER
-#=================================================
-ynh_script_progression --message="Checking version number..." --weight=1
-
-if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-  sleep 60
-fi
-abort_if_up_to_date
-# previous function is what defines 'version', more precisely the 'previous version'
-previous_version="${version}"
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
-
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -74,8 +18,8 @@ ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
 
-if ynh_version_gt "${previous_version}" "1.1.1~ynh1"  ; then
-	pkill -u $app || true
+if ynh_compare_current_package_version --comparison gt --version "1.1.1~ynh1"; then
+    pkill -u "$app" || true
 fi
 
 #=================================================
@@ -83,157 +27,92 @@ fi
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-# Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-# Create a permission if needed
-if ! ynh_permission_exists --permission="api"; then
-	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
-fi
-
-# If db_name doesn't exist, create it
-if [ -z "$db_name" ]; then
-	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-fi
-
-# If db_user doesn't exist, create it
-if [ -z "$db_user" ]; then
-	db_user=$db_name
-fi
-
-# If db_pwd doesn't exist, create it
-if [ -z "$db_pwd" ]; then
-	db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
-	ynh_app_setting_set --app=$app --key=psqlpwd --value=$db_pwd
-fi
-
-# Switch variables name
-psql_db=$(ynh_app_setting_get --app=$app --key=psql_db)
-
-if [ -n "$psql_db" ]
-then
-	db_name=$(ynh_app_setting_get --app=$app --key=psql_db)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-	ynh_app_setting_delete --app=$app --key=psql_db
+if [ -n "${psql_db:-}" ]; then
+    ynh_app_setting_delete --app="$app" --key=psql_db
 fi
 
 # Close a port
-if yunohost firewall list | grep -q "\- $port$"
-then
-	ynh_script_progression --message="Closing port $port..."
-	ynh_exec_warn_less yunohost firewall disallow TCP $port
+if yunohost firewall list | grep -q "\- $port$"; then
+    ynh_script_progression --message="Closing port $port..."
+    ynh_exec_warn_less yunohost firewall disallow TCP "$port"
 fi
 
 # Remove old repository
 ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
 apt-key del A14F4FCA
 
-# Switch to $final_path/live
-if [ ! -d "$final_path/live" ]; then
-	mv $final_path/$app $final_path/live
+# Switch to $install_dir/live
+if [ ! -d "$install_dir/live" ]; then
+    mv "$install_dir/$app" "$install_dir/live"
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-#=================================================
-# UPGRADE TO OTP RELEASE
-#=================================================
 
 config="/etc/$app/config.exs"
-if ynh_version_gt "1.1.1~ynh1" "${previous_version}" ; then
-	ynh_script_progression --message="Upgrading to OTP release..." --weight=1
 
-	# Define app's data directory
-	datadir="/home/yunohost.app/${app}"
-	ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+if ynh_compare_current_package_version --comparison le --version "1.1.1~ynh1"; then
+    ynh_script_progression --message="Upgrading to OTP release..." --weight=1
 
-	# Create app folders
-	mkdir -p "$datadir/"
-	mkdir -p "$datadir/uploads/"
-	mkdir -p "$datadir/static/"
-	mkdir -p "$datadir/static/emoji/"
+    # Give permission to the data_dir
+    chown -R "$app":"$app" "$data_dir"
 
-	# Give permission to the datadir
-	chown -R "$app":"$app" "$datadir"
+    rsync -a "$install_dir/live/uploads/" "$data_dir/uploads/"
+    if [ -d "$install_dir/live/instance/static/" ]; then
+        rsync -a "$install_dir/live/instance/static/" "$data_dir/static/"
+    fi
+    rsync -a "$install_dir/live/priv/static/emoji/" "$data_dir/static/emoji/"
 
-	rsync -a "$final_path/live/uploads/" "$datadir/uploads/"
-	if [ -d "$final_path/live/instance/static/" ]; then
-		rsync -a "$final_path/live/instance/static/" "$datadir/static/"
-	fi
+    mkdir -p "/etc/$app"
+    chown -R "$app" "/etc/$app"
+    mv "$install_dir/live/config/prod.secret.exs" "$config"
+    ynh_replace_string --target_file="$config" \
+        --match_string="use Mix.Config" \
+        --replace_string="import Config"
+    echo "config :pleroma, :instance, static_dir: \"/home/yunohost.app/$app/static\"" >> "$config"
+    echo "config :pleroma, Pleroma.Uploaders.Local, uploads: \"/home/yunohost.app/$app/uploads\"" >> "$config"
 
-	rsync -a "$final_path/live/priv/static/emoji/" "$datadir/static/emoji/"
-
-	mkdir -p /etc/$app
-	chown -R $app /etc/$app
-	mv $final_path/live/config/prod.secret.exs $config
-	ynh_replace_string --match_string="use Mix.Config" --replace_string="import Config" --target_file="$config"
-	echo "config :pleroma, :instance, static_dir: \"/home/yunohost.app/$app/static\"" >> $config
-	echo "config :pleroma, Pleroma.Uploaders.Local, uploads: \"/home/yunohost.app/$app/uploads\"" >> $config
-
-	ynh_backup_if_checksum_is_different --file="$config"
-
-	ynh_secure_remove --file="$final_path/live"
+    ynh_backup_if_checksum_is_different --file="$config"
 fi
 
-if ynh_version_gt "2.0.5~ynh1" "${previous_version}" ; then
-	cat "../conf/ldap.exs" >> "$config"
-	ynh_replace_string --match_string="config :pleroma, configurable_from_database: false" --replace_string="config :pleroma, configurable_from_database: true" --target_file="$config"
+if ynh_compare_current_package_version --comparison le --version "2.0.5~ynh1"; then
+    cat "../conf/ldap.exs" >> "$config"
 fi
 
-if ynh_version_gt "2.4.4~ynh2" "${previous_version}"; then
-	registration_bool_value=`(($registration)) && echo "true" || echo "false"`
-	ynh_replace_string --match_string='registrations_open: true' --replace_string="registrations_open: $registration_bool_value" --target_file="$config"
+if ynh_compare_current_package_version --comparison lt --version "2.5.5~ynh2"; then
+    # packaging v1 did not set a shell
+    usermod -s /bin/sh "$app"
 fi
+
+ynh_replace_string --target_file="$config" \
+    --match_string="config :pleroma, configurable_from_database: false" \
+    --replace_string="config :pleroma, configurable_from_database: true"
+
+ynh_replace_string --target_file="$config" \
+    --match_string='registrations_open: true' \
+    --replace_string="registrations_open: $(boolstr "$registration")"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression --message="Upgrading source files..." --weight=1
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-	ynh_script_progression --message="Upgrading source files..." --weight=1
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace=1
 
-	ynh_secure_remove --file="$final_path/live"
-	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path/live" --source_id=$YNH_ARCH
+chown -R "$app:$app" "$install_dir"
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
+
+if [ "$cache" -eq 1 ]; then
+    ynh_add_config --template="../conf/cache.conf" --destination="/etc/nginx/conf.d/$app-cache.conf"
+    cat ../conf/media.conf >> ../conf/nginx.conf
 fi
-
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:$app "$final_path"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=1
-
-ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
-
-if [ $cache -eq 1 ]
-then
-	ynh_add_config --template="../conf/cache.conf" --destination="/etc/nginx/conf.d/$app-cache.conf"
-
-	cat ../conf/media.conf >> ../conf/nginx.conf
-fi
-
 # Create a dedicated NGINX config
 ynh_add_nginx_config
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+yunohost service add "$app" --description="$app daemon for Pleroma"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -242,9 +121,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Making upgrade..." --weight=1
 
-pushd $final_path/live
-	ynh_exec_warn_less ynh_exec_as $app -s $SHELL -lc "$final_path/live/bin/pleroma_ctl migrate"
-popd
+ynh_exec_warn_less ynh_exec_as "$app" -i "$install_dir/live/bin/pleroma_ctl" migrate
 
 #=================================================
 # UPDATE A CONFIG FILE
@@ -256,38 +133,14 @@ config="/etc/$app/config.exs"
 ynh_backup_if_checksum_is_different --file="$config"
 
 chmod 400 "$config"
-chown $app:$app "$config"
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
-
-yunohost service add $app --description="$app daemon for Pleroma"
+chown "$app:$app" "$config"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Pleroma.Web.Endpoint"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Pleroma.Web.Endpoint"
 
 #=================================================
 # END OF SCRIPT
