@@ -83,7 +83,12 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
     format = "zip"
     extract = true
 
+    # Those assets are to make autoupdate work, but are dummy artifacts, because
+    # We need to find the actual artifacts from the CI jobs...
     autoupdate.strategy = "latest_gitlab_release"
+    autoupdate.asset.amd64 = "source.tar.gz"
+    autoupdate.asset.arm64 = "source.tar.gz"
+    autoupdate.asset.armhf = "source.tar.gz"
 
     [resources.system_user]
 
