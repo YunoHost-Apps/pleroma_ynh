@@ -23,7 +23,7 @@ Pour des informations plus détaillées sur Pleroma voir [What is Pleroma](https
 **Interface utilisateur Mastodon pour Pleroma :** Ajouter `/web` à la fin du nom de domaine (URL) de votre installation, par exemple : `https://pleroma.domain.tld/web`
 
 
-**Version incluse :** 2.5.5~ynh2
+**Version incluse :** 2.6.2~ynh1
 
 ## Captures d’écran
 
