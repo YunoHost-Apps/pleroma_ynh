@@ -71,15 +71,16 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.6.2/pleroma-v2.6.2.tar.gz"
-    amd64.sha256 = "e691af582b258f438ccaabf2b651365326765c10b22848416acdf63bfcc942c0"
+    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256761/artifacts/download"
+    amd64.sha256 = "4408be4d30c669a58589f3f0e5754c4f17f6a99d012c801204aacdcda4f1c9ef"
 
-    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.6.2/pleroma-v2.6.2.tar.gz"
-    armhf.sha256 = "e691af582b258f438ccaabf2b651365326765c10b22848416acdf63bfcc942c0"
+    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256788/artifacts/download"
+    armhf.sha256 = "ceff4df89f53654cfac3aafb685d0df2977a3073133ca7a472e92ebb349a58f1"
 
-    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.6.2/pleroma-v2.6.2.tar.gz"
-    arm64.sha256 = "e691af582b258f438ccaabf2b651365326765c10b22848416acdf63bfcc942c0"
+    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256765/artifacts/download"
+    arm64.sha256 = "eb38fddc449a0b47191d284671af3f1fe229b4d31b420cb8478f615006bd8757"
 
+    format = "zip"
     extract = true
 
     # Those assets are to make autoupdate work, but are dummy artifacts, because
