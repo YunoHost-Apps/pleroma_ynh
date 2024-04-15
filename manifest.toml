@@ -80,7 +80,6 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
     arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.6.2/pleroma-v2.6.2.tar.gz"
     arm64.sha256 = "e691af582b258f438ccaabf2b651365326765c10b22848416acdf63bfcc942c0"
 
-    format = "zip"
     extract = true
 
     # Those assets are to make autoupdate work, but are dummy artifacts, because
