@@ -9,7 +9,7 @@ description.fr = "Serveur de réseautage social fédéré basé sur des protocol
 
 version = "2.6.2~ynh1"
 
-maintainers = ["Anmol Sharma", "yalh76"]
+maintainers = []
 
 [upstream]
 license = "AGPL-3.0-only"
@@ -26,8 +26,8 @@ multi_instance = false
 ldap = true
 sso = false
 disk = "200M"
-ram.build = "50M" # FIXME: replace with an **estimate** minimum ram requirement. e.g. 50M, 400M, 1G, ...
-ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requirement. e.g. 50M, 400M, 1G, ...
+ram.build = "50M"
+ram.runtime = "50M"
 
 [install]
     [install.domain]
