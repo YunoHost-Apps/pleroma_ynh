@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Pleroma
+# YunoHost 上的 Pleroma
 
 [![集成程度](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![工作状态](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
 
@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**分发版本：** 2.6.2~ynh1
+**分发版本：** 2.6.2~ynh2
 
 ## 截图
 
