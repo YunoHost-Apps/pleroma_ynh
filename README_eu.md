@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Pleroma YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
 
 [![Instalatu Pleroma YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Paketatutako bertsioa:** 2.6.2~ynh2
+**Paketatutako bertsioa:** 2.7.0~ynh1
 
 ## Pantaila-argazkiak
 

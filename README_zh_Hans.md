@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Pleroma
 
-[![集成程度](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![工作状态](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
 
 [![使用 YunoHost 安装 Pleroma](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +23,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**分发版本：** 2.6.2~ynh2
+**分发版本：** 2.7.0~ynh1
 
 ## 截图
 
