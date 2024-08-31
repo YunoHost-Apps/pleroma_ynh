@@ -1,22 +1,14 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# STANDARD UPGRADE STEPS
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped $app"
+ynh_systemctl --service=$app --action="stop" --log_path=systemd --wait_until="Stopped $app"
 
 if ynh_compare_current_package_version --comparison gt --version "1.1.1~ynh1"; then
     pkill -u "$app" || true
@@ -25,20 +17,20 @@ fi
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
+ynh_script_progression "Ensuring downward compatibility..."
 
 if [ -n "${psql_db:-}" ]; then
-    ynh_app_setting_delete --app="$app" --key=psql_db
+    ynh_app_setting_delete --key=psql_db
 fi
 
 # Close a port
 if yunohost firewall list | grep -q "\- $port$"; then
-    ynh_script_progression --message="Closing port $port..."
-    ynh_exec_warn_less yunohost firewall disallow TCP "$port"
+    ynh_script_progression "Closing port $port..."
+    ynh_hide_warnings yunohost firewall disallow TCP "$port"
 fi
 
 # Remove old repository
-ynh_secure_remove --file="/etc/apt/sources.list.d/erlang-solutions.list"
+ynh_safe_rm "/etc/apt/sources.list.d/erlang-solutions.list"
 apt-key del A14F4FCA
 
 # Switch to $install_dir/live
@@ -48,8 +40,8 @@ fi
 
 config="/etc/$app/config.exs"
 
-if ynh_compare_current_package_version --comparison le --version "1.1.1~ynh1"; then
-    ynh_script_progression --message="Upgrading to OTP release..." --weight=1
+if ynh_app_upgrading_from_version_before_or_equal_to 1.1.1~ynh1; then
+    ynh_script_progression "Upgrading to OTP release..."
 
     # Give permission to the data_dir
     chown -R "$app":"$app" "$data_dir"
@@ -63,88 +55,85 @@ if ynh_compare_current_package_version --comparison le --version "1.1.1~ynh1"; t
     mkdir -p "/etc/$app"
     chown -R "$app" "/etc/$app"
     mv "$install_dir/live/config/prod.secret.exs" "$config"
-    ynh_replace_string --target_file="$config" \
-        --match_string="use Mix.Config" \
-        --replace_string="import Config"
+    ynh_replace --file="$config" \
+        --match="use Mix.Config" \
+        --replace="import Config"
     echo "config :pleroma, :instance, static_dir: \"/home/yunohost.app/$app/static\"" >> "$config"
     echo "config :pleroma, Pleroma.Uploaders.Local, uploads: \"/home/yunohost.app/$app/uploads\"" >> "$config"
 
-    ynh_backup_if_checksum_is_different --file="$config"
+    ynh_backup_if_checksum_is_different "$config"
 fi
 
-if ynh_compare_current_package_version --comparison le --version "2.0.5~ynh1"; then
+if ynh_app_upgrading_from_version_before_or_equal_to 2.0.5~ynh1; then
     cat "../conf/ldap.exs" >> "$config"
 fi
 
-if ynh_compare_current_package_version --comparison lt --version "2.5.5~ynh2"; then
+if ynh_app_upgrading_from_version_before 2.5.5~ynh2; then
     # packaging v1 did not set a shell
     usermod -s /bin/sh "$app"
 fi
 
-ynh_replace_string --target_file="$config" \
-    --match_string="config :pleroma, configurable_from_database: false" \
-    --replace_string="config :pleroma, configurable_from_database: true"
+ynh_replace --file="$config" \
+    --match="config :pleroma, configurable_from_database: false" \
+    --replace="config :pleroma, configurable_from_database: true"
 
-ynh_replace_string --target_file="$config" \
-    --match_string='registrations_open: true' \
-    --replace_string="registrations_open: $(boolstr "$registration")"
+ynh_replace --file="$config" \
+    --match='registrations_open: true' \
+    --replace="registrations_open: $(boolstr "$registration")"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Upgrading source files..." --weight=1
+ynh_script_progression "Upgrading source files..."
 
-ynh_setup_source --dest_dir="$install_dir/live" --full_replace=1
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace
 
-chown -R "$app:$app" "$install_dir"
-
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:$app" "$install_dir"
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
+ynh_script_progression "Upgrading system configurations related to $app..."
 
 if [ "$cache" -eq 1 ]; then
-    ynh_add_config --template="../conf/cache.conf" --destination="/etc/nginx/conf.d/$app-cache.conf"
+    ynh_config_add --template="cache.conf" --destination="/etc/nginx/conf.d/$app-cache.conf"
     cat ../conf/media.conf >> ../conf/nginx.conf
 fi
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 yunohost service add "$app" --description="$app daemon for Pleroma"
 
 #=================================================
-# SPECIFIC UPGRADE
-#=================================================
 # MAKE UPGRADE
 #=================================================
-ynh_script_progression --message="Making upgrade..." --weight=1
+ynh_script_progression "Making upgrade..."
 
-ynh_exec_warn_less ynh_exec_as "$app" -i "$install_dir/live/bin/pleroma_ctl" migrate
+ynh_hide_warnings ynh_exec_as_app -i "$install_dir/live/bin/pleroma_ctl" migrate
 
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..." --weight=1
+ynh_script_progression "Updating configuration..."
 
 config="/etc/$app/config.exs"
 
-ynh_backup_if_checksum_is_different --file="$config"
+ynh_backup_if_checksum_is_different "$config"
 
-chmod 400 "$config"
-chown "$app:$app" "$config"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$config"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "$config"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Pleroma.Web.Endpoint"
+ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Pleroma.Web.Endpoint"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"

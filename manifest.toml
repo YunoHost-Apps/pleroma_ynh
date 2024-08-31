@@ -21,6 +21,7 @@ fund = "https://liberapay.com/Pleroma-euro/"
 
 [integration]
 yunohost = ">=11.2"
+helpers_version = "2.1"
 architectures = ["amd64", "armhf", "arm64"]
 multi_instance = false
 ldap = true
