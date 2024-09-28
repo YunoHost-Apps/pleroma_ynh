@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
@@ -11,15 +10,14 @@ ynh_script_progression "Restoring the app main directory..."
 
 ynh_restore "$install_dir"
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:$app" "$install_dir"
+chown -R "$app:$app" "$install_dir"
+
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
 ynh_script_progression "Restoring the data directory..."
 
 ynh_restore "$data_dir"
-
-chown -R "$app:$app" "$data_dir"
 
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
@@ -54,8 +52,8 @@ yunohost service add "$app" --description="$app daemon for Pleroma"
 ynh_script_progression "Restoring various files..."
 
 ynh_restore "/etc/$app/"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "/etc/$app/config.exs"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "/etc/$app/config.exs"
+chmod 400 "/etc/$app/config.exs"
+chown "$app:$app" "/etc/$app/config.exs"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE

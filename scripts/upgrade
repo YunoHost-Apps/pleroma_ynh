@@ -88,7 +88,8 @@ ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --dest_dir="$install_dir/live" --full_replace
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:$app" "$install_dir"
+chown -R "$app:$app" "$install_dir"
+
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
@@ -99,11 +100,10 @@ if [ "$cache" -eq 1 ]; then
     cat ../conf/media.conf >> ../conf/nginx.conf
 fi
 
-# Create a dedicated NGINX config
 ynh_config_add_nginx
 
-# Create a dedicated systemd config
 ynh_config_add_systemd
+
 yunohost service add "$app" --description="$app daemon for Pleroma"
 
 #=================================================
@@ -122,8 +122,8 @@ config="/etc/$app/config.exs"
 
 ynh_backup_if_checksum_is_different "$config"
 
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$config"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "$config"
+chmod 400 "$config"
+chown "$app:$app" "$config"
 
 #=================================================
 # START SYSTEMD SERVICE

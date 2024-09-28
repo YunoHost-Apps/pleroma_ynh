@@ -21,16 +21,14 @@ if ynh_in_ci_tests; then
 fi
 
 #=================================================
-# APP "BUILD" (DEPLOYING SOURCES, VENV, COMPILING ETC)
-#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir/live"
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:www-data" "$install_dir"
+chown -R "$app:www-data" "$install_dir"
+
 #=================================================
 # UPDATE THE POSTGRESQL DATABASE
 #=================================================
@@ -115,15 +113,11 @@ ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum "$config"
 
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$config"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "$config"
-
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
 ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Pleroma.Web.Endpoint"
 
 #=================================================
