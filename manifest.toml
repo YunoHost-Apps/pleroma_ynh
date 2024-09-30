@@ -80,7 +80,6 @@ ram.runtime = "50M"
     arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/272742/artifacts/download"
     arm64.sha256 = "8cf12cee96adf9e64a60443109ed113a95ab7d3406eec5b18661a0d8d63abffb"
 
-    format = "zip"
     extract = true
 
     # Those assets are to make autoupdate work, but are dummy artifacts, because
