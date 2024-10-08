@@ -71,13 +71,13 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://git.pleroma.social/api/v4/projects/2/jobs/artifacts/stable/download?job=amd64"
+    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/272738/artifacts/download"
     amd64.sha256 = "451435dc2cc48b21a62cce1c0532f4746ee7b07e0bb2b40dca9210cea3fa0c17"
 
-    armhf.url = "https://git.pleroma.social/api/v4/projects/2/jobs/artifacts/stable/download?job=arm"
+    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/272740/artifacts/download"
     armhf.sha256 = "22da30dec93437e3ecb33270a9377bd8d8965554c2761af81e2268e11633ea56"
 
-    arm64.url = "https://git.pleroma.social/api/v4/projects/2/jobs/artifacts/stable/download?job=arm64"
+    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/272742/artifacts/download"
     arm64.sha256 = "8cf12cee96adf9e64a60443109ed113a95ab7d3406eec5b18661a0d8d63abffb"
     
     format = "zip"
