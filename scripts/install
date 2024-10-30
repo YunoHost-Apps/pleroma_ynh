@@ -80,7 +80,7 @@ ynh_exec_warn_less ynh_exec_as "$app" -i \
     --output "$config" \
     --output-psql /tmp/setup_db.psql \
     --domain "$domain" \
-    --instance-name "$name" \
+    --instance-name "$instance_name" \
     --admin-email "$admin_email" \
     --notify-email "$admin_email" \
     --dbhost localhost \
