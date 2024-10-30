@@ -5,7 +5,7 @@ No se debe editar a mano.
 
 # Pleroma para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
 
 [![Instalar Pleroma con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -39,7 +39,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 

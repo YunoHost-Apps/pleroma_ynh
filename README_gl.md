@@ -5,7 +5,7 @@ NON debe editarse manualmente.
 
 # Pleroma para YunoHost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
 
 [![Instalar Pleroma con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 

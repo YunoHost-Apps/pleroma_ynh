@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Pleroma
 
-[![集成程度](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![工作状态](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
 
 [![使用 YunoHost 安装 Pleroma](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
