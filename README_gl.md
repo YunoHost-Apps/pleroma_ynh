@@ -5,7 +5,9 @@ NON debe editarse manualmente.
 
 # Pleroma para YunoHost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/pleroma)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+![Estado de funcionamento](https://apps.yunohost.org/badge/state/pleroma)
+![Estado de mantemento](https://apps.yunohost.org/badge/maintained/pleroma)
 
 [![Instalar Pleroma con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Versión proporcionada:** 2.6.2~ynh3
+**Versión proporcionada:** 2.7.1~ynh1
 
 ## Capturas de pantalla
 

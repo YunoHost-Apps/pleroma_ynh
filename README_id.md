@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Pleroma untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/pleroma)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+![Status kerja](https://apps.yunohost.org/badge/state/pleroma)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/pleroma)
 
 [![Pasang Pleroma dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Versi terkirim:** 2.6.2~ynh3
+**Versi terkirim:** 2.7.1~ynh1
 
 ## Tangkapan Layar
 
