@@ -5,7 +5,9 @@
 
 # Pleroma для YunoHost
 
-[![Уровень интеграции](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Состояние работы](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Состояние сопровождения](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Уровень интеграции](https://apps.yunohost.org/badge/integration/pleroma)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+![Состояние работы](https://apps.yunohost.org/badge/state/pleroma)
+![Состояние сопровождения](https://apps.yunohost.org/badge/maintained/pleroma)
 
 [![Установите Pleroma с YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Поставляемая версия:** 2.6.2~ynh3
+**Поставляемая версия:** 2.8.0~ynh1
 
 ## Снимки экрана
 

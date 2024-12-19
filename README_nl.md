@@ -5,7 +5,9 @@ Hij mag NIET handmatig aangepast worden.
 
 # Pleroma voor Yunohost
 
-[![Integratieniveau](https://dash.yunohost.org/integration/pleroma.svg)](https://ci-apps.yunohost.org/ci/apps/pleroma/) ![Mate van functioneren](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Onderhoudsstatus](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Integratieniveau](https://apps.yunohost.org/badge/integration/pleroma)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+![Mate van functioneren](https://apps.yunohost.org/badge/state/pleroma)
+![Onderhoudsstatus](https://apps.yunohost.org/badge/maintained/pleroma)
 
 [![Pleroma met Yunohost installeren](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Geleverde versie:** 2.6.2~ynh3
+**Geleverde versie:** 2.8.0~ynh1
 
 ## Schermafdrukken
 
