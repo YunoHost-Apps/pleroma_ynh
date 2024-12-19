@@ -7,7 +7,7 @@ name = "Pleroma"
 description.en = "Federated social networking server built on open protocols"
 description.fr = "Serveur de réseautage social fédéré basé sur des protocoles ouverts"
 
-version = "2.6.2~ynh3"
+version = "2.8.0~ynh1"
 
 maintainers = []
 
@@ -71,14 +71,14 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256761/artifacts/download"
-    amd64.sha256 = "4408be4d30c669a58589f3f0e5754c4f17f6a99d012c801204aacdcda4f1c9ef"
+    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
+    amd64.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
 
-    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256788/artifacts/download"
-    armhf.sha256 = "ceff4df89f53654cfac3aafb685d0df2977a3073133ca7a472e92ebb349a58f1"
+    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
+    armhf.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
 
-    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256765/artifacts/download"
-    arm64.sha256 = "eb38fddc449a0b47191d284671af3f1fe229b4d31b420cb8478f615006bd8757"
+    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
+    arm64.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
 
     format = "zip"
     extract = true
