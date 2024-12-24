@@ -20,7 +20,7 @@ cpe = "cpe:2.3:a:kpherox:pleroma"
 fund = "https://liberapay.com/Pleroma-euro/"
 
 [integration]
-yunohost = ">=11.2"
+yunohost = ">=12"
 architectures = ["amd64", "armhf", "arm64"]
 multi_instance = false
 ldap = true
@@ -113,7 +113,6 @@ ram.runtime = "50M"
         "postgresql",
         "postgresql-contrib",
         "libvips42",
-        "libc6",
     ]
 
     [resources.database]
