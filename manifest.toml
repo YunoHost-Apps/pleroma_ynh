@@ -113,6 +113,7 @@ ram.runtime = "50M"
         "postgresql",
         "postgresql-contrib",
         "libvips42",
+        "libc6",
     ]
 
     [resources.database]
