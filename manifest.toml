@@ -80,7 +80,7 @@ ram.runtime = "50M"
     arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
     arm64.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
 
-    format = "zip"
+    format = "tar.gz"
     extract = true
 
     # Those assets are to make autoupdate work, but are dummy artifacts, because
