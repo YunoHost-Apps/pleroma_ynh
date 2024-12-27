@@ -71,24 +71,17 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
-    amd64.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
+    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/283011/artifacts/download"
+    amd64.sha256 = "31440d91e7448cd3912144638ea7c59300d45c2fecfad24f0cf9c8ea91058ce0"
 
-    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
-    armhf.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
+    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/282573/artifacts/download"
+    armhf.sha256 = "fdb6e7103a1de055102c30158f1153be468d424a1c9b713dd2571deb2aa20f4f"
 
-    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/archive/v2.8.0/pleroma-v2.8.0.tar.gz"
-    arm64.sha256 = "f5144af64ce822310b9943df274bac3c1c7704e16750ee247f55b4fc7fe5be67"
+    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/283015/artifacts/download"
+    arm64.sha256 = "ffb9f5c56531076ca14bb23c25d7e78547fb4ef37c7eafd81740bfde966358a8"
 
     format = "zip"
     extract = true
-
-    # Those assets are to make autoupdate work, but are dummy artifacts, because
-    # We need to find the actual artifacts from the CI jobs...
-    autoupdate.strategy = "latest_gitlab_release"
-    autoupdate.asset.amd64 = "source.tar.gz"
-    autoupdate.asset.arm64 = "source.tar.gz"
-    autoupdate.asset.armhf = "source.tar.gz"
 
     [resources.system_user]
 
@@ -116,6 +109,9 @@ ram.runtime = "50M"
         "libimage-exiftool-perl",
         "postgresql",
         "postgresql-contrib",
+        "libmagic-dev",
+        "libimage-exiftool-perl",
+        "libvips"
     ]
 
     [resources.database]
