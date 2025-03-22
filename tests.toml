@@ -4,4 +4,17 @@ test_format = 1.0
 
 [default]
 
-    test_upgrade_from.ba16bc8bee7715c479a7ee575ec5f7d9970a84f8.name = "2.4.3"
+    # ------------
+    # Tests to run
+    # ------------
+
+    # -------------------------------
+    # Default args to use for install
+    # -------------------------------
+
+    # -------------------------------
+    # Commits to test upgrade from
+    # -------------------------------
+
+    test_upgrade_from.196d35387131bb7fe193c361e1405e21ac36ceaf.name = "Upgrade from 2.8.0~ynh1"
+    #test_upgrade_from.ba16bc8bee7715c479a7ee575ec5f7d9970a84f8.name = "2.4.3"
