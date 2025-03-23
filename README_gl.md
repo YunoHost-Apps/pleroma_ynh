@@ -25,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Versión proporcionada:** 2.8.0~ynh1
+**Versión proporcionada:** 2.8.0~ynh2
 
 ## Capturas de pantalla
 
