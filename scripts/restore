@@ -30,7 +30,7 @@ ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS citext;"
 
 ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 
-ynh_psql_db_shell " < "./db.sql""
+ynh_psql_db_shell < ./db.sql
 
 #=================================================
 # RESTORE SYSTEM CONFIGURATIONS
