@@ -23,6 +23,12 @@ if [ -n "${psql_db:-}" ]; then
     ynh_app_setting_delete --key=psql_db
 fi
 
+if [[ -z "${instance_name:-}" ]]; then
+    instance_name="$name"
+    ynh_app_setting_set --app="$app" --key=instance_name --value="$instance_name"
+    ynh_app_setting_delete --app="$app" --key=name
+fi
+
 # Close a port
 if yunohost firewall list | grep -q "\- $port$"; then
     ynh_script_progression "Closing port $port..."

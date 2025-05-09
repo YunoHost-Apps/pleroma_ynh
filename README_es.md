@@ -5,7 +5,9 @@ No se debe editar a mano.
 
 # Pleroma para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/pleroma)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+![Estado funcional](https://apps.yunohost.org/badge/state/pleroma)
+![Estado En Mantención](https://apps.yunohost.org/badge/maintained/pleroma)
 
 [![Instalar Pleroma con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +25,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 **Mastodon web front-end for Pleroma:** Add **/web** in front of your Pleroma domain, eg. pleroma.domain.tld/web
 
 
-**Versión actual:** 2.6.2~ynh2
+**Versión actual:** 2.8.0~ynh2
 
 ## Capturas
 
@@ -39,7 +41,7 @@ For user friendly details about Pleroma: [see here](https://blog.soykaf.com/post
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/pleroma_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 

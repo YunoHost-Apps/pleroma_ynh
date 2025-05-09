@@ -5,7 +5,9 @@ Il NE doit PAS être modifié à la main.
 
 # Pleroma pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/pleroma.svg)](https://dash.yunohost.org/appci/app/pleroma) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/pleroma.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/pleroma.maintain.svg)
+[![Niveau d’intégration](https://apps.yunohost.org/badge/integration/pleroma)](https://ci-apps.yunohost.org/ci/apps/pleroma/)
+![Statut du fonctionnement](https://apps.yunohost.org/badge/state/pleroma)
+![Statut de maintenance](https://apps.yunohost.org/badge/maintained/pleroma)
 
 [![Installer Pleroma avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=pleroma)
 
@@ -23,7 +25,7 @@ Pour des informations plus détaillées sur Pleroma voir [What is Pleroma](https
 **Interface utilisateur Mastodon pour Pleroma :** Ajouter `/web` à la fin du nom de domaine (URL) de votre installation, par exemple : `https://pleroma.domain.tld/web`
 
 
-**Version incluse :** 2.6.2~ynh2
+**Version incluse :** 2.8.0~ynh2
 
 ## Captures d’écran
 

@@ -7,7 +7,7 @@ name = "Pleroma"
 description.en = "Federated social networking server built on open protocols"
 description.fr = "Serveur de réseautage social fédéré basé sur des protocoles ouverts"
 
-version = "2.6.2~ynh2"
+version = "2.8.0~ynh2"
 
 maintainers = []
 
@@ -20,12 +20,15 @@ cpe = "cpe:2.3:a:kpherox:pleroma"
 fund = "https://liberapay.com/Pleroma-euro/"
 
 [integration]
-yunohost = ">=11.2.30"
+yunohost = ">=12.0.9"
 helpers_version = "2.1"
 architectures = ["amd64", "armhf", "arm64"]
 multi_instance = false
+
 ldap = true
+
 sso = false
+
 disk = "200M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -44,7 +47,7 @@ ram.runtime = "50M"
     [install.password]
     type = "password"
 
-    [install.name]
+    [install.instance_name]
     ask.en = "Choose a name for your Pleroma instance"
     ask.fr = "Choisissez un nom pour votre instance Pleroma"
     type = "string"
@@ -72,41 +75,44 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256761/artifacts/download"
-    amd64.sha256 = "4408be4d30c669a58589f3f0e5754c4f17f6a99d012c801204aacdcda4f1c9ef"
+    amd64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/283011/artifacts/download"
+    amd64.sha256 = "31440d91e7448cd3912144638ea7c59300d45c2fecfad24f0cf9c8ea91058ce0"
 
-    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256788/artifacts/download"
-    armhf.sha256 = "ceff4df89f53654cfac3aafb685d0df2977a3073133ca7a472e92ebb349a58f1"
+    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/282573/artifacts/download"
+    armhf.sha256 = "fdb6e7103a1de055102c30158f1153be468d424a1c9b713dd2571deb2aa20f4f"
 
-    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/256765/artifacts/download"
-    arm64.sha256 = "eb38fddc449a0b47191d284671af3f1fe229b4d31b420cb8478f615006bd8757"
+    arm64.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/283015/artifacts/download"
+    arm64.sha256 = "ffb9f5c56531076ca14bb23c25d7e78547fb4ef37c7eafd81740bfde966358a8"
 
     format = "zip"
     extract = true
 
-    # Those assets are to make autoupdate work, but are dummy artifacts, because
-    # We need to find the actual artifacts from the CI jobs...
-    autoupdate.strategy = "latest_gitlab_release"
-    autoupdate.asset.amd64 = "source.tar.gz"
-    autoupdate.asset.arm64 = "source.tar.gz"
-    autoupdate.asset.armhf = "source.tar.gz"
-
     [resources.system_user]
+    # This will provision/deprovision a unix system user
 
     [resources.install_dir]
+    # This will create/remove the install dir as /var/www/$app
+    # and store the corresponding setting $install_dir
 
     [resources.data_dir]
+    # This will create/remove the data dir as /home/yunohost.app/$app
+    # and store the corresponding setting $data_dir
     subdirs = [
         "uploads", "static", "static/emoji",
     ]
 
     [resources.permissions]
+    # This will configure SSOwat permission for $domain/$path/
+    # The initial allowed group of user is configured via the init_main_permission question (public=visitors, private=all_users)
     main.url = "/"
 
     [resources.ports]
+    # This will pick a random port for reverse-proxying and store it as the $port setting
     main.default = 8095
 
     [resources.apt]
+    # This will automatically install/uninstall the following apt packages
+    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
     packages = [
         "curl",
         "unzip",
@@ -117,7 +123,11 @@ ram.runtime = "50M"
         "libimage-exiftool-perl",
         "postgresql",
         "postgresql-contrib",
+        "libmagic-dev",
+        "libimage-exiftool-perl",
+        "libvips"
     ]
 
     [resources.database]
+    # This will automatically provision/deprovison a DB and store the corresponding credentials in settings $db_user, $db_name, $db_pwd
     type = "postgresql"

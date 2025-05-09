@@ -74,7 +74,7 @@ ynh_hide_warnings ynh_exec_as_app -i \
     --output "$config" \
     --output-psql /tmp/setup_db.psql \
     --domain "$domain" \
-    --instance-name "$name" \
+    --instance-name "$instance_name" \
     --admin-email "$admin_email" \
     --notify-email "$admin_email" \
     --dbhost localhost \
