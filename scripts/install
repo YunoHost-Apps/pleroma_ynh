@@ -27,8 +27,6 @@ ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir/live"
 
-chown -R "$app:www-data" "$install_dir"
-
 #=================================================
 # UPDATE THE POSTGRESQL DATABASE
 #=================================================

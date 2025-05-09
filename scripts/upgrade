@@ -94,8 +94,6 @@ ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --dest_dir="$install_dir/live" --full_replace
 
-chown -R "$app:$app" "$install_dir"
-
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
