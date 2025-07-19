@@ -26,7 +26,6 @@ architectures = ["amd64", "armhf", "arm64"]
 multi_instance = false
 
 ldap = true
-
 sso = false
 
 disk = "200M"

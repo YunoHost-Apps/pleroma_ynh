@@ -10,8 +10,10 @@ source /usr/share/yunohost/helpers
 path="/"
 random_key=$(ynh_string_random --length=64)
 ynh_app_setting_set --key=random_key --value="$random_key"
+
 signing_salt=$(ynh_string_random --length=8)
 ynh_app_setting_set --key=signing_salt --value="$signing_salt"
+
 admin_email=$(ynh_user_get_info --username="$admin" --key="mail")
 ynh_app_setting_set --key=admin_email --value="$admin_email"
 
