@@ -115,7 +115,6 @@ ram.runtime = "50M"
     packages = [
         "curl",
         "unzip",
-        "libncurses5",
         "imagemagick",
         "ffmpeg",
         "exiftool",
@@ -126,6 +125,13 @@ ram.runtime = "50M"
         "libimage-exiftool-perl",
         "libvips"
     ]
+    packages_from_raw_bash = """
+    if [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
+        echo "libncurses5";
+    elif [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
+        echo "libncurses6";
+    fi
+    """
 
     [resources.database]
     # This will automatically provision/deprovison a DB and store the corresponding credentials in settings $db_user, $db_name, $db_pwd
