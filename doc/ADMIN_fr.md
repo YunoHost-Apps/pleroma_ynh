@@ -5,7 +5,7 @@ Quelques informations, à toutes fins utiles, sur les différences entre une ins
 |                             | Package officiel           | Avec Yunohost                           |
 | --------------------------- | -------------------------- | --------------------------------------- |
 | Répertoire d’installation   | `/opt/pleroma`              | `/var/www/pleroma/live/`                 |
-| Répertoire statique         | `/var/lib/pleroma/static`   | `/etc/pleroma/config.exs`                |
+| Répertoire statique         | `/var/lib/pleroma/static`   | `/home/yunohost.app/pleroma/`                |
 | Fichier de configuration    | `/etc/pleroma/config.exs`   | `/etc/pleroma/config.exs`                |
 | Ligne de commandes          | `/bin/pleroma_ctl`         | `/var/www/pleroma/live/bin/pleroma_ctl`  |
 
