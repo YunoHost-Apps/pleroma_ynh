@@ -21,7 +21,7 @@ fund = "https://liberapay.com/Pleroma-euro/"
 
 [integration]
 yunohost = ">= 12.0.0"
-architectures = ["amd64", "armhf", "arm64"]
+architectures = ["amd64", "arm64"]
 multi_instance = false
 
 ldap = true
@@ -77,13 +77,9 @@ ram.runtime = "50M"
     amd64.url = "https://github.com/Thovi98/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-amd64.tar.gz"
     amd64.sha256 = "c15e55b2d5d3f4d5d971669396e4088862454f7158ecf630f899d88a122fccc2"
 
-    armhf.url = "https://git.pleroma.social/pleroma/pleroma/-/jobs/282573/artifacts/download"
-    armhf.sha256 = "fdb6e7103a1de055102c30158f1153be468d424a1c9b713dd2571deb2aa20f4f"
-
     arm64.url = "https://github.com/Thovi98/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-arm64.tar.gz"
     arm64.sha256 = "b06fb9505f4bc2eb83703c9274c696e3fe992a80626a4b99d34d28f4e9ecc60d"
 
-    format = "zip"
     extract = true
 
     [resources.system_user]
