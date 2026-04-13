@@ -74,10 +74,10 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://github.com/Thovi98/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-amd64.tar.gz"
+    amd64.url = "https://github.com/YunoHost-Apps/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-amd64.tar.gz"
     amd64.sha256 = "c15e55b2d5d3f4d5d971669396e4088862454f7158ecf630f899d88a122fccc2"
 
-    arm64.url = "https://github.com/Thovi98/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-arm64.tar.gz"
+    arm64.url = "https://github.com/YunoHost-Apps/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-arm64.tar.gz"
     arm64.sha256 = "b06fb9505f4bc2eb83703c9274c696e3fe992a80626a4b99d34d28f4e9ecc60d"
 
     extract = true
