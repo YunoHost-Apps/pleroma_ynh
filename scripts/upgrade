@@ -36,8 +36,14 @@ if yunohost firewall list | grep -q "\- $port$"; then
 fi
 
 # Remove old repository
-ynh_safe_rm "/etc/apt/sources.list.d/erlang-solutions.list"
-apt-key del A14F4FCA
+if [[ -f "/etc/apt/sources.list.d/erlang-solutions.list" ]]
+then
+    ynh_safe_rm "/etc/apt/sources.list.d/erlang-solutions.list"
+    if which apt-key
+    then
+	apt-key del A14F4FCA
+    fi
+fi
 
 # Switch to $install_dir/live
 if [ ! -d "$install_dir/live" ]; then
