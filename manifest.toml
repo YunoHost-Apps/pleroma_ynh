@@ -7,7 +7,7 @@ name = "Pleroma"
 description.en = "Federated social networking server built on open protocols"
 description.fr = "Serveur de réseautage social fédéré basé sur des protocoles ouverts"
 
-version = "2.8.0~ynh3"
+version = "2.10.0~ynh1"
 
 maintainers = []
 
@@ -20,12 +20,12 @@ cpe = "cpe:2.3:a:kpherox:pleroma"
 fund = "https://liberapay.com/Pleroma-euro/"
 
 [integration]
-yunohost = ">= 12.0.0"
+yunohost = ">=12.1.39"
+helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = false
 
 ldap = true
-
 sso = false
 
 disk = "200M"
@@ -74,40 +74,29 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.8.0/pleroma-v2.8.0-bookworm-amd64.tar.gz"
-    amd64.sha256 = "e6aa2edbef2cef3b1f60b9a74d39a7aeb87512640db5c6744ce3ea80872336be"
-    
-    arm64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.8.0/pleroma-v2.8.0-bookworm-arm64.tar.gz"
-    arm64.sha256 = "7daa2a728fea97f94149fa672ba668150beb3a1cf2822b6cbc7ef3dc782e707f"
-    
+
+    amd64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-amd64.tar.gz"
+    amd64.sha256 = "c15e55b2d5d3f4d5d971669396e4088862454f7158ecf630f899d88a122fccc2"
+
+    arm64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-arm64.tar.gz"
+    arm64.sha256 = "b06fb9505f4bc2eb83703c9274c696e3fe992a80626a4b99d34d28f4e9ecc60d"
+
     extract = true
 
     [resources.system_user]
-    # This will provision/deprovision a unix system user
 
     [resources.install_dir]
-    # This will create/remove the install dir as /var/www/$app
-    # and store the corresponding setting $install_dir
 
     [resources.data_dir]
-    # This will create/remove the data dir as /home/yunohost.app/$app
-    # and store the corresponding setting $data_dir
-    subdirs = [
-        "uploads", "static", "static/emoji",
-    ]
+    subdirs = ["uploads", "static", "static/emoji"]
 
     [resources.permissions]
-    # This will configure SSOwat permission for $domain/$path/
-    # The initial allowed group of user is configured via the init_main_permission question (public=visitors, private=all_users)
     main.url = "/"
 
     [resources.ports]
-    # This will pick a random port for reverse-proxying and store it as the $port setting
     main.default = 8095
 
     [resources.apt]
-    # This will automatically install/uninstall the following apt packages
-    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
     packages = [
         "curl",
         "unzip",
@@ -130,5 +119,4 @@ ram.runtime = "50M"
     """
 
     [resources.database]
-    # This will automatically provision/deprovison a DB and store the corresponding credentials in settings $db_user, $db_name, $db_pwd
     type = "postgresql"
