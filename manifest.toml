@@ -7,7 +7,7 @@ name = "Pleroma"
 description.en = "Federated social networking server built on open protocols"
 description.fr = "Serveur de réseautage social fédéré basé sur des protocoles ouverts"
 
-version = "2.10.0~ynh1"
+version = "2.10.2~ynh1"
 
 maintainers = []
 
@@ -75,11 +75,11 @@ ram.runtime = "50M"
 [resources]
     [resources.sources.main]
 
-    amd64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-amd64.tar.gz"
-    amd64.sha256 = "c15e55b2d5d3f4d5d971669396e4088862454f7158ecf630f899d88a122fccc2"
+    amd64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.10.2/pleroma-v2.10.2-bookworm-amd64.tar.gz"
+    amd64.sha256 = "d63653b710e18879c6afc9950466c37f6fafed54a200f65e820cd7048a7a5209"
 
-    arm64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.10.0/pleroma-v2.10.0-bookworm-arm64.tar.gz"
-    arm64.sha256 = "b06fb9505f4bc2eb83703c9274c696e3fe992a80626a4b99d34d28f4e9ecc60d"
+    arm64.url = "https://github.com/Yunohost-Apps/pleroma-otp/releases/download/v2.10.2/pleroma-v2.10.2-bookworm-arm64.tar.gz"
+    arm64.sha256 = "da821c791296f5cad0a2f4225ce4ba85f62d4e84a67b87224869768f39feff8c"
 
     extract = true
 
